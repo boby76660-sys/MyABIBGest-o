@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sistema de Gestão Geral ABIB Refeições Coletivas">
+  <title>Gestão ABIB - Refeições Coletivas</title>
+  
+  <!-- CSS Principal Inspirado em SaaS Webflow -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Google Firebase Web SDK (v10 compat - Realtime Database) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+</head>
+<body>
+
+  <!-- HEADER PRINCIPAL ESTILO MODERN SAAS -->
+  <header class="app-header">
+    <div class="header-brand" id="btn-go-home">
+      <div class="brand-icon-box">
+        <svg class="brand-icon-svg" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+          <line x1="9" y1="6" x2="9" y2="6.01"></line>
+          <line x1="15" y1="6" x2="15" y2="6.01"></line>
+          <line x1="9" y1="10" x2="9" y2="10.01"></line>
+          <line x1="15" y1="10" x2="15" y2="10.01"></line>
+          <line x1="9" y1="14" x2="9" y2="14.01"></line>
+          <line x1="15" y1="14" x2="15" y2="14.01"></line>
+          <line x1="9" y1="18" x2="15" y2="18"></line>
+        </svg>
+      </div>
+      <div>
+        <h1>GESTÃO ABIB</h1>
+        <p>REFEIÇÕES COLETIVAS</p>
+      </div>
+    </div>
+
+    <div class="header-user-controls">
+      <!-- Badge do Perfil Ativo -->
+      <button id="btn-change-profile" class="btn-profile-badge" title="Clique para alterar de perfil">
+        <span id="active-profile-name">Perfil</span>
+        <small style="opacity: 0.7; margin-left: 2px;">(Alterar)</small>
+      </button>
+
+      <!-- Botão Painel Admin -->
+      <button id="btn-open-admin" class="btn btn-primary btn-sm">
+        Admin
+      </button>
+    </div>
+  </header>
+
+  <!-- CONTAINER DE VISUALIZAÇÃO SPA -->
+  <main class="app-container" id="main-view-container">
+    <div class="loading-spinner" style="text-align: center; padding: 40px; color: var(--text-muted);">
+      Carregando sistema...
+    </div>
+  </main>
+
+  <!-- RODAPÉ -->
+  <footer class="app-footer">
+    <p>&copy; 2026 ABIB Refeições Coletivas - Sistema de Gestão Geral (21 Unidades)</p>
+  </footer>
+
+  <!-- SCRIPT PRINCIPAL UNIFICADO -->
+  <script src="js/bundle.js"></script>
+</body>
+</html>
