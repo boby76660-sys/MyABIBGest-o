@@ -1,5 +1,5 @@
 /**
- * ABIB Gestão - JavaScript Bundle Unificado (Sincronização em Tempo Real via Firebase)
+ * ABIB Gestão - JavaScript Bundle Unificado (Tratamento de 0 no Blur e Placeholder Limpo)
  */
 
 (function () {
@@ -769,7 +769,7 @@
     });
   }
 
-  // --- 8. COMENSAIS VIEW (COM ATUALIZAÇÃO TEMPO REAL DISPOSITIVOS MULTIPLOS) ---
+  // --- 8. COMENSAIS VIEW (CAMPOS INICIAM VAZIOS COM PLACEHOLDER "0", 0 PREENCHIDO NO BLUR) ---
   class ComensaisModuleView {
     constructor() {
       this.id = 'comensais';
@@ -956,8 +956,9 @@
           const input = form.querySelector(`input[name="${p.id}"]`);
           if (input && input !== activeEl) {
             const val = reg.publicos && reg.publicos[p.id] !== undefined ? reg.publicos[p.id] : '';
-            if (String(input.value) !== String(val)) {
-              input.value = val;
+            const displayVal = (val === 0 || val === '' || val === null || val === undefined) ? '' : val;
+            if (String(input.value) !== String(displayVal) && !(input.value === '0' && displayVal === '')) {
+              input.value = displayVal;
             }
           }
         });
@@ -1032,10 +1033,11 @@
               <div class="publicos-grid">
                 ${this.publicosAtivos.map(p => {
                   const val = reg.publicos && reg.publicos[p.id] !== undefined ? reg.publicos[p.id] : '';
+                  const displayVal = (val === 0 || val === '' || val === null || val === undefined) ? '' : val;
                   return `
                     <div class="input-publico-item">
                       <label>${p.nome}</label>
-                      <input type="number" inputmode="numeric" pattern="[0-9]*" class="input-comensal-num" name="${p.id}" value="${val}" placeholder="0" min="0">
+                      <input type="number" inputmode="numeric" pattern="[0-9]*" class="input-comensal-num" name="${p.id}" value="${displayVal}" placeholder="0" min="0">
                     </div>
                   `;
                 }).join('')}
@@ -1119,8 +1121,21 @@
           }
         };
 
-        const inputs = form.querySelectorAll('input');
-        inputs.forEach(input => {
+        const numInputs = form.querySelectorAll('.input-comensal-num');
+        numInputs.forEach(input => {
+          input.addEventListener('focus', () => {
+            if (input.value === '0') {
+              input.value = '';
+            }
+          });
+
+          input.addEventListener('blur', () => {
+            if (input.value.trim() === '') {
+              input.value = '0';
+              performAutoSave();
+            }
+          });
+
           input.addEventListener('input', () => {
             const indicator = card.querySelector('.auto-save-indicator');
             if (indicator) {
@@ -1133,6 +1148,20 @@
 
           input.addEventListener('change', performAutoSave);
         });
+
+        const obsInput = form.querySelector('.input-obs');
+        if (obsInput) {
+          obsInput.addEventListener('input', () => {
+            const indicator = card.querySelector('.auto-save-indicator');
+            if (indicator) {
+              indicator.textContent = 'Salvando...';
+              indicator.style.color = 'var(--primary)';
+            }
+            if (autoSaveTimer) clearTimeout(autoSaveTimer);
+            autoSaveTimer = setTimeout(performAutoSave, 400);
+          });
+          obsInput.addEventListener('change', performAutoSave);
+        }
 
         form.addEventListener('submit', (e) => {
           e.preventDefault();
