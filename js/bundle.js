@@ -1,5 +1,5 @@
 /**
- * ABIB Gestão - JavaScript Bundle Unificado (Censura de CNPJ Oculto)
+ * ABIB Gestão - JavaScript Bundle Unificado (Sincronização em Tempo Real via Firebase)
  */
 
 (function () {
@@ -269,9 +269,32 @@
     }
   ];
 
-  // --- 2. FIREBASE CLIENT ---
+  // --- 2. FIREBASE CLIENT E LISTENER TEMPO REAL ---
   let rtdb = null;
   let isFirebaseActive = false;
+  const collectionListeners = new Set();
+
+  function subscribeRealtimeSync() {
+    if (!checkIsFirebaseActive()) return;
+
+    Object.values(STORAGE_KEYS).forEach(key => {
+      if (collectionListeners.has(key)) return;
+      collectionListeners.add(key);
+
+      try {
+        getRealtimeDB().ref(key).on('value', snapshot => {
+          const val = snapshot.val();
+          if (val !== null && val !== undefined) {
+            const docs = Array.isArray(val) ? val.filter(Boolean) : Object.values(val);
+            updateMemoryCache(key, docs);
+            window.dispatchEvent(new CustomEvent('abib_realtime_update', { detail: { key, docs } }));
+          }
+        });
+      } catch (e) {
+        console.warn("Erro ao registrar listener Firebase:", key, e);
+      }
+    });
+  }
 
   function initFirebase(config) {
     if (!config || !config.apiKey || (!config.databaseURL && !config.projectId)) {
@@ -287,6 +310,7 @@
         }
         rtdb = window.firebase.database();
         isFirebaseActive = true;
+        subscribeRealtimeSync();
         return true;
       }
     } catch (err) {
@@ -341,17 +365,9 @@
     // 1. Retorno síncrono e ultra-rápido (0ms) do Memory Cache / LocalStorage
     const cached = getMemoryCache(key);
     if (cached) {
-      // 2. Se Firebase estiver ativo, atualiza em SEGUNDO PLANO sem travar a interface
+      // 2. Se Firebase estiver ativo, garante que o listener esteja escutando
       if (checkIsFirebaseActive()) {
-        try {
-          getRealtimeDB().ref(key).once('value').then(snapshot => {
-            const val = snapshot.val();
-            if (val) {
-              const docs = Array.isArray(val) ? val.filter(Boolean) : Object.values(val);
-              updateMemoryCache(key, docs);
-            }
-          }).catch(() => {});
-        } catch (e) {}
+        subscribeRealtimeSync();
       }
       return cached;
     }
@@ -366,6 +382,9 @@
       try {
         getRealtimeDB().ref(key).set(items).catch(() => {});
       } catch (e) {}
+    } else {
+      // Dispara atualização local em tempo real mesmo sem Firebase
+      window.dispatchEvent(new CustomEvent('abib_realtime_update', { detail: { key, docs: items } }));
     }
   }
 
@@ -750,7 +769,7 @@
     });
   }
 
-  // --- 8. COMENSAIS VIEW ---
+  // --- 8. COMENSAIS VIEW (COM ATUALIZAÇÃO TEMPO REAL DISPOSITIVOS MULTIPLOS) ---
   class ComensaisModuleView {
     constructor() {
       this.id = 'comensais';
@@ -758,6 +777,7 @@
       this.currentDate = new Date().toISOString().split('T')[0];
       this.filterStatus = 'todos';
       this.searchQuery = '';
+      this.realtimeHandler = null;
     }
 
     async render(container, currentProfile) {
@@ -890,6 +910,65 @@
       const btnRelatorios = this.container.querySelector('#btn-relatorios');
       btnRelatorios.addEventListener('click', () => {
         window.app.switchView('comensais-relatorios');
+      });
+
+      // Listener de Atualização em Tempo Real (Realtime Multidispositivo)
+      if (this.realtimeHandler) {
+        window.removeEventListener('abib_realtime_update', this.realtimeHandler);
+      }
+      this.realtimeHandler = async (e) => {
+        if (e.detail && e.detail.key === STORAGE_KEYS.COMENSAIS) {
+          await this.handleRealtimeUpdate();
+        }
+      };
+      window.addEventListener('abib_realtime_update', this.realtimeHandler);
+    }
+
+    async handleRealtimeUpdate() {
+      this.statusLista = await getStatusUnidadesNoDia(this.currentDate);
+      await this.updateHeaderPillCounts();
+
+      const grid = this.container.querySelector('#unidades-cards-container');
+      if (!grid) return;
+
+      const activeEl = document.activeElement;
+
+      this.statusLista.forEach(item => {
+        const u = item.unidade;
+        const reg = item.registro || { publicos: {}, observacao: '' };
+        const form = grid.querySelector(`.form-comensais-unidade[data-unidade-id="${u.id}"]`);
+        if (!form) return;
+
+        const card = form.closest('.unidade-card');
+        const statusArea = card ? card.querySelector('.card-status-area') : null;
+
+        if (statusArea) {
+          if (item.status === 'concluido') {
+            statusArea.innerHTML = `<span class="badge badge-success"><span class="status-dot dot-success"></span> CONCLUÍDO (${item.totalComensais})</span>`;
+            if (card) card.className = 'unidade-card card-done';
+          } else {
+            statusArea.innerHTML = `<span class="badge badge-pending"><span class="status-dot dot-pending"></span> PENDENTE</span>`;
+            if (card) card.className = 'unidade-card card-pending';
+          }
+        }
+
+        this.publicosAtivos.forEach(p => {
+          const input = form.querySelector(`input[name="${p.id}"]`);
+          if (input && input !== activeEl) {
+            const val = reg.publicos && reg.publicos[p.id] !== undefined ? reg.publicos[p.id] : '';
+            if (String(input.value) !== String(val)) {
+              input.value = val;
+            }
+          }
+        });
+
+        const inputObs = form.querySelector('input[name="observacao"]');
+        if (inputObs && inputObs !== activeEl) {
+          const obsVal = reg.observacao || '';
+          if (inputObs.value !== obsVal) {
+            inputObs.value = obsVal;
+          }
+        }
       });
     }
 
@@ -1049,7 +1128,7 @@
               indicator.style.color = 'var(--primary)';
             }
             if (autoSaveTimer) clearTimeout(autoSaveTimer);
-            autoSaveTimer = setTimeout(performAutoSave, 1000);
+            autoSaveTimer = setTimeout(performAutoSave, 400);
           });
 
           input.addEventListener('change', performAutoSave);
