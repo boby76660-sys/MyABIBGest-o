@@ -1,5 +1,5 @@
 /**
- * ABIB Gestão - JavaScript Bundle Unificado (Tratamento de 0 no Blur e Placeholder Limpo)
+ * ABIB Gestão - JavaScript Bundle Unificado (Suporte Numérico em Texto com 0 Garantido)
  */
 
 (function () {
@@ -28,6 +28,14 @@
       } catch (e) {}
     }
     return null;
+  }
+
+  // --- HELPER DE VALOR NUMÉRICO SEGURO (SEMPRE RETORNA STRING NUMÉRICA, '0' SE NULO/VAZIO) ---
+  function ensureNumberValue(val) {
+    if (val === null || val === undefined || val === '' || isNaN(val)) {
+      return '0';
+    }
+    return String(val);
   }
 
   // --- HELPER DE CENSURA DE CNPJ ---
@@ -769,7 +777,7 @@
     });
   }
 
-  // --- 8. COMENSAIS VIEW (CAMPOS INICIAM VAZIOS COM PLACEHOLDER "0", 0 PREENCHIDO NO BLUR) ---
+  // --- 8. COMENSAIS VIEW (TIPO DE CAMPO TEXTO COM SELEÇÃO NATIVA SEM ERRO NO NAVEGADOR) ---
   class ComensaisModuleView {
     constructor() {
       this.id = 'comensais';
@@ -955,9 +963,9 @@
         this.publicosAtivos.forEach(p => {
           const input = form.querySelector(`input[name="${p.id}"]`);
           if (input && input !== activeEl) {
-            const val = reg.publicos && reg.publicos[p.id] !== undefined ? reg.publicos[p.id] : '';
-            const displayVal = (val === 0 || val === '' || val === null || val === undefined) ? '' : val;
-            if (String(input.value) !== String(displayVal) && !(input.value === '0' && displayVal === '')) {
+            const val = reg && reg.publicos ? reg.publicos[p.id] : 0;
+            const displayVal = ensureNumberValue(val);
+            if (input.value !== displayVal) {
               input.value = displayVal;
             }
           }
@@ -1032,12 +1040,12 @@
             <form class="form-comensais-unidade" data-unidade-id="${u.id}">
               <div class="publicos-grid">
                 ${this.publicosAtivos.map(p => {
-                  const val = reg.publicos && reg.publicos[p.id] !== undefined ? reg.publicos[p.id] : '';
-                  const displayVal = (val === 0 || val === '' || val === null || val === undefined) ? '' : val;
+                  const val = reg && reg.publicos ? reg.publicos[p.id] : 0;
+                  const displayVal = ensureNumberValue(val);
                   return `
                     <div class="input-publico-item">
                       <label>${p.nome}</label>
-                      <input type="number" inputmode="numeric" pattern="[0-9]*" class="input-comensal-num" name="${p.id}" value="${displayVal}" placeholder="0" min="0">
+                      <input type="text" inputmode="numeric" pattern="[0-9]*" class="input-comensal-num" name="${p.id}" value="${displayVal}" placeholder="0">
                     </div>
                   `;
                 }).join('')}
@@ -1071,6 +1079,8 @@
                 publicosValues[p.id] = num;
                 totalVal += num;
                 hasAnyEntry = true;
+              } else {
+                publicosValues[p.id] = 0;
               }
             } else {
               publicosValues[p.id] = 0;
@@ -1123,20 +1133,30 @@
 
         const numInputs = form.querySelectorAll('.input-comensal-num');
         numInputs.forEach(input => {
+          if (input.value.trim() === '') {
+            input.value = '0';
+          }
+
           input.addEventListener('focus', () => {
-            if (input.value === '0') {
-              input.value = '';
-            }
+            try {
+              input.select();
+            } catch (e) {}
           });
 
           input.addEventListener('blur', () => {
             if (input.value.trim() === '') {
               input.value = '0';
-              performAutoSave();
             }
+            performAutoSave();
           });
 
           input.addEventListener('input', () => {
+            // Permite somente números digitados
+            const clean = input.value.replace(/\D/g, '');
+            if (clean !== input.value) {
+              input.value = clean;
+            }
+
             const indicator = card.querySelector('.auto-save-indicator');
             if (indicator) {
               indicator.textContent = 'Salvando...';
