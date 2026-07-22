@@ -1,5 +1,5 @@
 /**
- * ABIB Gestão - JavaScript Bundle Unificado (Versão Corporativa Executiva - Sem Bordas Unilaterais)
+ * ABIB Gestão - JavaScript Bundle Unificado (Busca Inteligente Calibrada)
  */
 
 (function () {
@@ -230,7 +230,74 @@
     return updated;
   }
 
-  // --- 4. ADMIN SERVICE ---
+  // --- 4. ALGORITMO DE BUSCA INTELIGENTE CALIBRADO ---
+  function normalizeText(text) {
+    if (!text) return '';
+    return String(text)
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '') // remove acentos
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]/g, '') // remove pontuação
+      .trim();
+  }
+
+  function fuzzyMatchUnidade(unidade, query) {
+    if (!query) return true;
+
+    const qClean = normalizeText(query);
+    if (!qClean) return true;
+
+    const loja = normalizeText(unidade.loja);
+    const grupo = normalizeText(unidade.grupo);
+    const codigo = normalizeText(unidade.codigo);
+    const tipoUnidade = normalizeText(unidade.unidade);
+
+    // Texto completo onde buscar
+    const fullText = `${loja} ${grupo} ${codigo} ${tipoUnidade}`;
+
+    // 1. Busca direta por substring completa (ex: "itabira", "moc", "filial 1")
+    if (fullText.includes(qClean)) return true;
+
+    // 2. Mapeamento estrito de atalhos e apelidos conhecidos
+    const ALIASES = {
+      'moc': ['montes claros', 'moc'],
+      'jf': ['juiz de fora', 'jf'],
+      'sjd': ['sao joao del rei', 'sjd'],
+      'lafaiete': ['conselheiro lafaiete'],
+      'monlevade': ['joao monlevade'],
+      'paraiso': ['santana do paraiso']
+    };
+
+    const queryWords = qClean.split(/\s+/).filter(Boolean);
+
+    // Verificar se alguma palavra da busca bate com atalhos conhecidos
+    for (const qWord of queryWords) {
+      if (ALIASES[qWord]) {
+        const targets = ALIASES[qWord];
+        if (targets.some(t => fullText.includes(t))) {
+          // Se tiver mais palavras na busca (ex: "jf 2"), verifica as outras palavras também
+          const otherWords = queryWords.filter(w => w !== qWord);
+          if (otherWords.length === 0) return true;
+          if (otherWords.every(w => fullText.includes(w))) return true;
+        }
+      }
+    }
+
+    // 3. Match estrito onde TODAS as palavras buscadas devem bater como início (prefixo) de palavras da unidade
+    const textWords = fullText.split(/\s+/).filter(Boolean);
+
+    return queryWords.every(qWord => {
+      return textWords.some(tWord => {
+        // A palavra da unidade deve COMEÇAR com a palavra buscada (ex: "ita" -> "itabira")
+        if (tWord.startsWith(qWord)) return true;
+        // Ou a palavra buscada é igual à palavra da unidade
+        if (qWord === tWord) return true;
+        return false;
+      });
+    });
+  }
+
+  // --- 5. ADMIN SERVICE ---
   async function getUnidades() {
     const unidades = await getCollection(STORAGE_KEYS.UNIDADES);
     return unidades.sort((a, b) => (a.ordem || 0) - (b.ordem || 0));
@@ -302,7 +369,7 @@
     return true;
   }
 
-  // --- 5. COMENSAIS SERVICE ---
+  // --- 6. COMENSAIS SERVICE ---
   async function saveComensaisRegistro(registroData) {
     const id = `reg_${registroData.data}_${registroData.unidadeId}`;
     return await saveDoc(STORAGE_KEYS.COMENSAIS, {
@@ -420,7 +487,7 @@
     return csv;
   }
 
-  // --- 6. PERFIL MANAGER ---
+  // --- 7. PERFIL MANAGER ---
   const ACTIVE_PROFILE_KEY = 'abib_gestao_active_profile_id';
 
   async function getActiveProfile() {
@@ -475,7 +542,7 @@
     });
   }
 
-  // --- 7. COMENSAIS VIEW ---
+  // --- 8. COMENSAIS VIEW (COM BUSCA CALIBRADA) ---
   class ComensaisModuleView {
     constructor() {
       this.id = 'comensais';
@@ -550,7 +617,7 @@
 
       const inputSearch = this.container.querySelector('#input-search-unidades');
       inputSearch.addEventListener('input', (e) => {
-        this.searchQuery = e.target.value.toLowerCase();
+        this.searchQuery = e.target.value;
         this.renderCards();
       });
 
@@ -618,7 +685,7 @@
 
       const filtrados = this.statusLista.filter(item => {
         const u = item.unidade;
-        const matchSearch = !this.searchQuery || u.loja.toLowerCase().includes(this.searchQuery) || u.grupo.toLowerCase().includes(this.searchQuery);
+        const matchSearch = fuzzyMatchUnidade(u, this.searchQuery);
         const matchStatus = this.filterStatus === 'todos' || item.status === this.filterStatus;
         return matchSearch && matchStatus;
       });
@@ -708,7 +775,7 @@
     }
   }
 
-  // --- 8. COMENSAIS REPORT VIEW CORPORATIVO ---
+  // --- 9. COMENSAIS REPORT VIEW ---
   class ComensaisReportView {
     constructor(appController) {
       this.appController = appController;
@@ -985,7 +1052,7 @@
     }
   }
 
-  // --- 9. ADMIN PANEL CORPORATIVO ---
+  // --- 10. ADMIN PANEL ---
   class AdminPanel {
     constructor(appController) {
       this.appController = appController;
@@ -1349,7 +1416,7 @@
     }
   }
 
-  // --- 10. APP CONTROLLER PRINCIPAL CORPORATIVO ---
+  // --- 11. APP CONTROLLER PRINCIPAL CORPORATIVO ---
   class AppController {
     constructor() {
       this.currentProfile = null;
@@ -1389,9 +1456,11 @@
       const profileBadge = document.getElementById('active-profile-badge');
       const profileName = document.getElementById('active-profile-name');
 
-      if (profileBadge && profileName && this.currentProfile) {
-        profileBadge.textContent = '';
+      if (profileName && this.currentProfile) {
         profileName.textContent = this.currentProfile.nome;
+      }
+      if (profileBadge) {
+        profileBadge.textContent = '';
       }
 
       const btnChangeProfile = document.getElementById('btn-change-profile');
