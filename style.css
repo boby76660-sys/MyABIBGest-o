@@ -1,5 +1,6 @@
 /* ==========================================================================
-   DESIGN SYSTEM MODERNO SAAS / BUSINESS WEB (LAYOUT COMPACTO OTIMIZADO PARA MOBILE)
+   DESIGN SYSTEM MODERNO SAAS / BUSINESS WEB
+   INTEGRAÇÃO TOTAL DE ELEMENTOS NATIVOS, MODAIS RESPONSIVOS E ANIMAÇÃO REVERSA
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -48,8 +49,15 @@
   --transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-* {
+/* --- ESTABILIZAÇÃO DE SCROLL (ELIMINA O DESLOCAMENTO DA TELA) --- */
+html {
+  scrollbar-gutter: stable;
+  overflow-y: scroll;
   box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
   margin: 0;
   padding: 0;
   font-family: var(--font-main);
@@ -64,6 +72,136 @@ body {
   flex-direction: column;
   font-size: 14px;
   line-height: 1.4;
+}
+
+/* --- SCROLLBAR CUSTOMIZADA E ELEGANTE --- */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-app);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 var(--bg-app);
+}
+
+/* --- ESTILIZAÇÃO E INTEGRAÇÃO DE TODOS OS ELEMENTOS NATIVOS --- */
+
+/* 1. SELETORES DE ARQUIVO (FILE INPUT) */
+input[type="file"] {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+input[type="file"]::file-selector-button,
+input[type="file"]::-webkit-file-upload-button {
+  background-color: #ffffff;
+  color: var(--text-body);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  margin-right: 12px;
+  font-family: var(--font-main);
+}
+
+input[type="file"]::file-selector-button:hover,
+input[type="file"]::-webkit-file-upload-button:hover {
+  background-color: var(--primary-light);
+  border-color: var(--primary-border);
+  color: var(--primary);
+}
+
+/* 2. REMOÇÃO DE SETAS DOS INPUTS NUMÉRICOS (NUMBER SPINNERS) */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* 3. CAIXAS DE SELEÇÃO (SELECT) CUSTOMIZADAS */
+select.select-field, select.input-field, select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: var(--bg-surface);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%3C64748b' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px 16px;
+  padding-right: 36px !important;
+  cursor: pointer;
+}
+
+/* 4. CHECKBOXES CUSTOMIZADAS */
+input[type="checkbox"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid var(--border-hover);
+  border-radius: 4px;
+  outline: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  background-color: #ffffff;
+  transition: var(--transition);
+  position: relative;
+  flex-shrink: 0;
+}
+
+input[type="checkbox"]:hover {
+  border-color: var(--primary);
+}
+
+input[type="checkbox"]:checked {
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+
+input[type="checkbox"]:checked::after {
+  content: '';
+  width: 5px;
+  height: 9px;
+  border: solid #ffffff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  margin-top: -2px;
+}
+
+/* 5. CAMPO DE DATA CUSTOMIZADO */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: opacity(0.6);
+  transition: var(--transition);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  filter: opacity(1);
 }
 
 /* --- HEADER PRINCIPAL CORPORATIVO --- */
@@ -89,6 +227,7 @@ body {
   gap: 10px;
   cursor: pointer;
   min-width: 0;
+  user-select: none;
 }
 
 .brand-icon-box {
@@ -152,7 +291,7 @@ body {
   color: var(--primary);
   padding: 5px 10px;
   border-radius: var(--radius-pill);
-  display: flex;
+  display: none;
   align-items: center;
   gap: 4px;
   cursor: pointer;
@@ -175,14 +314,20 @@ body {
   flex: 1;
 }
 
-/* --- TITULOS DOS MÓDULOS --- */
+/* --- TÍTULOS E BOTÕES DE AÇÃO --- */
 .module-header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 10px;
+  flex-direction: column;
+  gap: 12px;
   margin-bottom: 14px;
+}
+
+@media (min-width: 768px) {
+  .module-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
 }
 
 .header-titles h2 {
@@ -201,8 +346,28 @@ body {
 
 .header-actions {
   display: flex;
+  flex-direction: column;
   gap: 8px;
-  flex-wrap: wrap;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .header-actions {
+    flex-direction: row;
+    width: auto;
+    align-items: center;
+  }
+}
+
+.header-actions .btn {
+  width: 100%;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .header-actions .btn {
+    width: auto;
+  }
 }
 
 /* --- BARRA DE DATA E FILTROS COMPACTA --- */
@@ -298,7 +463,7 @@ body {
   border-color: var(--status-success-text);
 }
 
-/* --- CARDS DAS 21 UNIDADES (ULTRA COMPACTOS E ERGONÔMICOS) --- */
+/* --- CARDS DAS UNIDADES --- */
 .cards-grid-vertical {
   display: flex;
   flex-direction: column;
@@ -309,7 +474,7 @@ body {
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  padding: 12px 14px;
+  padding: 14px 16px;
   box-shadow: var(--shadow-card);
   transition: var(--transition);
 }
@@ -323,13 +488,13 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   padding-bottom: 8px;
   border-bottom: 1px solid #f1f5f9;
 }
 
 .card-unit-title h3 {
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   font-weight: 800;
   color: var(--text-title);
   letter-spacing: -0.3px;
@@ -369,84 +534,72 @@ body {
 .dot-pending { background: var(--status-pending-text); }
 .dot-success { background: var(--status-success-text); }
 
-/* --- GRID DAS CATEGORIAS DE PÚBLICO (LAYOUT EM LINHAS HORIZONTAIS COMPACTAS) --- */
+/* --- PÚBLICOS E OBSERVAÇÃO --- */
 .publicos-grid {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 10px;
   margin-bottom: 10px;
 }
 
 .input-publico-item {
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  background: #f8fafc;
-  padding: 6px 10px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border-color);
+  flex-direction: column;
+  gap: 3px;
 }
 
 .input-publico-item label {
-  font-size: 0.78rem;
-  color: var(--text-title);
+  font-size: 0.74rem;
+  color: var(--text-muted);
   font-weight: 700;
-  letter-spacing: 0.2px;
-  flex: 1;
-  margin: 0;
-  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-left: 2px;
 }
 
 .input-comensal-num {
-  width: 78px;
-  height: 38px;
-  padding: 4px 8px;
+  width: 100%;
+  height: 40px;
+  padding: 6px 12px;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   font-size: 1.15rem;
   font-weight: 800;
   text-align: center;
-  background: #ffffff;
+  background: var(--bg-app);
   color: var(--text-title);
   transition: var(--transition);
-  flex-shrink: 0;
 }
 
 .input-comensal-num:focus {
+  background: #ffffff;
   border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
-.obs-and-actions {
+.obs-container {
   display: flex;
-  gap: 8px;
-  align-items: center;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 4px;
 }
 
 .input-obs {
-  flex: 1;
-  padding: 8px 10px;
+  width: 100%;
+  padding: 8px 12px;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
-  font-size: 0.82rem;
-  height: 36px;
+  font-size: 0.86rem;
+  height: 38px;
+  background: var(--bg-app);
+  color: var(--text-title);
+  transition: var(--transition);
 }
 
-.btn-save-unit {
-  background: var(--primary);
-  color: #ffffff;
-  padding: 8px 16px;
-  height: 36px;
-  font-size: 0.82rem;
-  font-weight: 700;
-  border-radius: var(--radius-sm);
-  flex-shrink: 0;
-}
-
-.btn-save-unit:hover {
-  background: var(--primary-hover);
+.input-obs:focus {
+  background: #ffffff;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
 /* --- BOTÕES --- */
@@ -502,6 +655,41 @@ body {
 
 .btn-block { width: 100%; }
 .btn-sm { padding: 5px 10px; font-size: 0.78rem; }
+
+/* Botões de Perfil no Modal */
+.btn-profile-card {
+  display: block !important;
+  width: 100%;
+  text-align: left !important;
+  white-space: normal !important;
+  padding: 14px 16px !important;
+  margin-bottom: 10px;
+  border-radius: var(--radius-md);
+  height: auto;
+  box-sizing: border-box;
+}
+
+.btn-profile-card div {
+  white-space: normal !important;
+  width: 100%;
+}
+
+.btn-profile-card strong {
+  display: block;
+  font-size: 0.95rem;
+  color: var(--text-title);
+  margin-bottom: 4px;
+  font-weight: 800;
+}
+
+.btn-profile-card p {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  line-height: 1.4;
+  margin: 0;
+  white-space: normal !important;
+}
 
 /* --- DASHBOARD DE CARDS --- */
 .dashboard-welcome h2 {
@@ -573,7 +761,7 @@ body {
   position: absolute;
   top: 12px;
   right: 12px;
-  background: var(--neutral-200);
+  background: #e2e8f0;
   color: var(--text-muted);
   font-size: 0.68rem;
   padding: 3px 8px;
@@ -582,11 +770,11 @@ body {
   text-transform: uppercase;
 }
 
-/* --- TABELAS E KPIS --- */
+/* --- TABELAS E CARDS DE KPIS COM EMPILHAMENTO LÍMPIDO --- */
 .kpi-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
   margin-bottom: 16px;
 }
 
@@ -594,23 +782,31 @@ body {
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  padding: 14px;
+  padding: 14px 16px;
   box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  justify-content: center;
 }
 
 .kpi-title {
+  display: block;
   font-size: 0.72rem;
   color: var(--text-muted);
   text-transform: uppercase;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0.4px;
+  line-height: 1.25;
 }
 
 .kpi-value {
-  font-size: 1.5rem;
+  display: block;
+  font-size: 1.7rem;
   font-weight: 800;
-  color: var(--text-title);
-  margin-top: 4px;
+  color: var(--primary);
+  line-height: 1.1;
+  margin-top: 2px;
 }
 
 .table-responsive-card {
@@ -619,6 +815,7 @@ body {
   border: 1px solid var(--border-color);
   overflow-x: auto;
   box-shadow: var(--shadow-card);
+  max-width: 100%;
 }
 
 .data-table {
@@ -655,7 +852,27 @@ body {
   font-weight: 700;
 }
 
-/* --- MODAIS --- */
+/* --- MODAIS TOTALMENTE RESPONSIVOS E ANIMAÇÃO ENTRADA / SAÍDA --- */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes modalPop {
+  from { opacity: 0; transform: scale(0.96) translateY(-8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes modalOut {
+  from { opacity: 1; transform: scale(1) translateY(0); }
+  to { opacity: 0; transform: scale(0.96) translateY(-8px); }
+}
+
 .modal, .profile-modal-overlay, .admin-auth-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -665,7 +882,12 @@ body {
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 14px;
+  padding: 12px;
+  animation: fadeIn 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal.closing, .profile-modal-overlay.closing, .admin-auth-overlay.closing {
+  animation: fadeOut 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .hidden { display: none !important; }
@@ -676,33 +898,62 @@ body {
   border: 1px solid var(--border-color);
   width: 100%;
   max-width: 500px;
-  padding: 18px;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
   box-shadow: var(--shadow-modal);
+  animation: modalPop 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
 }
 
-.modal-large { max-width: 920px; }
+.modal.closing .modal-content,
+.profile-modal-overlay.closing .profile-modal-card,
+.admin-auth-overlay.closing .admin-auth-card {
+  animation: modalOut 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.modal-large { max-width: 880px; }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
   padding-bottom: 10px;
   border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
 }
 
 .modal-header h3 {
-  font-size: 1.1rem;
-  font-weight: 700;
+  font-size: 1.05rem;
+  font-weight: 800;
   color: var(--text-title);
+}
+
+.modal-body {
+  overflow-y: auto;
+  overflow-x: auto;
+  flex: 1;
+  min-height: 0;
+  padding-right: 2px;
+}
+
+.modal-footer {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-color);
+  flex-shrink: 0;
 }
 
 .btn-close-modal, .btn-close-modal-unidades {
   background: none;
   border: none;
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   cursor: pointer;
   color: var(--text-muted);
+  padding: 0 4px;
+  line-height: 1;
 }
 
 .whatsapp-textarea {
@@ -718,7 +969,7 @@ body {
   background: var(--bg-app);
 }
 
-/* --- PAINEL ADMIN --- */
+/* --- PAINEL ADMIN E SIDEBAR COMPACTA --- */
 .admin-layout {
   display: flex;
   flex-direction: column;
@@ -726,9 +977,22 @@ body {
 }
 
 @media (min-width: 768px) {
-  .admin-layout { flex-direction: row; }
-  .admin-sidebar { width: 240px; }
-  .admin-content-area { flex: 1; }
+  .admin-layout {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .admin-sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 72px;
+  }
+
+  .admin-content-area {
+    flex: 1;
+    min-width: 0;
+  }
 }
 
 .admin-sidebar {
@@ -737,6 +1001,7 @@ body {
   border-radius: var(--radius-md);
   padding: 14px;
   box-shadow: var(--shadow-card);
+  height: auto;
 }
 
 .admin-logo h3 {
@@ -770,25 +1035,49 @@ body {
   color: var(--primary);
 }
 
+/* --- GRID DE CARDS DE PERFIL --- */
 .perfis-cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 14px;
+  align-items: stretch;
 }
 
 .card-perfil-admin {
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  padding: 14px;
+  padding: 16px;
   box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.card-perfil-header {
+  margin-bottom: 14px;
+}
+
+.field-permissions-box {
+  margin-top: auto;
+  margin-bottom: 14px;
+  background: #f8fafc;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+}
+
+.card-perfil-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 0;
 }
 
 .checkbox-grid {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  margin: 10px 0;
+  margin-top: 8px;
   font-size: 0.82rem;
 }
 

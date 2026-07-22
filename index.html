@@ -15,7 +15,7 @@
 </head>
 <body>
 
-  <!-- HEADER PRINCIPAL COM RESPONSIVIDADE CORRIGIDA -->
+  <!-- HEADER PRINCIPAL OPERACIONAL (SEM BOTÃO ADMIN VISÍVEL) -->
   <header class="app-header">
     <div class="header-brand" id="btn-go-home">
       <div class="brand-icon-box">
@@ -38,14 +38,9 @@
 
     <div class="header-user-controls">
       <!-- Badge do Perfil Ativo -->
-      <button id="btn-change-profile" class="btn-profile-badge" title="Clique para alterar de perfil">
+      <button id="btn-change-profile" class="btn-profile-badge" style="display: none;" title="Clique para alterar de perfil">
         <span id="active-profile-name">Perfil</span>
         <small style="opacity: 0.7; margin-left: 2px;">(Alterar)</small>
-      </button>
-
-      <!-- Botão Painel Admin -->
-      <button id="btn-open-admin" class="btn btn-primary btn-sm">
-        Admin
       </button>
     </div>
   </header>

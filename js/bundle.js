@@ -1,9 +1,185 @@
 /**
- * ABIB Gestão - JavaScript Bundle Unificado (Busca Inteligente Calibrada)
+ * ABIB Gestão - JavaScript Bundle Unificado (Censura de CNPJ Oculto)
  */
 
 (function () {
   'use strict';
+
+  // --- MEMORY CACHE PARA RESPOSTA EM 0ms ---
+  const memoryCache = new Map();
+
+  function updateMemoryCache(key, data) {
+    memoryCache.set(key, data);
+    try {
+      localStorage.setItem(key, JSON.stringify(data));
+    } catch (e) {}
+  }
+
+  function getMemoryCache(key) {
+    if (memoryCache.has(key)) {
+      return memoryCache.get(key);
+    }
+    const raw = localStorage.getItem(key);
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw);
+        memoryCache.set(key, parsed);
+        return parsed;
+      } catch (e) {}
+    }
+    return null;
+  }
+
+  // --- HELPER DE CENSURA DE CNPJ ---
+  function formatCensoredCNPJ(cnpjStr) {
+    if (!cnpjStr) return '**.***.***/****-**';
+    const digits = cnpjStr.replace(/\D/g, '');
+    if (digits.length === 14) {
+      const filial = digits.substring(8, 12);
+      return `**.***.***/${filial}-**`;
+    }
+    return cnpjStr.replace(/^(\d{2})\.(\d{3})\.(\d{3})\/(\d{4})-(\d{2})$/, '**.***.***/$4-**');
+  }
+
+  // --- HELPER DE FECHAMENTO COM ANIMAÇÃO REVERSA ---
+  function closeModal(modalElement, onComplete) {
+    if (!modalElement) {
+      if (onComplete) onComplete();
+      return;
+    }
+
+    modalElement.classList.add('closing');
+    setTimeout(() => {
+      modalElement.classList.remove('closing');
+      if (modalElement.classList.contains('profile-modal-overlay') || (!modalElement.id && modalElement.parentElement === document.body)) {
+        if (document.body.contains(modalElement)) {
+          document.body.removeChild(modalElement);
+        }
+      } else {
+        modalElement.classList.add('hidden');
+      }
+      if (onComplete) onComplete();
+    }, 170);
+  }
+
+  // --- HELPER DE DATAS ---
+  function shiftDateISO(dateISO, days) {
+    if (!dateISO) dateISO = new Date().toISOString().split('T')[0];
+    const d = new Date(dateISO + 'T00:00:00');
+    d.setDate(d.getDate() + days);
+    return d.toISOString().split('T')[0];
+  }
+
+  // --- COMPONENTES NATIVOS DE INTERFACE CUSTOMIZADA (TOAST, CONFIRM, PROMPT) ---
+  function showToast(message, type = 'success') {
+    let container = document.getElementById('toast-container');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'toast-container';
+      container.style.cssText = 'position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; pointer-events: none;';
+      document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    const bg = type === 'success' ? '#16a34a' : type === 'error' ? '#e11d48' : '#2563eb';
+    toast.style.cssText = `background: ${bg}; color: #ffffff; padding: 10px 16px; border-radius: 8px; font-size: 0.86rem; font-weight: 600; box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.2); opacity: 0; transform: translateY(10px); transition: all 0.25s ease; pointer-events: auto;`;
+    toast.textContent = message;
+
+    container.appendChild(toast);
+    setTimeout(() => { toast.style.opacity = '1'; toast.style.transform = 'translateY(0)'; }, 10);
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateY(10px)';
+      setTimeout(() => toast.remove(), 250);
+    }, 3000);
+  }
+
+  function showConfirm(message, title = "Confirmação de Ação") {
+    return new Promise((resolve) => {
+      const modalOverlay = document.createElement('div');
+      modalOverlay.className = 'modal';
+      modalOverlay.innerHTML = `
+        <div class="modal-content" style="max-width: 420px;">
+          <div class="modal-header">
+            <h3 style="font-size: 1.05rem; font-weight: 800; color: var(--text-title);">${title}</h3>
+          </div>
+          <div class="modal-body" style="padding: 12px 0 18px 0; color: var(--text-body); font-size: 0.9rem; line-height: 1.4;">
+            ${message}
+          </div>
+          <div class="modal-footer" style="display: flex; gap: 8px; justify-content: flex-end;">
+            <button class="btn btn-secondary btn-cancel-confirm">Cancelar</button>
+            <button class="btn btn-danger btn-ok-confirm">Confirmar</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modalOverlay);
+
+      const btnCancel = modalOverlay.querySelector('.btn-cancel-confirm');
+      const btnOk = modalOverlay.querySelector('.btn-ok-confirm');
+
+      modalOverlay.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) {
+          closeModal(modalOverlay, () => resolve(false));
+        }
+      });
+
+      btnCancel.addEventListener('click', () => {
+        closeModal(modalOverlay, () => resolve(false));
+      });
+
+      btnOk.addEventListener('click', () => {
+        closeModal(modalOverlay, () => resolve(true));
+      });
+    });
+  }
+
+  function showPrompt(message, defaultValue = '', title = "Digitação") {
+    return new Promise((resolve) => {
+      const modalOverlay = document.createElement('div');
+      modalOverlay.className = 'modal';
+      modalOverlay.innerHTML = `
+        <div class="modal-content" style="max-width: 440px;">
+          <div class="modal-header">
+            <h3 style="font-size: 1.05rem; font-weight: 800; color: var(--text-title);">${title}</h3>
+          </div>
+          <form id="form-custom-prompt">
+            <div class="modal-body" style="padding: 12px 0 16px 0;">
+              <p style="font-size: 0.88rem; color: var(--text-body); margin-bottom: 8px; font-weight: 500;">${message}</p>
+              <input type="text" id="input-custom-prompt" class="input-field" value="${defaultValue}" required style="margin-top: 4px;">
+            </div>
+            <div class="modal-footer" style="display: flex; gap: 8px; justify-content: flex-end;">
+              <button type="button" class="btn btn-secondary btn-cancel-prompt">Cancelar</button>
+              <button type="submit" class="btn btn-primary">Confirmar</button>
+            </div>
+          </form>
+        </div>
+      `;
+      document.body.appendChild(modalOverlay);
+
+      const input = modalOverlay.querySelector('#input-custom-prompt');
+      input.focus();
+      input.select();
+
+      modalOverlay.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) {
+          closeModal(modalOverlay, () => resolve(null));
+        }
+      });
+
+      const btnCancel = modalOverlay.querySelector('.btn-cancel-prompt');
+      const form = modalOverlay.querySelector('#form-custom-prompt');
+
+      btnCancel.addEventListener('click', () => {
+        closeModal(modalOverlay, () => resolve(null));
+      });
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const val = input.value.trim();
+        closeModal(modalOverlay, () => resolve(val));
+      });
+    });
+  }
 
   // --- 1. CONFIGURAÇÃO E DADOS INICIAIS (SEEDS) ---
   const DEFAULT_ADMIN_PASSWORD = "admin123";
@@ -48,9 +224,17 @@
 
   const PERFIS_SEED = [
     {
+      id: "p_padrao",
+      nome: "Perfil Padrão",
+      descricao: "Acesso completo a todas as funções e módulos do sistema.",
+      icone: "",
+      modulos: ["comensais"],
+      permissoesCamposUnidade: ["codigo", "grupo", "loja", "unidade", "cnpj"]
+    },
+    {
       id: "p_nutri_geral",
       nome: "Nutricionista Geral",
-      descricao: "Lançamento diário de comensais e acompanhamento de todas as 21 unidades.",
+      descricao: "Responsável pelo lançamento diário de comensais e acompanhamento geral das 21 unidades.",
       icone: "",
       modulos: ["comensais"],
       permissoesCamposUnidade: ["loja"]
@@ -58,7 +242,7 @@
     {
       id: "p_nutri_gestora",
       nome: "Nutricionista Gestora",
-      descricao: "Acompanhamento regional e suporte às unidades de sua responsabilidade.",
+      descricao: "Acompanhamento regional das unidades sob sua gestão (compras e suporte).",
       icone: "",
       modulos: ["comensais"],
       permissoesCamposUnidade: ["loja", "grupo", "unidade"]
@@ -66,7 +250,7 @@
     {
       id: "p_diretoria",
       nome: "Gestão & Diretoria",
-      descricao: "Relatórios consolidados, dados fiscais e detalhamento completo de empresas.",
+      descricao: "Acesso a relatórios consolidados, visão fiscal, CNPJs e detalhamento de unidades.",
       icone: "",
       modulos: ["comensais"],
       permissoesCamposUnidade: ["codigo", "grupo", "loja", "unidade", "cnpj"]
@@ -103,11 +287,9 @@
         }
         rtdb = window.firebase.database();
         isFirebaseActive = true;
-        console.log("Firebase Realtime Database conectado.");
         return true;
       }
     } catch (err) {
-      console.error("Erro Firebase:", err);
       isFirebaseActive = false;
       return false;
     }
@@ -116,15 +298,7 @@
   function getRealtimeDB() { return rtdb; }
   function checkIsFirebaseActive() { return isFirebaseActive; }
 
-  function withTimeout(promise, ms = 2000) {
-    return new Promise((resolve, reject) => {
-      const timer = setTimeout(() => reject(new Error("Timeout Firebase")), ms);
-      promise.then(res => { clearTimeout(timer); resolve(res); })
-             .catch(err => { clearTimeout(timer); reject(err); });
-    });
-  }
-
-  // --- 3. STORAGE SERVICE ---
+  // --- 3. STORAGE SERVICE INSTANTÂNEO EM MEMÓRIA (0ms DE LATÊNCIA) ---
   const STORAGE_KEYS = {
     UNIDADES: 'abib_gestao_unidades',
     PUBLICOS: 'abib_gestao_publicos',
@@ -136,61 +310,62 @@
 
   function seedInitialData() {
     if (!localStorage.getItem(STORAGE_KEYS.UNIDADES)) {
-      localStorage.setItem(STORAGE_KEYS.UNIDADES, JSON.stringify(UNIDADES_SEED));
+      updateMemoryCache(STORAGE_KEYS.UNIDADES, UNIDADES_SEED);
     }
     if (!localStorage.getItem(STORAGE_KEYS.PUBLICOS)) {
-      localStorage.setItem(STORAGE_KEYS.PUBLICOS, JSON.stringify(PUBLICOS_SEED));
+      updateMemoryCache(STORAGE_KEYS.PUBLICOS, PUBLICOS_SEED);
     }
     if (!localStorage.getItem(STORAGE_KEYS.PERFIS)) {
-      localStorage.setItem(STORAGE_KEYS.PERFIS, JSON.stringify(PERFIS_SEED));
+      updateMemoryCache(STORAGE_KEYS.PERFIS, PERFIS_SEED);
     }
     if (!localStorage.getItem(STORAGE_KEYS.MODULOS)) {
-      localStorage.setItem(STORAGE_KEYS.MODULOS, JSON.stringify(MODULOS_SEED));
+      updateMemoryCache(STORAGE_KEYS.MODULOS, MODULOS_SEED);
     }
     if (!localStorage.getItem(STORAGE_KEYS.CONFIG)) {
-      localStorage.setItem(STORAGE_KEYS.CONFIG, JSON.stringify({
+      updateMemoryCache(STORAGE_KEYS.CONFIG, {
         adminPassword: DEFAULT_ADMIN_PASSWORD,
         divisaoPorRefeicao: false,
         sensibilidadeAlertaPct: 30,
+        permitirTrocaPerfil: false,
         firebaseConfig: DEFAULT_FIREBASE_CONFIG
-      }));
+      });
     }
     if (!localStorage.getItem(STORAGE_KEYS.COMENSAIS)) {
-      localStorage.setItem(STORAGE_KEYS.COMENSAIS, JSON.stringify([]));
+      updateMemoryCache(STORAGE_KEYS.COMENSAIS, []);
     }
   }
 
   async function getCollection(key) {
     seedInitialData();
 
-    if (checkIsFirebaseActive()) {
-      try {
-        const db = getRealtimeDB();
-        const snapshot = await withTimeout(db.ref(key).once('value'), 2000);
-        const val = snapshot.val();
-        if (val) {
-          const docs = Array.isArray(val) ? val.filter(Boolean) : Object.values(val);
-          localStorage.setItem(key, JSON.stringify(docs));
-          return docs;
-        }
-      } catch (e) {
-        console.warn(`[StorageService] Cache local (${key}).`);
+    // 1. Retorno síncrono e ultra-rápido (0ms) do Memory Cache / LocalStorage
+    const cached = getMemoryCache(key);
+    if (cached) {
+      // 2. Se Firebase estiver ativo, atualiza em SEGUNDO PLANO sem travar a interface
+      if (checkIsFirebaseActive()) {
+        try {
+          getRealtimeDB().ref(key).once('value').then(snapshot => {
+            const val = snapshot.val();
+            if (val) {
+              const docs = Array.isArray(val) ? val.filter(Boolean) : Object.values(val);
+              updateMemoryCache(key, docs);
+            }
+          }).catch(() => {});
+        } catch (e) {}
       }
+      return cached;
     }
 
-    const data = localStorage.getItem(key);
-    return data ? JSON.parse(data) : [];
+    return [];
   }
 
   async function saveCollection(key, items) {
-    localStorage.setItem(key, JSON.stringify(items));
+    updateMemoryCache(key, items);
+
     if (checkIsFirebaseActive()) {
       try {
-        const db = getRealtimeDB();
-        db.ref(key).set(items).catch(err => console.warn("Erro ao salvar no Firebase:", err));
-      } catch (e) {
-        console.error("Erro salvando coleção:", e);
-      }
+        getRealtimeDB().ref(key).set(items).catch(() => {});
+      } catch (e) {}
     }
   }
 
@@ -212,19 +387,18 @@
 
   async function getConfig() {
     seedInitialData();
-    const config = localStorage.getItem(STORAGE_KEYS.CONFIG);
-    return config ? JSON.parse(config) : {};
+    const config = getMemoryCache(STORAGE_KEYS.CONFIG);
+    return config || {};
   }
 
   async function saveConfig(newConfig) {
     const current = await getConfig();
     const updated = { ...current, ...newConfig };
-    localStorage.setItem(STORAGE_KEYS.CONFIG, JSON.stringify(updated));
+    updateMemoryCache(STORAGE_KEYS.CONFIG, updated);
 
     if (checkIsFirebaseActive()) {
       try {
-        const db = getRealtimeDB();
-        db.ref('configuracoes').set(updated);
+        getRealtimeDB().ref('configuracoes').set(updated);
       } catch (e) {}
     }
     return updated;
@@ -235,9 +409,9 @@
     if (!text) return '';
     return String(text)
       .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '') // remove acentos
+      .replace(/[\u0300-\u036f]/g, '')
       .toLowerCase()
-      .replace(/[^a-z0-9\s]/g, '') // remove pontuação
+      .replace(/[^a-z0-9\s]/g, '')
       .trim();
   }
 
@@ -252,13 +426,10 @@
     const codigo = normalizeText(unidade.codigo);
     const tipoUnidade = normalizeText(unidade.unidade);
 
-    // Texto completo onde buscar
     const fullText = `${loja} ${grupo} ${codigo} ${tipoUnidade}`;
 
-    // 1. Busca direta por substring completa (ex: "itabira", "moc", "filial 1")
     if (fullText.includes(qClean)) return true;
 
-    // 2. Mapeamento estrito de atalhos e apelidos conhecidos
     const ALIASES = {
       'moc': ['montes claros', 'moc'],
       'jf': ['juiz de fora', 'jf'],
@@ -270,12 +441,10 @@
 
     const queryWords = qClean.split(/\s+/).filter(Boolean);
 
-    // Verificar se alguma palavra da busca bate com atalhos conhecidos
     for (const qWord of queryWords) {
       if (ALIASES[qWord]) {
         const targets = ALIASES[qWord];
         if (targets.some(t => fullText.includes(t))) {
-          // Se tiver mais palavras na busca (ex: "jf 2"), verifica as outras palavras também
           const otherWords = queryWords.filter(w => w !== qWord);
           if (otherWords.length === 0) return true;
           if (otherWords.every(w => fullText.includes(w))) return true;
@@ -283,14 +452,11 @@
       }
     }
 
-    // 3. Match estrito onde TODAS as palavras buscadas devem bater como início (prefixo) de palavras da unidade
     const textWords = fullText.split(/\s+/).filter(Boolean);
 
     return queryWords.every(qWord => {
       return textWords.some(tWord => {
-        // A palavra da unidade deve COMEÇAR com a palavra buscada (ex: "ita" -> "itabira")
         if (tWord.startsWith(qWord)) return true;
-        // Ou a palavra buscada é igual à palavra da unidade
         if (qWord === tWord) return true;
         return false;
       });
@@ -328,11 +494,28 @@
     return await saveDoc(STORAGE_KEYS.PUBLICOS, publicoData);
   }
 
-  async function getPerfis() { return await getCollection(STORAGE_KEYS.PERFIS); }
+  async function getPerfis() {
+    const perfis = await getCollection(STORAGE_KEYS.PERFIS);
+    const hasPadrao = perfis.some(p => p.id === 'p_padrao' || p.nome === 'Perfil Padrão');
+    if (!hasPadrao) {
+      const padrao = {
+        id: "p_padrao",
+        nome: "Perfil Padrão",
+        descricao: "Acesso completo a todas as funções e módulos do sistema.",
+        icone: "",
+        modulos: ["comensais"],
+        permissoesCamposUnidade: ["codigo", "grupo", "loja", "unidade", "cnpj"]
+      };
+      perfis.unshift(padrao);
+      await saveCollection(STORAGE_KEYS.PERFIS, perfis);
+    }
+    return perfis;
+  }
 
   async function savePerfil(perfilData) {
     if (!perfilData.id) perfilData.id = 'p_' + Date.now();
     if (!perfilData.permissoesCamposUnidade) perfilData.permissoesCamposUnidade = ['loja'];
+    if (!perfilData.modulos) perfilData.modulos = ['comensais'];
     return await saveDoc(STORAGE_KEYS.PERFIS, perfilData);
   }
 
@@ -392,7 +575,7 @@
 
     return unidades.filter(u => u.ativo !== false).map(u => {
       const reg = registrosMap.get(u.id);
-      const hasData = reg && reg.publicos && Object.values(reg.publicos).some(val => val !== null && val !== undefined && val !== '');
+      const hasData = reg && reg.publicos && Object.values(reg.publicos).some(val => val !== null && val !== undefined && val !== '' && val !== 0);
       
       let totalComensais = 0;
       if (hasData) {
@@ -402,7 +585,7 @@
       return {
         unidade: u,
         registro: reg || null,
-        status: hasData ? 'concluido' : 'pendente',
+        status: hasData && totalComensais > 0 ? 'concluido' : 'pendente',
         totalComensais,
         observacao: reg ? reg.observacao : ''
       };
@@ -492,12 +675,15 @@
 
   async function getActiveProfile() {
     const perfis = await getPerfis();
-    const savedId = localStorage.getItem(ACTIVE_PROFILE_KEY);
-    if (savedId) {
-      const found = perfis.find(p => p.id === savedId);
-      if (found) return found;
+    const config = await getConfig();
+    if (config.permitirTrocaPerfil) {
+      const savedId = localStorage.getItem(ACTIVE_PROFILE_KEY);
+      if (savedId) {
+        const found = perfis.find(p => p.id === savedId);
+        if (found) return found;
+      }
     }
-    return null;
+    return perfis.find(p => p.id === 'p_padrao') || perfis[0];
   }
 
   function setActiveProfileId(profileId) {
@@ -506,13 +692,19 @@
 
   async function renderProfileSelectorModal(onProfileSelectedCallback) {
     const perfis = await getPerfis();
+    const currentActive = await getActiveProfile();
+    const isAlreadyDefined = !!currentActive;
+
     const modalOverlay = document.createElement('div');
     modalOverlay.className = 'profile-modal-overlay';
     modalOverlay.innerHTML = `
       <div class="profile-modal-card">
-        <div class="profile-modal-header">
-          <h2>Acesso ao Sistema de Gestão ABIB</h2>
-          <p class="subtitle">Selecione seu Perfil de Acesso para continuar:</p>
+        <div class="profile-modal-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+          <div>
+            <h2 style="font-size: 1.15rem; font-weight: 800; color: var(--text-title);">Acesso ao Sistema de Gestão ABIB</h2>
+            <p class="subtitle" style="margin-top: 2px;">Selecione seu Perfil de Acesso para continuar:</p>
+          </div>
+          ${isAlreadyDefined ? '<button class="btn-close-modal-profile" style="background:none; border:none; font-size:1.4rem; cursor:pointer; color:var(--text-muted); padding: 0 4px; line-height: 1;">&times;</button>' : ''}
         </div>
         <div class="profiles-selection-grid">
           ${perfis.map(p => `
@@ -529,20 +721,36 @@
 
     document.body.appendChild(modalOverlay);
 
+    if (isAlreadyDefined) {
+      modalOverlay.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) {
+          closeModal(modalOverlay);
+        }
+      });
+
+      const btnClose = modalOverlay.querySelector('.btn-close-modal-profile');
+      if (btnClose) {
+        btnClose.addEventListener('click', () => {
+          closeModal(modalOverlay);
+        });
+      }
+    }
+
     modalOverlay.querySelectorAll('.btn-profile-card').forEach(btn => {
       btn.addEventListener('click', () => {
         const id = btn.getAttribute('data-profile-id');
         setActiveProfileId(id);
-        document.body.removeChild(modalOverlay);
-        if (onProfileSelectedCallback) {
-          const selected = perfis.find(p => p.id === id);
-          onProfileSelectedCallback(selected);
-        }
+        closeModal(modalOverlay, () => {
+          if (onProfileSelectedCallback) {
+            const selected = perfis.find(p => p.id === id);
+            onProfileSelectedCallback(selected);
+          }
+        });
       });
     });
   }
 
-  // --- 8. COMENSAIS VIEW (COM BUSCA CALIBRADA) ---
+  // --- 8. COMENSAIS VIEW ---
   class ComensaisModuleView {
     constructor() {
       this.id = 'comensais';
@@ -571,7 +779,11 @@
         <div class="date-and-filter-bar">
           <div class="date-picker-group">
             <label for="input-data-comensais">Data:</label>
-            <input type="date" id="input-data-comensais" class="input-date" value="${this.currentDate}">
+            <div style="display: flex; align-items: center; gap: 4px;">
+              <button type="button" id="btn-date-prev" class="btn btn-secondary" title="Dia anterior" style="padding: 6px 12px; font-weight: 800; font-size: 0.85rem;">◀</button>
+              <input type="date" id="input-data-comensais" class="input-date" value="${this.currentDate}" style="text-align: center;">
+              <button type="button" id="btn-date-next" class="btn btn-secondary" title="Próximo dia" style="padding: 6px 12px; font-weight: 800; font-size: 0.85rem;">▶</button>
+            </div>
           </div>
           <div class="search-group">
             <input type="text" id="input-search-unidades" class="input-search" placeholder="Buscar unidade ou loja...">
@@ -583,9 +795,7 @@
           </div>
         </div>
 
-        <div id="unidades-cards-container" class="cards-grid-vertical">
-          <div class="loading-spinner">Carregando unidades...</div>
-        </div>
+        <div id="unidades-cards-container" class="cards-grid-vertical"></div>
 
         <!-- Modal WhatsApp -->
         <div id="modal-whatsapp" class="modal hidden">
@@ -610,8 +820,23 @@
 
     bindEvents() {
       const inputData = this.container.querySelector('#input-data-comensais');
+      const btnPrev = this.container.querySelector('#btn-date-prev');
+      const btnNext = this.container.querySelector('#btn-date-next');
+
       inputData.addEventListener('change', async (e) => {
         this.currentDate = e.target.value;
+        await this.loadData();
+      });
+
+      btnPrev.addEventListener('click', async () => {
+        this.currentDate = shiftDateISO(this.currentDate, -1);
+        inputData.value = this.currentDate;
+        await this.loadData();
+      });
+
+      btnNext.addEventListener('click', async () => {
+        this.currentDate = shiftDateISO(this.currentDate, 1);
+        inputData.value = this.currentDate;
         await this.loadData();
       });
 
@@ -631,19 +856,23 @@
         });
       });
 
+      const modalWs = this.container.querySelector('#modal-whatsapp');
+      modalWs.addEventListener('click', (e) => {
+        if (e.target === modalWs) closeModal(modalWs);
+      });
+
       const btnWhatsapp = this.container.querySelector('#btn-whatsapp');
       btnWhatsapp.addEventListener('click', async () => {
         const texto = await generateWhatsAppSummary(this.currentDate);
-        const modal = this.container.querySelector('#modal-whatsapp');
         const textarea = this.container.querySelector('#whatsapp-preview-text');
         textarea.value = texto;
-        modal.classList.remove('hidden');
+        modalWs.classList.remove('hidden');
       });
 
       const btnCloseModal = this.container.querySelector('.btn-close-modal');
       if (btnCloseModal) {
         btnCloseModal.addEventListener('click', () => {
-          this.container.querySelector('#modal-whatsapp').classList.add('hidden');
+          closeModal(modalWs);
         });
       }
 
@@ -653,8 +882,8 @@
           const textarea = this.container.querySelector('#whatsapp-preview-text');
           textarea.select();
           document.execCommand('copy');
-          alert("Resumo copiado para a área de transferência!");
-          this.container.querySelector('#modal-whatsapp').classList.add('hidden');
+          showToast("Resumo copiado para a área de transferência!", "success");
+          closeModal(modalWs);
         });
       }
 
@@ -664,23 +893,32 @@
       });
     }
 
+    async updateHeaderPillCounts() {
+      this.statusLista = await getStatusUnidadesNoDia(this.currentDate);
+      const pendentesCount = this.statusLista.filter(x => x.status === 'pendente').length;
+      const concluidosCount = this.statusLista.filter(x => x.status === 'concluido').length;
+
+      const cTodos = this.container.querySelector('#count-todos');
+      const cPend = this.container.querySelector('#count-pendentes');
+      const cConc = this.container.querySelector('#count-concluidos');
+
+      if (cTodos) cTodos.textContent = this.statusLista.length;
+      if (cPend) cPend.textContent = pendentesCount;
+      if (cConc) cConc.textContent = concluidosCount;
+    }
+
     async loadData() {
       this.publicos = await getPublicos();
       this.publicosAtivos = this.publicos.filter(p => p.ativo !== false);
       this.statusLista = await getStatusUnidadesNoDia(this.currentDate);
 
-      const pendentesCount = this.statusLista.filter(x => x.status === 'pendente').length;
-      const concluidosCount = this.statusLista.filter(x => x.status === 'concluido').length;
-
-      this.container.querySelector('#count-todos').textContent = this.statusLista.length;
-      this.container.querySelector('#count-pendentes').textContent = pendentesCount;
-      this.container.querySelector('#count-concluidos').textContent = concluidosCount;
-
+      await this.updateHeaderPillCounts();
       this.renderCards();
     }
 
     renderCards() {
       const grid = this.container.querySelector('#unidades-cards-container');
+      if (!grid) return;
       grid.innerHTML = '';
 
       const filtrados = this.statusLista.filter(item => {
@@ -723,27 +961,39 @@
                   `;
                 }).join('')}
               </div>
-              <div class="obs-and-actions">
-                <input type="text" class="input-obs" name="observacao" value="${reg.observacao || ''}" placeholder="Observação (ex: evento especial, falta de energia)...">
-                <button type="submit" class="btn btn-save-unit">Salvar</button>
+              <div class="obs-container">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <label style="font-size: 0.74rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; margin-left: 2px;">OBSERVAÇÃO</label>
+                  <div class="auto-save-indicator" style="font-size: 0.74rem; font-weight: 700; text-align: right; white-space: nowrap;"></div>
+                </div>
+                <input type="text" class="input-obs" name="observacao" value="${reg.observacao || ''}" placeholder="Digite observações da unidade (opcional)...">
               </div>
-              <div class="alert-discrepancia-container" style="margin-top: 8px;"></div>
+              <div class="alert-discrepancia-container" style="margin-top: 6px;"></div>
             </form>
           </div>
         `;
 
         const form = card.querySelector('.form-comensais-unidade');
-        form.addEventListener('submit', async (e) => {
-          e.preventDefault();
+        let autoSaveTimer = null;
+
+        const performAutoSave = async () => {
           const formData = new FormData(form);
           const publicosValues = {};
           let totalVal = 0;
+          let hasAnyEntry = false;
 
           this.publicosAtivos.forEach(p => {
             const rawVal = formData.get(p.id);
-            const num = rawVal !== '' && rawVal !== null ? parseInt(rawVal, 10) : 0;
-            publicosValues[p.id] = num;
-            totalVal += num;
+            if (rawVal !== '' && rawVal !== null) {
+              const num = parseInt(rawVal, 10);
+              if (!isNaN(num)) {
+                publicosValues[p.id] = num;
+                totalVal += num;
+                hasAnyEntry = true;
+              }
+            } else {
+              publicosValues[p.id] = 0;
+            }
           });
 
           const observacao = formData.get('observacao') || '';
@@ -755,19 +1005,59 @@
             observacao
           });
 
+          const indicator = card.querySelector('.auto-save-indicator');
+          if (indicator) {
+            indicator.textContent = 'Salvo ✓';
+            indicator.style.color = '#16a34a';
+            setTimeout(() => {
+              if (indicator.textContent === 'Salvo ✓') indicator.textContent = '';
+            }, 2500);
+          }
+
+          const statusArea = card.querySelector('.card-status-area');
+          if (statusArea) {
+            if (hasAnyEntry && totalVal > 0) {
+              statusArea.innerHTML = `<span class="badge badge-success"><span class="status-dot dot-success"></span> CONCLUÍDO (${totalVal})</span>`;
+              card.className = 'unidade-card card-done';
+            } else {
+              statusArea.innerHTML = `<span class="badge badge-pending"><span class="status-dot dot-pending"></span> PENDENTE</span>`;
+              card.className = 'unidade-card card-pending';
+            }
+          }
+
+          this.updateHeaderPillCounts();
+
           const alerta = await checkDiscrepanciaAlert(u.id, totalVal);
           const alertaBox = card.querySelector('.alert-discrepancia-container');
-          if (alerta) {
+          if (alerta && totalVal > 0) {
             alertaBox.innerHTML = `
-              <div style="padding: 8px 12px; background: #fff1f2; border: 1px solid #fecdd3; color: #e11d48; font-size: 0.8rem; border-radius: 4px;">
+              <div style="padding: 6px 10px; background: #fff1f2; border: 1px solid #fecdd3; color: #e11d48; font-size: 0.76rem; border-radius: 4px;">
                 Atenção: O total (${totalVal}) está ${alerta.difPct > 0 ? '+' : ''}${alerta.difPct}% em relação à média habitual (${alerta.media}) desta unidade.
               </div>
             `;
           } else {
             alertaBox.innerHTML = '';
           }
+        };
 
-          await this.loadData();
+        const inputs = form.querySelectorAll('input');
+        inputs.forEach(input => {
+          input.addEventListener('input', () => {
+            const indicator = card.querySelector('.auto-save-indicator');
+            if (indicator) {
+              indicator.textContent = 'Salvando...';
+              indicator.style.color = 'var(--primary)';
+            }
+            if (autoSaveTimer) clearTimeout(autoSaveTimer);
+            autoSaveTimer = setTimeout(performAutoSave, 1000);
+          });
+
+          input.addEventListener('change', performAutoSave);
+        });
+
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          performAutoSave();
         });
 
         grid.appendChild(card);
@@ -775,7 +1065,7 @@
     }
   }
 
-  // --- 9. COMENSAIS REPORT VIEW ---
+  // --- 9. COMENSAIS REPORT VIEW (COM CENSURA DE CNPJ OCULTO) ---
   class ComensaisReportView {
     constructor(appController) {
       this.appController = appController;
@@ -814,8 +1104,9 @@
               <option value="personalizado">Personalizado</option>
             </select>
           </div>
-          <div class="filter-group custom-date-group hidden">
+          <div class="filter-group custom-date-group hidden" style="display: flex; align-items: center; gap: 6px;">
             <input type="date" id="report-date-start" class="input-date">
+            <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">até</span>
             <input type="date" id="report-date-end" class="input-date">
           </div>
           <div class="filter-group">
@@ -823,7 +1114,6 @@
               <option value="todas">Todas as Unidades</option>
             </select>
           </div>
-          <button id="btn-filtrar-relatorio" class="btn btn-primary">Filtrar</button>
         </div>
 
         <div class="kpi-grid">
@@ -849,7 +1139,6 @@
               <button class="btn-close-modal-unidades">&times;</button>
             </div>
             <div class="modal-body">
-              <p class="subtitle" style="margin-bottom: 12px;">Campos visíveis para o perfil ativo: <strong>${currentProfile ? currentProfile.nome : 'Padrão'}</strong></p>
               <div class="table-responsive-card">
                 <table class="data-table" id="table-detalhes-unidades-modal">
                   <thead><tr id="header-detalhes-unidades"></tr></thead>
@@ -899,23 +1188,34 @@
 
       const selectPeriodo = this.container.querySelector('#select-periodo');
       const customGroup = this.container.querySelector('.custom-date-group');
+      const inputStart = this.container.querySelector('#report-date-start');
+      const inputEnd = this.container.querySelector('#report-date-end');
+      const selectLoja = this.container.querySelector('#select-filtro-loja');
 
-      selectPeriodo.addEventListener('change', (e) => {
+      selectPeriodo.addEventListener('change', async (e) => {
         const val = e.target.value;
         if (val === 'personalizado') {
           customGroup.classList.remove('hidden');
+          if (inputStart.value) this.dataInicio = inputStart.value;
+          if (inputEnd.value) this.dataFim = inputEnd.value;
         } else {
           customGroup.classList.add('hidden');
           this.setPeriodDates(val);
+          await this.loadReportData();
         }
       });
 
-      const btnFiltrar = this.container.querySelector('#btn-filtrar-relatorio');
-      btnFiltrar.addEventListener('click', async () => {
-        if (selectPeriodo.value === 'personalizado') {
-          this.dataInicio = this.container.querySelector('#report-date-start').value;
-          this.dataFim = this.container.querySelector('#report-date-end').value;
-        }
+      inputStart.addEventListener('change', async () => {
+        this.dataInicio = inputStart.value;
+        if (this.dataInicio && this.dataFim) await this.loadReportData();
+      });
+
+      inputEnd.addEventListener('change', async () => {
+        this.dataFim = inputEnd.value;
+        if (this.dataInicio && this.dataFim) await this.loadReportData();
+      });
+
+      selectLoja.addEventListener('change', async () => {
         await this.loadReportData();
       });
 
@@ -932,13 +1232,18 @@
         document.body.removeChild(link);
       });
 
+      const modalDetalhes = this.container.querySelector('#modal-detalhes-unidades');
+      modalDetalhes.addEventListener('click', (e) => {
+        if (e.target === modalDetalhes) closeModal(modalDetalhes);
+      });
+
       const btnVerDetalhes = this.container.querySelector('#btn-ver-detalhes-unidades');
       btnVerDetalhes.addEventListener('click', async () => await this.renderModalDetalhesUnidades());
 
       const btnCloseDetalhes = this.container.querySelector('.btn-close-modal-unidades');
       if (btnCloseDetalhes) {
         btnCloseDetalhes.addEventListener('click', () => {
-          this.container.querySelector('#modal-detalhes-unidades').classList.add('hidden');
+          closeModal(modalDetalhes);
         });
       }
     }
@@ -960,7 +1265,8 @@
       const publicos = await getPublicos();
       const unidadesMap = new Map(unidades.map(u => [u.id, u]));
 
-      const lojaFiltro = this.container.querySelector('#select-filtro-loja').value;
+      const selectLoja = this.container.querySelector('#select-filtro-loja');
+      const lojaFiltro = selectLoja ? selectLoja.value : 'todas';
 
       const filtrados = todos.filter(r => {
         const dateMatch = r.data >= this.dataInicio && r.data <= this.dataFim;
@@ -1028,23 +1334,50 @@
       const permissoes = (this.currentProfile && this.currentProfile.permissoesCamposUnidade) || ["codigo", "grupo", "loja", "unidade", "cnpj"];
 
       let headerHTML = '';
-      if (permissoes.includes('codigo')) headerHTML += '<th>Cód</th>';
-      if (permissoes.includes('grupo')) headerHTML += '<th>Grupo</th>';
-      if (permissoes.includes('loja')) headerHTML += '<th>Loja / Unidade</th>';
-      if (permissoes.includes('unidade')) headerHTML += '<th>Tipo Unidade</th>';
-      if (permissoes.includes('cnpj')) headerHTML += '<th>CNPJ</th>';
+      if (permissoes.includes('codigo')) {
+        headerHTML += '<th style="width: 70px;">Cód</th>';
+      }
+      headerHTML += '<th>Loja / Unidade</th>';
 
       theadRow.innerHTML = headerHTML;
       tbody.innerHTML = '';
 
       unidades.forEach(u => {
         let rowHTML = '<tr>';
-        if (permissoes.includes('codigo')) rowHTML += `<td>${u.codigo || '-'}</td>`;
-        if (permissoes.includes('grupo')) rowHTML += `<td><span class="badge-tag">${u.grupo || '-'}</span></td>`;
-        if (permissoes.includes('loja')) rowHTML += `<td><strong>${u.loja}</strong></td>`;
-        if (permissoes.includes('unidade')) rowHTML += `<td>${u.unidade || '-'}</td>`;
-        if (permissoes.includes('cnpj')) rowHTML += `<td><code>${u.cnpj || '-'}</code></td>`;
-        rowHTML += '</tr>';
+
+        if (permissoes.includes('codigo')) {
+          rowHTML += `<td><strong>${u.codigo || '-'}</strong></td>`;
+        }
+
+        rowHTML += '<td>';
+        
+        // Linha Principal: Badge de Grupo + Nome da Loja
+        let mainLine = '<div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">';
+        if (permissoes.includes('grupo') && u.grupo) {
+          mainLine += `<span class="badge-tag">${u.grupo}</span>`;
+        }
+        if (permissoes.includes('loja')) {
+          mainLine += `<strong style="font-size: 0.92rem; color: var(--text-title);">${u.loja}</strong>`;
+        }
+        mainLine += '</div>';
+
+        // Sublinha: Tipo de Unidade + CNPJ (Aberto ou Censurado: **.***.***/0000-**)
+        const subItems = [];
+        if (permissoes.includes('unidade') && u.unidade) {
+          subItems.push(`<span>${u.unidade}</span>`);
+        }
+        
+        if (u.cnpj) {
+          const displayCNPJ = permissoes.includes('cnpj') ? u.cnpj : formatCensoredCNPJ(u.cnpj);
+          subItems.push(`<code style="font-size: 0.76rem; color: var(--text-muted);">CNPJ: ${displayCNPJ}</code>`);
+        }
+
+        let subLine = '';
+        if (subItems.length > 0) {
+          subLine = `<div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 4px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">${subItems.join(' <span style="color: #cbd5e1; font-size: 0.7rem;">•</span> ')}</div>`;
+        }
+
+        rowHTML += mainLine + subLine + '</td></tr>';
         tbody.innerHTML += rowHTML;
       });
 
@@ -1095,11 +1428,12 @@
           this.isAuthenticated = true;
           this.renderPanelContent();
         } else {
-          alert("Senha incorreta.");
+          showToast("Senha incorreta.", "error");
         }
       });
 
       this.container.querySelector('#btn-cancel-admin').addEventListener('click', () => {
+        window.location.hash = '';
         window.app.switchView('dashboard');
       });
     }
@@ -1140,6 +1474,7 @@
 
       this.container.querySelector('#btn-sair-admin').addEventListener('click', () => {
         this.isAuthenticated = false;
+        window.location.hash = '';
         window.app.switchView('dashboard');
       });
     }
@@ -1207,6 +1542,10 @@
       const modal = body.querySelector('#modal-unidade');
       const form = body.querySelector('#form-unidade-crud');
 
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal(modal);
+      });
+
       body.querySelector('#btn-nova-unidade').addEventListener('click', () => {
         form.reset();
         body.querySelector('#edit-unidade-id').value = '';
@@ -1214,7 +1553,7 @@
         modal.classList.remove('hidden');
       });
 
-      body.querySelector('.btn-close-modal').addEventListener('click', () => modal.classList.add('hidden'));
+      body.querySelector('.btn-close-modal').addEventListener('click', () => closeModal(modal));
 
       body.querySelectorAll('.btn-edit-unidade').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -1243,7 +1582,8 @@
           cnpj: body.querySelector('#u-cnpj').value,
           ativo: true
         });
-        modal.classList.add('hidden');
+        closeModal(modal);
+        showToast("Unidade salva com sucesso!", "success");
         await this.renderUnidadesTab(body);
       });
     }
@@ -1273,16 +1613,24 @@
       `;
 
       body.querySelector('#btn-novo-publico').addEventListener('click', async () => {
-        const nome = prompt("Nome da nova categoria de público:");
-        if (nome) { await savePublico({ nome }); await this.renderPublicosTab(body); }
+        const nome = await showPrompt("Digite o nome da nova categoria de público:", "", "Nova Categoria");
+        if (nome) {
+          await savePublico({ nome });
+          showToast("Categoria de público criada!", "success");
+          await this.renderPublicosTab(body);
+        }
       });
 
       body.querySelectorAll('.btn-edit-pub').forEach(btn => {
         btn.addEventListener('click', async () => {
           const pub = publicos.find(x => x.id === btn.getAttribute('data-id'));
           if (pub) {
-            const novoNome = prompt("Novo nome para o público:", pub.nome);
-            if (novoNome) { await savePublico({ ...pub, nome: novoNome }); await this.renderPublicosTab(body); }
+            const novoNome = await showPrompt("Digite o novo nome para esta categoria:", pub.nome, "Editar Categoria");
+            if (novoNome) {
+              await savePublico({ ...pub, nome: novoNome });
+              showToast("Categoria de público atualizada!", "success");
+              await this.renderPublicosTab(body);
+            }
           }
         });
       });
@@ -1290,60 +1638,180 @@
 
     async renderPerfisTab(body) {
       const perfis = await getPerfis();
+      const config = await getConfig();
+
       body.innerHTML = `
         <div class="tab-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-          <h3>Perfis de Acesso e Visibilidade de Campos</h3>
+          <h3>Perfis de Acesso e Módulos</h3>
           <button id="btn-novo-perfil" class="btn btn-primary">+ Novo Perfil</button>
         </div>
-        <p class="subtitle" style="margin-bottom: 16px;">Selecione quais campos das empresas ficam visíveis para cada perfil:</p>
+
+        <div style="background: var(--bg-surface); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 20px; box-shadow: var(--shadow-card);">
+          <h4 style="font-size: 1.05rem; font-weight: 800; color: var(--text-title); margin-bottom: 4px;">Configuração Global de Perfis</h4>
+          <p class="subtitle" style="margin-bottom: 12px;">Defina se os usuários podem visualizar e alternar de perfil na tela inicial:</p>
+          <label style="display: flex; align-items: center; gap: 10px; font-weight: 700; cursor: pointer; color: var(--text-title);">
+            <input type="checkbox" id="chk-permitir-troca-perfil" ${config.permitirTrocaPerfil ? 'checked' : ''}>
+            Liberar seletor de perfis no cabeçalho da aplicação
+          </label>
+        </div>
+
+        <p class="subtitle" style="margin-bottom: 16px;">Gerencie as permissões e módulos visíveis para cada perfil:</p>
         <div class="perfis-cards-grid">
           ${perfis.map(p => {
             const campos = p.permissoesCamposUnidade || ["loja"];
+            const modulosList = p.modulos || ["comensais"];
+            const isDefault = p.id === 'p_padrao';
             return `
               <div class="card-perfil-admin">
-                <div class="card-perfil-header" style="margin-bottom: 10px;">
-                  <h4 style="font-size: 1rem; font-weight: 700;">${p.nome}</h4>
-                  <p class="subtitle">${p.descricao || ''}</p>
+                <div class="card-perfil-header" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
+                  <div style="flex: 1;">
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                      <h4 style="font-size: 1.05rem; font-weight: 800; color: var(--text-title);">${p.nome}</h4>
+                      ${isDefault ? '<span class="badge badge-success" style="font-size: 0.65rem;">PADRÃO</span>' : ''}
+                    </div>
+                    <p class="subtitle" style="margin-top: 3px; font-size: 0.8rem; line-height: 1.35;">${p.descricao || 'Sem descrição definida.'}</p>
+                  </div>
+                  <button class="btn btn-sm btn-secondary btn-edit-perfil-info" data-id="${p.id}" title="Editar nome e descrição do perfil" style="padding: 4px 8px; flex-shrink: 0;">Editar</button>
                 </div>
-                <div class="field-permissions-box" style="margin-bottom: 12px;">
-                  <h5 style="font-size: 0.78rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;">Campos Visíveis:</h5>
+                <div class="field-permissions-box">
+                  <h5 style="font-size: 0.74rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; font-weight: 800; letter-spacing: 0.4px;">MÓDULOS PERMITIDOS:</h5>
+                  <div class="checkbox-grid-modulos" data-perfil-id="${p.id}" style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; font-size: 0.82rem;">
+                    <label><input type="checkbox" value="comensais" ${modulosList.includes('comensais') ? 'checked' : ''}> Comensais Diários</label>
+                    <label><input type="checkbox" value="pratos" ${modulosList.includes('pratos') ? 'checked' : ''}> Inventário de Pratos & Louças</label>
+                    <label><input type="checkbox" value="precos" ${modulosList.includes('precos') ? 'checked' : ''}> Preços & Custos por Unidade</label>
+                  </div>
+
+                  <h5 style="font-size: 0.74rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; font-weight: 800; letter-spacing: 0.4px;">CAMPOS DAS UNIDADES:</h5>
                   <div class="checkbox-grid" data-perfil-id="${p.id}">
                     <label><input type="checkbox" value="codigo" ${campos.includes('codigo') ? 'checked' : ''}> Código</label>
                     <label><input type="checkbox" value="grupo" ${campos.includes('grupo') ? 'checked' : ''}> Grupo (AC/ABIB/MOC)</label>
                     <label><input type="checkbox" value="loja" ${campos.includes('loja') ? 'checked' : ''}> Nome da Loja</label>
                     <label><input type="checkbox" value="unidade" ${campos.includes('unidade') ? 'checked' : ''}> Filial / Matriz</label>
-                    <label><input type="checkbox" value="cnpj" ${campos.includes('cnpj') ? 'checked' : ''}> CNPJ</label>
+                    <label><input type="checkbox" value="cnpj" ${campos.includes('cnpj') ? 'checked' : ''}> CNPJ (Completo)</label>
                   </div>
                 </div>
-                <div class="card-perfil-actions" style="display: flex; gap: 8px;">
+                <div class="card-perfil-actions">
                   <button class="btn btn-sm btn-primary btn-save-perfil-perm" data-id="${p.id}">Salvar Permissões</button>
-                  <button class="btn btn-sm btn-danger btn-del-perfil" data-id="${p.id}">Excluir</button>
+                  ${!isDefault ? `<button class="btn btn-sm btn-danger btn-del-perfil" data-id="${p.id}">Excluir</button>` : ''}
                 </div>
               </div>
             `;
           }).join('')}
         </div>
+
+        <!-- Modal Editar / Novo Perfil -->
+        <div id="modal-perfil-crud" class="modal hidden">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h3 id="title-modal-perfil">Editar Perfil</h3>
+              <button class="btn-close-modal-perfil" style="background:none; border:none; font-size:1.3rem; cursor:pointer; color:var(--text-muted);">&times;</button>
+            </div>
+            <form id="form-perfil-crud">
+              <input type="hidden" id="edit-perfil-id">
+              <div class="modal-body" style="display: flex; flex-direction: column; gap: 14px;">
+                <div>
+                  <label style="font-size: 0.8rem; font-weight: 700; color: var(--text-title); text-transform: uppercase;">Nome do Perfil:*</label>
+                  <input type="text" id="perfil-nome-input" class="input-field" required placeholder="ex: Nutricionista Geral" style="margin-top: 4px;">
+                </div>
+                <div>
+                  <label style="font-size: 0.8rem; font-weight: 700; color: var(--text-title); text-transform: uppercase;">Descrição do Perfil:*</label>
+                  <textarea id="perfil-desc-input" class="input-field" style="height: 80px; resize: vertical; margin-top: 4px;" required placeholder="Descreva as funções e nível de acesso deste perfil..."></textarea>
+                </div>
+              </div>
+              <div class="modal-footer" style="margin-top: 18px;">
+                <button type="submit" class="btn btn-primary btn-block">Salvar Perfil</button>
+              </div>
+            </form>
+          </div>
+        </div>
       `;
 
-      body.querySelector('#btn-novo-perfil').addEventListener('click', async () => {
-        const nome = prompt("Nome do novo perfil:");
-        if (nome) { await savePerfil({ nome, modulos: ['comensais'], permissoesCamposUnidade: ['loja', 'grupo'] }); await this.renderPerfisTab(body); }
+      const chkTroca = body.querySelector('#chk-permitir-troca-perfil');
+      chkTroca.addEventListener('change', async (e) => {
+        const val = e.target.checked;
+        await saveConfig({ permitirTrocaPerfil: val });
+        showToast(val ? "Seletor de perfil ativado no cabeçalho!" : "Seletor de perfil ocultado.", "info");
+        window.app.renderHeader();
+      });
+
+      const modal = body.querySelector('#modal-perfil-crud');
+      const form = body.querySelector('#form-perfil-crud');
+      const btnClose = body.querySelector('.btn-close-modal-perfil');
+
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal(modal);
+      });
+
+      btnClose.addEventListener('click', () => closeModal(modal));
+
+      body.querySelector('#btn-novo-perfil').addEventListener('click', () => {
+        form.reset();
+        body.querySelector('#edit-perfil-id').value = '';
+        body.querySelector('#title-modal-perfil').textContent = 'Novo Perfil de Acesso';
+        modal.classList.remove('hidden');
+      });
+
+      body.querySelectorAll('.btn-edit-perfil-info').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const p = perfis.find(x => x.id === btn.getAttribute('data-id'));
+          if (p) {
+            body.querySelector('#edit-perfil-id').value = p.id;
+            body.querySelector('#perfil-nome-input').value = p.nome || '';
+            body.querySelector('#perfil-desc-input').value = p.descricao || '';
+            body.querySelector('#title-modal-perfil').textContent = 'Editar Perfil de Acesso';
+            modal.classList.remove('hidden');
+          }
+        });
+      });
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = body.querySelector('#edit-perfil-id').value;
+        const nome = body.querySelector('#perfil-nome-input').value.trim();
+        const descricao = body.querySelector('#perfil-desc-input').value.trim();
+
+        if (id) {
+          const perfil = perfis.find(x => x.id === id);
+          await savePerfil({ ...perfil, nome, descricao });
+          showToast(`Perfil "${nome}" atualizado!`, "success");
+        } else {
+          await savePerfil({
+            nome,
+            descricao,
+            modulos: ['comensais'],
+            permissoesCamposUnidade: ['loja', 'grupo', 'codigo', 'unidade', 'cnpj']
+          });
+          showToast(`Novo perfil "${nome}" criado!`, "success");
+        }
+
+        closeModal(modal);
+        await this.renderPerfisTab(body);
       });
 
       body.querySelectorAll('.btn-save-perfil-perm').forEach(btn => {
         btn.addEventListener('click', async () => {
           const id = btn.getAttribute('data-id');
           const perfil = perfis.find(x => x.id === id);
-          const box = body.querySelector(`.checkbox-grid[data-perfil-id="${id}"]`);
-          const checked = Array.from(box.querySelectorAll('input:checked')).map(cb => cb.value);
-          await savePerfil({ ...perfil, permissoesCamposUnidade: checked });
-          alert(`Permissões salvas para o perfil ${perfil.nome}.`);
+          const boxCampos = body.querySelector(`.checkbox-grid[data-perfil-id="${id}"]`);
+          const checkedCampos = Array.from(boxCampos.querySelectorAll('input:checked')).map(cb => cb.value);
+
+          const boxModulos = body.querySelector(`.checkbox-grid-modulos[data-perfil-id="${id}"]`);
+          const checkedModulos = Array.from(boxModulos.querySelectorAll('input:checked')).map(cb => cb.value);
+
+          await savePerfil({ ...perfil, permissoesCamposUnidade: checkedCampos, modulos: checkedModulos });
+          showToast(`Permissões salvas para "${perfil.nome}".`, "success");
         });
       });
 
       body.querySelectorAll('.btn-del-perfil').forEach(btn => {
         btn.addEventListener('click', async () => {
-          if (confirm("Excluir este perfil?")) { await deletePerfil(btn.getAttribute('data-id')); await this.renderPerfisTab(body); }
+          const perfil = perfis.find(x => x.id === btn.getAttribute('data-id'));
+          const confirmou = await showConfirm(`Tem certeza que deseja excluir o perfil <strong>"${perfil.nome}"</strong>?`, "Excluir Perfil");
+          if (confirmou) {
+            await deletePerfil(perfil.id);
+            showToast(`Perfil "${perfil.nome}" excluído com sucesso.`, "success");
+            await this.renderPerfisTab(body);
+          }
         });
       });
     }
@@ -1370,7 +1838,7 @@
         };
         await saveConfig({ firebaseConfig: fbConfig });
         initFirebase(fbConfig);
-        alert("Configurações salvas.");
+        showToast("Configurações do Firebase salvas!", "success");
       });
     }
 
@@ -1380,16 +1848,48 @@
         <div class="backup-grid" style="display: flex; gap: 16px; flex-wrap: wrap;">
           <div class="backup-card" style="background: var(--bg-surface); padding: 16px; border: 1px solid var(--border-color); border-radius: 8px; flex: 1; min-width: 240px;">
             <h4>Exportar Backup Completo</h4>
-            <p class="subtitle" style="margin-bottom: 12px;">Download em formato JSON.</p>
+            <p class="subtitle" style="margin-bottom: 12px;">Download em formato JSON contendo todas as unidades e histórico.</p>
             <button id="btn-export-json" class="btn btn-primary">Download Backup JSON</button>
           </div>
           <div class="backup-card" style="background: var(--bg-surface); padding: 16px; border: 1px solid var(--border-color); border-radius: 8px; flex: 1; min-width: 240px;">
             <h4>Restaurar Backup</h4>
-            <p class="subtitle" style="margin-bottom: 12px;">Selecione um arquivo de backup salvo anteriormente.</p>
-            <input type="file" id="input-import-json" accept=".json" class="input-file">
+            <p class="subtitle" style="margin-bottom: 12px;">Selecione um arquivo de backup (.json) salvo anteriormente.</p>
+            <div style="display: flex; align-items: center; gap: 10px; margin-top: 8px; flex-wrap: wrap;">
+              <label for="input-import-json" class="btn btn-secondary" style="cursor: pointer;">
+                Selecionar Arquivo JSON
+              </label>
+              <span id="file-name-display" style="font-size: 0.8rem; color: var(--text-muted); font-weight: 500;">Nenhum arquivo selecionado</span>
+              <input type="file" id="input-import-json" accept=".json" style="display: none;">
+            </div>
           </div>
         </div>
       `;
+
+      const fileInput = body.querySelector('#input-import-json');
+      const fileNameDisplay = body.querySelector('#file-name-display');
+
+      fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          fileNameDisplay.textContent = file.name;
+          fileNameDisplay.style.color = 'var(--text-title)';
+          
+          const reader = new FileReader();
+          reader.onload = async (evt) => {
+            try {
+              await importFullBackup(JSON.parse(evt.target.result));
+              showToast("Backup restaurado com sucesso!", "success");
+              setTimeout(() => window.location.reload(), 1200);
+            } catch (err) {
+              showToast("Erro ao importar backup: " + err.message, "error");
+            }
+          };
+          reader.readAsText(file);
+        } else {
+          fileNameDisplay.textContent = 'Nenhum arquivo selecionado';
+          fileNameDisplay.style.color = 'var(--text-muted)';
+        }
+      });
 
       body.querySelector('#btn-export-json').addEventListener('click', async () => {
         const data = await exportFullBackup();
@@ -1398,25 +1898,12 @@
         const link = document.createElement('a'); link.href = url;
         link.setAttribute('download', `backup_gestao_abib_${new Date().toISOString().split('T')[0]}.json`);
         document.body.appendChild(link); link.click(); document.body.removeChild(link);
-      });
-
-      body.querySelector('#input-import-json').addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = async (evt) => {
-            try {
-              await importFullBackup(JSON.parse(evt.target.result));
-              alert("Backup restaurado!"); window.location.reload();
-            } catch (err) { alert("Erro ao importar backup: " + err.message); }
-          };
-          reader.readAsText(file);
-        }
+        showToast("Download do backup iniciado!", "success");
       });
     }
   }
 
-  // --- 11. APP CONTROLLER PRINCIPAL CORPORATIVO ---
+  // --- 11. APP CONTROLLER PRINCIPAL ---
   class AppController {
     constructor() {
       this.currentProfile = null;
@@ -1424,65 +1911,99 @@
       this.comensaisModule = new ComensaisModuleView();
       this.comensaisReportView = new ComensaisReportView(this);
       this.adminPanel = new AdminPanel(this);
+      this.logoClickCount = 0;
+      this.logoClickTimer = null;
     }
 
     async init() {
-      console.log("Inicializando Sistema de Gestão ABIB...");
-      const config = await getConfig();
-      if (config.firebaseConfig) {
-        initFirebase(config.firebaseConfig);
-      } else {
-        initFirebase(DEFAULT_FIREBASE_CONFIG);
+      try {
+        console.log("Inicializando Sistema de Gestão ABIB...");
+        const config = await getConfig();
+        if (config.firebaseConfig) {
+          initFirebase(config.firebaseConfig);
+        } else {
+          initFirebase(DEFAULT_FIREBASE_CONFIG);
+        }
+
+        this.currentProfile = await getActiveProfile();
+
+        window.addEventListener('popstate', () => this.checkHashRoute());
+        window.addEventListener('hashchange', () => this.checkHashRoute());
+
+        this.checkHashRoute();
+      } catch (err) {
+        console.error("Erro ao inicializar:", err);
+        this.currentProfile = { id: 'p_padrao', nome: 'Perfil Padrão', modulos: ['comensais'], permissoesCamposUnidade: ["codigo", "grupo", "loja", "unidade", "cnpj"] };
+        this.renderApp();
       }
+    }
 
-      this.currentProfile = await getActiveProfile();
+    isAdminRoute() {
+      const path = window.location.pathname.toLowerCase();
+      const hash = window.location.hash.toLowerCase();
+      return path.endsWith('/admin') || path.endsWith('/admin/') || hash === '#admin' || hash === '#/admin';
+    }
 
-      if (!this.currentProfile) {
-        await renderProfileSelectorModal((profile) => {
-          this.currentProfile = profile;
-          this.renderApp();
-        });
+    checkHashRoute() {
+      if (this.isAdminRoute()) {
+        this.switchView('admin');
       } else {
         this.renderApp();
       }
     }
 
-    renderApp() {
-      this.renderHeader();
+    async renderApp() {
+      await this.renderHeader();
       this.switchView(this.currentView);
     }
 
-    renderHeader() {
-      const profileBadge = document.getElementById('active-profile-badge');
+    async renderHeader() {
+      const config = await getConfig();
       const profileName = document.getElementById('active-profile-name');
 
       if (profileName && this.currentProfile) {
         profileName.textContent = this.currentProfile.nome;
       }
-      if (profileBadge) {
-        profileBadge.textContent = '';
-      }
 
       const btnChangeProfile = document.getElementById('btn-change-profile');
       if (btnChangeProfile) {
-        btnChangeProfile.onclick = async () => {
-          await renderProfileSelectorModal((profile) => {
-            this.currentProfile = profile;
-            this.renderApp();
-          });
-        };
+        if (config.permitirTrocaPerfil) {
+          btnChangeProfile.style.display = 'inline-flex';
+          btnChangeProfile.onclick = async () => {
+            await renderProfileSelectorModal((profile) => {
+              this.currentProfile = profile;
+              this.renderApp();
+            });
+          };
+        } else {
+          btnChangeProfile.style.display = 'none';
+        }
       }
 
-      const btnAdmin = document.getElementById('btn-open-admin');
-      if (btnAdmin) { btnAdmin.onclick = () => this.switchView('admin'); }
-
       const btnHome = document.getElementById('btn-go-home');
-      if (btnHome) { btnHome.onclick = () => this.switchView('dashboard'); }
+      if (btnHome) {
+        btnHome.onclick = () => {
+          this.logoClickCount++;
+          if (this.logoClickTimer) clearTimeout(this.logoClickTimer);
+          
+          if (this.logoClickCount >= 3) {
+            this.logoClickCount = 0;
+            this.switchView('admin');
+          } else {
+            this.logoClickTimer = setTimeout(() => {
+              this.logoClickCount = 0;
+              window.location.hash = '';
+              this.switchView('dashboard');
+            }, 500);
+          }
+        };
+      }
     }
 
     async switchView(viewName) {
       this.currentView = viewName;
       const viewContainer = document.getElementById('main-view-container');
+      if (!viewContainer) return;
       viewContainer.innerHTML = '';
 
       if (viewName === 'dashboard') {
@@ -1497,13 +2018,11 @@
     }
 
     renderDashboard(container) {
-      container.innerHTML = `
-        <div class="dashboard-welcome">
-          <h2>Selecione um Módulo para iniciar:</h2>
-          <p class="subtitle">Módulos liberados para o perfil <strong>${this.currentProfile ? this.currentProfile.nome : 'Padrão'}</strong>:</p>
-        </div>
+      const allowedModules = (this.currentProfile && this.currentProfile.modulos) || ['comensais'];
 
-        <div class="modules-cards-grid">
+      let modulesHTML = '';
+      if (allowedModules.includes('comensais')) {
+        modulesHTML += `
           <div class="card-module-primary" id="card-modulo-comensais">
             <span class="tag-active-module">Módulo Ativo</span>
             <div class="module-card-info">
@@ -1511,22 +2030,40 @@
               <p>Registro diário das 21 unidades, controle de status, alertas de variação e envio formatado para WhatsApp.</p>
             </div>
           </div>
+        `;
+      }
 
-          <div class="card-module-disabled">
+      if (allowedModules.includes('pratos')) {
+        modulesHTML += `
+          <div class="card-module-primary" id="card-modulo-pratos">
+            <span class="tag-active-module">Módulo Ativo</span>
             <div class="module-card-info">
               <h3>Inventário de Pratos & Louças</h3>
-              <p>Módulo de controle de estoque de talheres e louças por unidade.</p>
+              <p>Módulo de controle de estoque de talheres danificados e louças por unidade.</p>
             </div>
-            <span class="badge-soon">Em Breve</span>
           </div>
+        `;
+      }
 
-          <div class="card-module-disabled">
+      if (allowedModules.includes('precos')) {
+        modulesHTML += `
+          <div class="card-module-primary" id="card-modulo-precos">
+            <span class="tag-active-module">Módulo Ativo</span>
             <div class="module-card-info">
               <h3>Preços & Custos por Unidade</h3>
               <p>Módulo de acompanhamento de preços de refeições e insumos.</p>
             </div>
-            <span class="badge-soon">Em Breve</span>
           </div>
+        `;
+      }
+
+      container.innerHTML = `
+        <div class="dashboard-welcome">
+          <h2>Selecione um Módulo para iniciar:</h2>
+        </div>
+
+        <div class="modules-cards-grid">
+          ${modulesHTML || '<p class="subtitle" style="padding: 20px 0;">Nenhum módulo liberado para este perfil.</p>'}
         </div>
       `;
 
