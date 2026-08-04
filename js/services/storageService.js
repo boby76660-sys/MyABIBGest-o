@@ -20,8 +20,19 @@ export function seedInitialData() {
   if (!localStorage.getItem(STORAGE_KEYS.UNIDADES)) {
     localStorage.setItem(STORAGE_KEYS.UNIDADES, JSON.stringify(UNIDADES_SEED));
   }
-  if (!localStorage.getItem(STORAGE_KEYS.PUBLICOS)) {
+  const storedPublicos = localStorage.getItem(STORAGE_KEYS.PUBLICOS);
+  if (!storedPublicos) {
     localStorage.setItem(STORAGE_KEYS.PUBLICOS, JSON.stringify(PUBLICOS_SEED));
+  } else {
+    try {
+      const parsed = JSON.parse(storedPublicos);
+      const hasNewPublicos = parsed.some(p => p.id === 'pub_promotores_cartao' || p.id === 'pub_promotores_pix' || p.id === 'pub_assinaturas');
+      if (!hasNewPublicos) {
+        localStorage.setItem(STORAGE_KEYS.PUBLICOS, JSON.stringify(PUBLICOS_SEED));
+      }
+    } catch (e) {
+      localStorage.setItem(STORAGE_KEYS.PUBLICOS, JSON.stringify(PUBLICOS_SEED));
+    }
   }
   if (!localStorage.getItem(STORAGE_KEYS.PERFIS)) {
     localStorage.setItem(STORAGE_KEYS.PERFIS, JSON.stringify(PERFIS_SEED));

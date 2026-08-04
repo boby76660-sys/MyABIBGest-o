@@ -1,5 +1,5 @@
 /**
- * ABIB Gestão - JavaScript Bundle Unificado (Suporte Numérico em Texto com 0 Garantido)
+ * ABIB Gestão - JavaScript Bundle Unificado (Filtragem de Registros Zerados em Relatórios)
  */
 
 (function () {
@@ -201,9 +201,11 @@
   };
 
   const PUBLICOS_SEED = [
-    { id: "pub_ticket", nome: "Ticket", ordem: 1, ativo: true },
+    { id: "pub_ticket", nome: "Tickets", ordem: 1, ativo: true },
     { id: "pub_garra", nome: "Garra / Estrela D'Alva", ordem: 2, ativo: true },
-    { id: "pub_promotores", nome: "Promotores ou Motorista (Pix/Cartão)", ordem: 3, ativo: true }
+    { id: "pub_promotores_cartao", nome: "Promotores ou Motoristas - Cartão", ordem: 3, ativo: true },
+    { id: "pub_promotores_pix", nome: "Promotores ou Motoristas - Pix", ordem: 4, ativo: true },
+    { id: "pub_assinaturas", nome: "Assinaturas", ordem: 5, ativo: true }
   ];
 
   const UNIDADES_SEED = [
@@ -344,8 +346,19 @@
     if (!localStorage.getItem(STORAGE_KEYS.UNIDADES)) {
       updateMemoryCache(STORAGE_KEYS.UNIDADES, UNIDADES_SEED);
     }
-    if (!localStorage.getItem(STORAGE_KEYS.PUBLICOS)) {
+    const storedPublicos = localStorage.getItem(STORAGE_KEYS.PUBLICOS);
+    if (!storedPublicos) {
       updateMemoryCache(STORAGE_KEYS.PUBLICOS, PUBLICOS_SEED);
+    } else {
+      try {
+        const parsed = JSON.parse(storedPublicos);
+        const hasNewPublicos = parsed.some(p => p.id === 'pub_promotores_cartao' || p.id === 'pub_promotores_pix' || p.id === 'pub_assinaturas');
+        if (!hasNewPublicos) {
+          updateMemoryCache(STORAGE_KEYS.PUBLICOS, PUBLICOS_SEED);
+        }
+      } catch (e) {
+        updateMemoryCache(STORAGE_KEYS.PUBLICOS, PUBLICOS_SEED);
+      }
     }
     if (!localStorage.getItem(STORAGE_KEYS.PERFIS)) {
       updateMemoryCache(STORAGE_KEYS.PERFIS, PERFIS_SEED);
@@ -679,7 +692,13 @@
     const publicos = await getPublicos();
     const unidadesMap = new Map(unidades.map(u => [u.id, u]));
 
-    const filtrados = todos.filter(r => r.data >= inicioISO && r.data <= fimISO);
+    const filtrados = todos.filter(r => {
+      const inDateRange = r.data >= inicioISO && r.data <= fimISO;
+      let total = 0;
+      if (r.publicos) Object.values(r.publicos).forEach(v => total += parseInt(v || 0, 10));
+      const hasObs = r.observacao && r.observacao.trim() !== '';
+      return inDateRange && (total > 0 || hasObs);
+    });
 
     let csv = 'Data;Grupo;Codigo;Loja;Unidade;CNPJ;Total Comensais;';
     publicos.forEach(p => csv += `${p.nome};`);
@@ -777,7 +796,7 @@
     });
   }
 
-  // --- 8. COMENSAIS VIEW (TIPO DE CAMPO TEXTO COM SELEÇÃO NATIVA SEM ERRO NO NAVEGADOR) ---
+  // --- 8. COMENSAIS VIEW ---
   class ComensaisModuleView {
     constructor() {
       this.id = 'comensais';
@@ -1193,7 +1212,7 @@
     }
   }
 
-  // --- 9. COMENSAIS REPORT VIEW (COM CENSURA DE CNPJ OCULTO) ---
+  // --- 9. COMENSAIS REPORT VIEW (OCULTA REGISTROS SEM REFEIÇÕES DE VERDADE) ---
   class ComensaisReportView {
     constructor(appController) {
       this.appController = appController;
@@ -1399,7 +1418,15 @@
       const filtrados = todos.filter(r => {
         const dateMatch = r.data >= this.dataInicio && r.data <= this.dataFim;
         const lojaMatch = lojaFiltro === 'todas' || r.unidadeId === lojaFiltro;
-        return dateMatch && lojaMatch;
+
+        let totalDoc = 0;
+        if (r.publicos) {
+          Object.values(r.publicos).forEach(v => totalDoc += parseInt(v || 0, 10));
+        }
+        const hasObs = r.observacao && r.observacao.trim() !== '';
+
+        // Exibe no relatório apenas unidades que possuam refeições vendidas (>0) ou observação cadastrada
+        return dateMatch && lojaMatch && (totalDoc > 0 || hasObs);
       }).sort((a, b) => b.data.localeCompare(a.data));
 
       let totalRefeicoes = 0;
@@ -1421,7 +1448,7 @@
       tbody.innerHTML = '';
 
       if (filtrados.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="padding: 20px; text-align: center; color: var(--text-muted);">Nenhum registro encontrado no período selecionado.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" style="padding: 20px; text-align: center; color: var(--text-muted);">Nenhum registro com refeições encontrado no período selecionado.</td></tr>`;
         return;
       }
 

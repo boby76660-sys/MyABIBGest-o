@@ -15,10 +15,13 @@ export const DEFAULT_FIREBASE_CONFIG = {
 
 // Dados Padrão de Públicos / Categorias de Comensais
 export const PUBLICOS_SEED = [
-  { id: "pub_ticket", nome: "Ticket", ordem: 1, ativo: true },
+  { id: "pub_ticket", nome: "Tickets", ordem: 1, ativo: true },
   { id: "pub_garra", nome: "Garra / Estrela D'Alva", ordem: 2, ativo: true },
-  { id: "pub_promotores", nome: "Promotores ou Motorista (Pix/Cartão)", ordem: 3, ativo: true }
+  { id: "pub_promotores_cartao", nome: "Promotores ou Motoristas - Cartão", ordem: 3, ativo: true },
+  { id: "pub_promotores_pix", nome: "Promotores ou Motoristas - Pix", ordem: 4, ativo: true },
+  { id: "pub_assinaturas", nome: "Assinaturas", ordem: 5, ativo: true }
 ];
+
 
 // Dados Padrão das 21 Unidades com Metadados Completos
 export const UNIDADES_SEED = [
