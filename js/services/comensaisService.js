@@ -112,6 +112,7 @@ export async function generateWhatsAppSummary(dataISO) {
       if (item.observacao) {
         texto += `       Obs: _${item.observacao}_\n`;
       }
+      texto += `\n`;
     } else {
       texto += `*[PENDENTE] ${item.unidade.loja}*\n`;
     }
