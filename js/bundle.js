@@ -643,56 +643,59 @@
 
     let texto = `RESUMO DE COMENSAIS - ${dataFormatada}\nABIB Refeições Coletivas\n\n`;
 
-    statusLista.forEach(item => {
-      if (item.status === 'concluido') {
-        concluidasCount++;
-        totalGeralEmpresa += item.totalComensais;
-        texto += `*[CONCLUÍDO] ${item.unidade.loja}:* ${item.totalComensais} Comensais\n`;
-        
-        const pMap = (item.registro && item.registro.publicos) ? item.registro.publicos : {};
-        const partes = [];
-        let handledPromotores = false;
+    const concluidas = statusLista.filter(item => item.status === 'concluido');
+    const pendentes = statusLista.filter(item => item.status !== 'concluido');
 
-        publicosAtivos.forEach(p => {
-          if (p.id === 'pub_promotores_cartao' || p.id === 'pub_promotores_pix') {
-            if (!handledPromotores) {
-              handledPromotores = true;
-              const cVal = parseInt(pMap['pub_promotores_cartao'] || 0, 10);
-              const pxVal = parseInt(pMap['pub_promotores_pix'] || 0, 10);
-              if (cVal > 0 && pxVal > 0) {
-                partes.push(`Promotores ou Motoristas - Cartão: _${cVal}_ | Pix: _${pxVal}_`);
-              } else if (cVal > 0) {
-                partes.push(`Promotores ou Motoristas - Cartão: _${cVal}_`);
-              } else if (pxVal > 0) {
-                partes.push(`Promotores ou Motoristas - Pix: _${pxVal}_`);
-              }
+    concluidas.forEach(item => {
+      concluidasCount++;
+      totalGeralEmpresa += item.totalComensais;
+      texto += `*[CONCLUÍDO] ${item.unidade.loja}:* ${item.totalComensais} Comensais\n`;
+      
+      const pMap = (item.registro && item.registro.publicos) ? item.registro.publicos : {};
+      const partes = [];
+      let handledPromotores = false;
+
+      publicosAtivos.forEach(p => {
+        if (p.id === 'pub_promotores_cartao' || p.id === 'pub_promotores_pix') {
+          if (!handledPromotores) {
+            handledPromotores = true;
+            const cVal = parseInt(pMap['pub_promotores_cartao'] || 0, 10);
+            const pxVal = parseInt(pMap['pub_promotores_pix'] || 0, 10);
+            if (cVal > 0 && pxVal > 0) {
+              partes.push(`Promotores ou Motoristas - Cartão: _${cVal}_ | Pix: _${pxVal}_`);
+            } else if (cVal > 0) {
+              partes.push(`Promotores ou Motoristas - Cartão: _${cVal}_`);
+            } else if (pxVal > 0) {
+              partes.push(`Promotores ou Motoristas - Pix: _${pxVal}_`);
             }
-          } else if (p.id === 'pub_promotores') {
-            const val = parseInt(pMap[p.id] || 0, 10);
-            if (val > 0) partes.push(`Promotores ou Motoristas: _${val}_`);
+          }
+        } else if (p.id === 'pub_promotores') {
+          const val = parseInt(pMap[p.id] || 0, 10);
+          if (val > 0) partes.push(`Promotores ou Motoristas: _${val}_`);
+        } else {
+          const val = parseInt(pMap[p.id] || 0, 10);
+          if (val > 0) partes.push(`${p.nome}: _${val}_`);
+        }
+      });
+
+      if (partes.length > 0) {
+        partes.forEach((parte, idx) => {
+          if (idx === 0) {
+            texto += `   └ ${parte}\n`;
           } else {
-            const val = parseInt(pMap[p.id] || 0, 10);
-            if (val > 0) partes.push(`${p.nome}: _${val}_`);
+            texto += `       ${parte}\n`;
           }
         });
-
-        if (partes.length > 0) {
-          partes.forEach((parte, idx) => {
-            if (idx === 0) {
-              texto += `   └ ${parte}\n`;
-            } else {
-              texto += `       ${parte}\n`;
-            }
-          });
-        }
-
-        if (item.observacao) {
-          texto += `       Obs: _${item.observacao}_\n`;
-        }
-        texto += `\n`;
-      } else {
-        texto += `*[PENDENTE] ${item.unidade.loja}*\n`;
       }
+
+      if (item.observacao) {
+        texto += `       Obs: _${item.observacao}_\n`;
+      }
+      texto += `\n`;
+    });
+
+    pendentes.forEach(item => {
+      texto += `*[PENDENTE] ${item.unidade.loja}*\n`;
     });
 
     texto += `\nTOTAL DA EMPRESA: ${totalGeralEmpresa} refeições\nStatus: ${concluidasCount}/${statusLista.length} unidades preenchidas.`;
