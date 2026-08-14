@@ -597,15 +597,16 @@
 
   async function saveCollection(key, items) {
     updateMemoryCache(key, items);
+    try {
+      localStorage.setItem(key, JSON.stringify(items));
+    } catch (e) {}
 
     if (checkIsFirebaseActive()) {
       try {
         getRealtimeDB().ref(key).set(items).catch(() => {});
       } catch (e) {}
-    } else {
-      // Dispara atualização local em tempo real mesmo sem Firebase
-      window.dispatchEvent(new CustomEvent('abib_realtime_update', { detail: { key, docs: items } }));
     }
+    window.dispatchEvent(new CustomEvent('abib_realtime_update', { detail: { key, docs: items } }));
   }
 
   async function saveDoc(key, item) {
@@ -3340,9 +3341,9 @@
         nomeProduto: item.nomeProduto || produtoInfo.nome || 'Produto',
         unidadeMedida: item.unidadeMedida || produtoInfo.unidadeMedida || 'kg',
         categoria: item.categoria || produtoInfo.categoria || 'Hortifrúti',
-        precoSacolao: pSacolao,
-        precoMartMinas: pMartMinas,
-        quantidade: qtd,
+        precoSacolao: pSacolao > 0 ? pSacolao : '',
+        precoMartMinas: pMartMinas > 0 ? pMartMinas : '',
+        quantidade: qtd > 0 ? qtd : '',
         fornecedorVencedorAuto,
         fornecedorEscolhido,
         subtotal
@@ -3616,9 +3617,14 @@
                 <button class="pill ${this.currentSemana === 4 ? 'active' : ''}" data-semana="4">Semana 4</button>
               </div>
 
-              <button id="btn-copiar-anterior" class="btn btn-secondary" style="white-space: nowrap; font-size: 0.82rem; padding: 6px 14px;">
-                Copiar Preços da Semana Anterior
-              </button>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button id="btn-copiar-anterior" class="btn btn-secondary" style="white-space: nowrap; font-size: 0.82rem; padding: 6px 14px;">
+                  Copiar Preços da Semana Anterior
+                </button>
+                <button id="btn-zerar-cotacao" class="btn btn-secondary" style="white-space: nowrap; font-size: 0.82rem; padding: 6px 14px; color: #dc2626; border-color: #fca5a5;">
+                  Zerar Valores
+                </button>
+              </div>
             </div>
           </div>
 
@@ -3852,9 +3858,38 @@
       });
 
       const btnCopiar = this.container.querySelector('#btn-copiar-anterior');
-      btnCopiar.addEventListener('click', async () => {
-        await this.handleCopiarSemanaAnterior();
-      });
+      if (btnCopiar) {
+        btnCopiar.addEventListener('click', async () => {
+          await this.handleCopiarSemanaAnterior();
+        });
+      }
+
+      const btnZerarCot = this.container.querySelector('#btn-zerar-cotacao');
+      if (btnZerarCot) {
+        btnZerarCot.addEventListener('click', async () => {
+          if (confirm("Atenção: Deseja realmente apagar todos os estoques, preços e quantidades lançados nesta cotação?")) {
+            this.itensState.forEach(item => {
+              item.estoque = '';
+              item.precoSacolao = '';
+              item.precoMartMinas = '';
+              item.quantidade = '';
+              item.fornecedorEscolhido = null;
+              item.isManual = false;
+            });
+            this.renderTabelaProdutos();
+            this.updateResumoCards();
+            const rawDoc = {
+              unidadeId: this.currentUnidadeId,
+              mesAno: this.currentMesAno,
+              semana: this.currentSemana,
+              nutricionistaId: this.currentProfile ? this.currentProfile.id : 'nutri_geral',
+              itens: this.itensState
+            };
+            await savePedidoSemanal(rawDoc);
+            showToast("Todos os valores foram zerados!", "success");
+          }
+        });
+      }
 
       const btnFinalizar = this.container.querySelector('#btn-finalizar-pedido');
       btnFinalizar.addEventListener('click', async () => {
@@ -4014,9 +4049,9 @@
           unidadeMedida: prod.unidadeMedida,
           categoria: prod.categoria,
           estoque: itemExistente ? (itemExistente.estoque !== undefined && itemExistente.estoque !== null ? itemExistente.estoque : '') : '',
-          precoSacolao: itemExistente ? (itemExistente.precoSacolao || '') : '',
-          precoMartMinas: itemExistente ? (itemExistente.precoMartMinas || '') : '',
-          quantidade: itemExistente ? (itemExistente.quantidade || '') : '',
+          precoSacolao: itemExistente ? (itemExistente.precoSacolao !== undefined && itemExistente.precoSacolao !== null && itemExistente.precoSacolao !== 0 ? itemExistente.precoSacolao : '') : '',
+          precoMartMinas: itemExistente ? (itemExistente.precoMartMinas !== undefined && itemExistente.precoMartMinas !== null && itemExistente.precoMartMinas !== 0 ? itemExistente.precoMartMinas : '') : '',
+          quantidade: itemExistente ? (itemExistente.quantidade !== undefined && itemExistente.quantidade !== null && itemExistente.quantidade !== 0 ? itemExistente.quantidade : '') : '',
           fornecedorEscolhido: itemExistente ? itemExistente.fornecedorEscolhido : null,
           isManual: itemExistente ? !!itemExistente.isManual : false
         };
@@ -4196,15 +4231,22 @@
         // Formatação com 2 casas decimais no blur (ao perder o foco) e Salvamento Imediato no Banco
         inp.addEventListener('blur', async (e) => {
           const field = e.target.getAttribute('data-field');
-          if (field === 'precoSacolao' || field === 'precoMartMinas') {
+          const idx = parseInt(e.target.getAttribute('data-index'));
+          if (field && !isNaN(idx) && this.itensState[idx]) {
             const rawVal = e.target.value.trim();
-            if (rawVal !== '') {
+            if (rawVal === '' || rawVal === '0') {
+              this.itensState[idx][field] = '';
+              e.target.value = '';
+            } else {
               const numVal = parseFloat(rawVal);
               if (!isNaN(numVal) && numVal > 0) {
-                const formatted = numVal.toFixed(2);
-                e.target.value = formatted;
-                const idx = parseInt(e.target.getAttribute('data-index'));
-                this.itensState[idx][field] = formatted;
+                if (field === 'precoSacolao' || field === 'precoMartMinas') {
+                  const formatted = numVal.toFixed(2);
+                  e.target.value = formatted;
+                  this.itensState[idx][field] = formatted;
+                } else {
+                  this.itensState[idx][field] = numVal;
+                }
               }
             }
           }

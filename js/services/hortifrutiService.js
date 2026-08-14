@@ -139,29 +139,34 @@ export function calcularTotaisPedido(itensState, produtosMeta) {
   let economiaEstimada = 0;
 
   const itensCalculados = itensState.map(item => {
-    const pSac = parseFloat(item.precoSacolao) || 0;
-    const pMart = parseFloat(item.precoMartMinas) || 0;
-    const qtd = parseFloat(item.quantidade) || 0;
+    const rawSac = item.precoSacolao;
+    const rawMart = item.precoMartMinas;
+    const rawQtd = item.quantidade;
+    const rawEst = item.estoque;
+
+    const numSac = rawSac !== "" && rawSac !== null && rawSac !== undefined ? (parseFloat(rawSac) || 0) : 0;
+    const numMart = rawMart !== "" && rawMart !== null && rawMart !== undefined ? (parseFloat(rawMart) || 0) : 0;
+    const numQtd = rawQtd !== "" && rawQtd !== null && rawQtd !== undefined ? (parseFloat(rawQtd) || 0) : 0;
 
     let vencAuto = '';
-    if (pSac > 0 && pMart > 0) {
-      vencAuto = pSac <= pMart ? 'Sacolão' : 'Mart Minas';
-    } else if (pMart > 0) {
+    if (numSac > 0 && numMart > 0) {
+      vencAuto = numSac <= numMart ? 'Sacolão' : 'Mart Minas';
+    } else if (numMart > 0) {
       vencAuto = 'Mart Minas';
-    } else if (pSac > 0) {
+    } else if (numSac > 0) {
       vencAuto = 'Sacolão';
     }
 
     const fornecedorFinal = item.isManual && item.fornecedorEscolhido ? item.fornecedorEscolhido : vencAuto;
-    const precoVencedor = fornecedorFinal === 'Mart Minas' ? pMart : (fornecedorFinal === 'Sacolão' ? pSac : 0);
-    const subtotal = Math.round((qtd * precoVencedor) * 100) / 100;
+    const precoVencedor = fornecedorFinal === 'Mart Minas' ? numMart : (fornecedorFinal === 'Sacolão' ? numSac : 0);
+    const subtotal = Math.round((numQtd * precoVencedor) * 100) / 100;
 
-    if (pSac > 0 && qtd > 0) totalSacolao += (qtd * pSac);
-    if (pMart > 0 && qtd > 0) totalMartMinas += (qtd * pMart);
+    if (numSac > 0 && numQtd > 0) totalSacolao += (numQtd * numSac);
+    if (numMart > 0 && numQtd > 0) totalMartMinas += (numQtd * numMart);
 
-    if (pSac > 0 && pMart > 0 && qtd > 0) {
-      const precoMaior = Math.max(pSac, pMart);
-      const economiaItem = (precoMaior - precoVencedor) * qtd;
+    if (numSac > 0 && numMart > 0 && numQtd > 0) {
+      const precoMaior = Math.max(numSac, numMart);
+      const economiaItem = (precoMaior - precoVencedor) * numQtd;
       if (economiaItem > 0) economiaEstimada += economiaItem;
     }
 
@@ -170,10 +175,10 @@ export function calcularTotaisPedido(itensState, produtosMeta) {
       nome: item.nome,
       categoria: item.categoria,
       unidadeMedida: item.unidadeMedida,
-      estoque: item.estoque !== undefined && item.estoque !== null ? item.estoque : '',
-      precoSacolao: pSac,
-      precoMartMinas: pMart,
-      quantidade: qtd,
+      estoque: rawEst !== undefined && rawEst !== null ? rawEst : '',
+      precoSacolao: numSac > 0 ? numSac : (rawSac === '' ? '' : (parseFloat(rawSac) || '')),
+      precoMartMinas: numMart > 0 ? numMart : (rawMart === '' ? '' : (parseFloat(rawMart) || '')),
+      quantidade: numQtd > 0 ? numQtd : (rawQtd === '' ? '' : (parseFloat(rawQtd) || '')),
       fornecedorEscolhido: fornecedorFinal,
       subtotal,
       isManual: !!item.isManual

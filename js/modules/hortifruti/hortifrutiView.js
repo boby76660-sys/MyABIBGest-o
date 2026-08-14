@@ -123,9 +123,14 @@ export class HortifrutiModule extends BaseModule {
               <button class="pill ${this.currentSemana === 4 ? 'active' : ''}" data-semana="4">Semana 4</button>
             </div>
 
-            <button id="btn-copiar-anterior" class="btn btn-secondary" style="white-space: nowrap; font-size: 0.82rem; padding: 6px 14px;">
-              Copiar Preços da Semana Anterior
-            </button>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button id="btn-copiar-anterior" class="btn btn-secondary" style="white-space: nowrap; font-size: 0.82rem; padding: 6px 14px;">
+                Copiar Preços da Semana Anterior
+              </button>
+              <button id="btn-zerar-cotacao" class="btn btn-secondary" style="white-space: nowrap; font-size: 0.82rem; padding: 6px 14px; color: #dc2626; border-color: #fca5a5;">
+                Zerar Valores
+              </button>
+            </div>
           </div>
         </div>
 
@@ -371,6 +376,33 @@ export class HortifrutiModule extends BaseModule {
       });
     }
 
+    const btnZerarCot = this.container.querySelector('#btn-zerar-cotacao');
+    if (btnZerarCot) {
+      btnZerarCot.addEventListener('click', async () => {
+        if (confirm("Atenção: Deseja realmente apagar todos os estoques, preços e quantidades lançados nesta cotação?")) {
+          this.itensState.forEach(item => {
+            item.estoque = '';
+            item.precoSacolao = '';
+            item.precoMartMinas = '';
+            item.quantidade = '';
+            item.fornecedorEscolhido = '';
+            item.isManual = false;
+          });
+          this.filterAndRenderRows();
+          this.updateResumoCards();
+          const rawDoc = {
+            unidadeId: this.currentUnidadeId,
+            mesAno: this.currentMesAno,
+            semana: this.currentSemana,
+            nutricionistaId: this.currentProfile ? this.currentProfile.id : 'nutri_geral',
+            itens: this.itensState
+          };
+          await savePedidoSemanal(rawDoc);
+          alert("Todos os valores da cotação foram zerados com sucesso!");
+        }
+      });
+    }
+
     const btnFinalizar = this.container.querySelector('#btn-finalizar-horti');
     if (btnFinalizar) {
       btnFinalizar.addEventListener('click', async () => {
@@ -516,9 +548,9 @@ export class HortifrutiModule extends BaseModule {
         categoria: prod.categoria,
         unidadeMedida: prod.unidadeMedida,
         estoque: gravado ? (gravado.estoque !== undefined && gravado.estoque !== null ? gravado.estoque : '') : '',
-        precoSacolao: gravado ? (gravado.precoSacolao || '') : '',
-        precoMartMinas: gravado ? (gravado.precoMartMinas || '') : '',
-        quantidade: gravado ? (gravado.quantidade || '') : '',
+        precoSacolao: gravado ? (gravado.precoSacolao !== undefined && gravado.precoSacolao !== null && gravado.precoSacolao !== 0 ? gravado.precoSacolao : '') : '',
+        precoMartMinas: gravado ? (gravado.precoMartMinas !== undefined && gravado.precoMartMinas !== null && gravado.precoMartMinas !== 0 ? gravado.precoMartMinas : '') : '',
+        quantidade: gravado ? (gravado.quantidade !== undefined && gravado.quantidade !== null && gravado.quantidade !== 0 ? gravado.quantidade : '') : '',
         fornecedorEscolhido: gravado ? (gravado.fornecedorEscolhido || '') : '',
         isManual: gravado ? (gravado.isManual || false) : false
       };
@@ -630,7 +662,7 @@ export class HortifrutiModule extends BaseModule {
           item.isManual = true;
           item.fornecedorEscolhido = e.target.value;
         } else if (field) {
-          item[field] = e.target.value;
+          item[field] = e.target.value !== undefined && e.target.value !== null ? e.target.value.trim() : '';
         }
 
         this.updateRowCalculations(e.target.closest('tr'), idx);
