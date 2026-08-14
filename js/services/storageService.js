@@ -4,15 +4,17 @@
  */
 
 import { getRealtimeDB, checkIsFirebaseActive } from '../firebaseClient.js';
-import { UNIDADES_SEED, PUBLICOS_SEED, PERFIS_SEED, MODULOS_SEED, DEFAULT_ADMIN_PASSWORD } from '../config.js';
+import { UNIDADES_SEED, PUBLICOS_SEED, PERFIS_SEED, MODULOS_SEED, PRODUTOS_HORTIFRUTI_SEED, DEFAULT_ADMIN_PASSWORD } from '../config.js';
 
-const STORAGE_KEYS = {
+export const STORAGE_KEYS = {
   UNIDADES: 'abib_gestao_unidades',
   PUBLICOS: 'abib_gestao_publicos',
   PERFIS: 'abib_gestao_perfis',
   MODULOS: 'abib_gestao_modulos',
   COMENSAIS: 'abib_gestao_comensais',
-  CONFIG: 'abib_gestao_config'
+  CONFIG: 'abib_gestao_config',
+  HORTIFRUTI_PRODUTOS: 'abib_gestao_hortifruti_produtos',
+  HORTIFRUTI_PEDIDOS: 'abib_gestao_hortifruti_pedidos'
 };
 
 // Inicialização de sementes (seeds) caso LocalStorage esteja vazio
@@ -50,6 +52,12 @@ export function seedInitialData() {
   }
   if (!localStorage.getItem(STORAGE_KEYS.COMENSAIS)) {
     localStorage.setItem(STORAGE_KEYS.COMENSAIS, JSON.stringify([]));
+  }
+  if (!localStorage.getItem(STORAGE_KEYS.HORTIFRUTI_PRODUTOS)) {
+    localStorage.setItem(STORAGE_KEYS.HORTIFRUTI_PRODUTOS, JSON.stringify(PRODUTOS_HORTIFRUTI_SEED));
+  }
+  if (!localStorage.getItem(STORAGE_KEYS.HORTIFRUTI_PEDIDOS)) {
+    localStorage.setItem(STORAGE_KEYS.HORTIFRUTI_PEDIDOS, JSON.stringify([]));
   }
 }
 

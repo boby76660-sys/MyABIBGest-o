@@ -1,8 +1,9 @@
 /**
  * Admin Panel - Painel Administrativo Completo Protegido por Senha Máster
+ * Gerenciamento de Unidades, Públicos, Perfis, Firebase e Gerador de Links de WhatsApp
  */
 
-import { getUnidades, saveUnidade, getPublicos, savePublico, getPerfis, savePerfil, deletePerfil, getAdminConfig, updateAdminConfig, exportFullBackup, importFullBackup } from '../services/adminService.js';
+import { getUnidades, saveUnidade, regenerateUnitToken, getPublicos, savePublico, getPerfis, savePerfil, deletePerfil, getAdminConfig, updateAdminConfig, exportFullBackup } from '../services/adminService.js';
 import { initFirebase } from '../firebaseClient.js';
 
 export class AdminPanel {
@@ -25,7 +26,7 @@ export class AdminPanel {
     this.container.innerHTML = `
       <div class="admin-auth-overlay">
         <div class="admin-auth-card">
-          <div class="auth-icon">🔒</div>
+          <div class="auth-icon"></div>
           <h2>Painel Administrativo</h2>
           <p class="subtitle">Digite a Senha Máster para continuar</p>
 
@@ -33,7 +34,7 @@ export class AdminPanel {
             <input type="password" id="input-admin-password" class="input-field" placeholder="Digite a senha..." autofocus required>
             <button type="submit" class="btn btn-primary btn-block">Acessar Painel Admin</button>
           </form>
-          <button id="btn-cancel-admin" class="btn btn-link">⬅️ Cancelar e Voltar</button>
+          <button id="btn-cancel-admin" class="btn btn-link">⬅ Cancelar e Voltar</button>
         </div>
       </div>
     `;
@@ -49,7 +50,7 @@ export class AdminPanel {
         this.isAuthenticated = true;
         this.renderPanelContent();
       } else {
-        alert("❌ Senha incorreta! Tente novamente.");
+        alert("Senha incorreta! Tente novamente.");
       }
     });
 
@@ -63,18 +64,19 @@ export class AdminPanel {
       <div class="admin-layout">
         <div class="admin-sidebar">
           <div class="admin-logo">
-            <span>⚙️</span>
+            
             <h3>Painel Admin</h3>
           </div>
           <nav class="admin-nav">
-            <button class="nav-tab active" data-tab="unidades">🏢 Unidades (${(await getUnidades()).length})</button>
-            <button class="nav-tab" data-tab="publicos">👥 Públicos / Refeições</button>
-            <button class="nav-tab" data-tab="perfis">👤 Perfis e Visibilidade</button>
-            <button class="nav-tab" data-tab="firebase">🔥 Configurar Firebase</button>
-            <button class="nav-tab" data-tab="backup">💾 Backup & Importação</button>
+            <button class="nav-tab active" data-tab="links-whatsapp">Links do WhatsApp</button>
+            <button class="nav-tab" data-tab="unidades"> Unidades (${(await getUnidades()).length})</button>
+            <button class="nav-tab" data-tab="publicos">Públicos / Refeições</button>
+            <button class="nav-tab" data-tab="perfis">Perfis e Visibilidade</button>
+            <button class="nav-tab" data-tab="firebase">Configurar Firebase</button>
+            <button class="nav-tab" data-tab="backup">Backup & Importação</button>
           </nav>
           <div class="admin-sidebar-footer">
-            <button id="btn-sair-admin" class="btn btn-secondary btn-block">🚪 Sair do Admin</button>
+            <button id="btn-sair-admin" class="btn btn-secondary btn-block"> Sair do Admin</button>
           </div>
         </div>
 
@@ -85,7 +87,7 @@ export class AdminPanel {
     `;
 
     this.bindTabEvents();
-    await this.loadTabContent('unidades');
+    await this.loadTabContent('links-whatsapp');
   }
 
   bindTabEvents() {
@@ -108,7 +110,9 @@ export class AdminPanel {
   async loadTabContent(tabKey) {
     const body = this.container.querySelector('#admin-tab-body');
 
-    if (tabKey === 'unidades') {
+    if (tabKey === 'links-whatsapp') {
+      await this.renderLinksWhatsAppTab(body);
+    } else if (tabKey === 'unidades') {
       await this.renderUnidadesTab(body);
     } else if (tabKey === 'publicos') {
       await this.renderPublicosTab(body);
@@ -121,14 +125,153 @@ export class AdminPanel {
     }
   }
 
+  // --- ABA DE LINKS DO WHATSAPP ---
+  async renderLinksWhatsAppTab(body) {
+    const unidades = await getUnidades();
+    const baseUrl = `${window.location.origin}${window.location.pathname}`;
+
+    body.innerHTML = `
+      <div class="tab-header">
+        <div>
+          <h3>Gerador de Links de Acesso Seguro para WhatsApp</h3>
+          <p class="subtitle">Envie o link exclusivo de cada unidade diretamente para a RT ou Cozinheira responsável.</p>
+        </div>
+      </div>
+
+      <div class="card" style="background: #ffffff; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 18px; margin-bottom: 24px; box-shadow: var(--shadow-sm);">
+        <h4 style="font-size: 1rem; font-weight: 800; color: var(--text-title); margin-bottom: 6px;">
+          Links Diretos Restritos por Módulo (Acesso Exclusivo)
+        </h4>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 14px;">
+          Ao abrir por estes links, o dispositivo solicita a Senha Máster e trava a navegação exclusivamente naquele módulo, impedindo voltar ao painel geral.
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; background: #f8fafc; padding: 10px 14px; border-radius: var(--radius-sm); border: 1px solid #e2e8f0; flex-wrap: wrap;">
+            <div>
+              <strong style="font-size: 0.9rem; color: var(--text-title);">Módulo Comensais Diários:</strong>
+              <code style="font-size: 0.78rem; color: #2563eb; display: block; margin-top: 2px;">${baseUrl}?modulo=comensais</code>
+            </div>
+            <div style="display: flex; gap: 6px; align-items: center;">
+              <button class="btn btn-sm btn-primary btn-copy-module-link" data-link="${baseUrl}?modulo=comensais" data-name="Comensais Diários">
+                Copiar Link Comensais
+              </button>
+              <a href="${baseUrl}?modulo=comensais" target="_blank" class="btn btn-sm btn-secondary" title="Abrir link em nova aba" style="display: inline-flex; align-items: center; justify-content: center; padding: 6px 10px; border-radius: 8px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+              </a>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; background: #f8fafc; padding: 10px 14px; border-radius: var(--radius-sm); border: 1px solid #e2e8f0; flex-wrap: wrap;">
+            <div>
+              <strong style="font-size: 0.9rem; color: var(--text-title);">Módulo Hortifrúti Semanal:</strong>
+              <code style="font-size: 0.78rem; color: #2563eb; display: block; margin-top: 2px;">${baseUrl}?modulo=hortifruti</code>
+            </div>
+            <div style="display: flex; gap: 6px; align-items: center;">
+              <button class="btn btn-sm btn-primary btn-copy-module-link" data-link="${baseUrl}?modulo=hortifruti" data-name="Hortifrúti Semanal">
+                Copiar Link Hortifrúti
+              </button>
+              <a href="${baseUrl}?modulo=hortifruti" target="_blank" class="btn btn-sm btn-secondary" title="Abrir link em nova aba" style="display: inline-flex; align-items: center; justify-content: center; padding: 6px 10px; border-radius: 8px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-responsive-card">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Cód</th>
+              <th>Grupo</th>
+              <th>Loja / Unidade</th>
+              <th>Token Secreto</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${unidades.map(u => {
+              const fullLink = `${baseUrl}?token=${u.tokenAcesso}`;
+              const grpClass = u.grupo ? `group-badge-${u.grupo.toLowerCase()}` : '';
+              return `
+                <tr>
+                  <td>${u.codigo || '-'}</td>
+                  <td><span class="group-badge-tag ${grpClass}">${u.grupo || '-'}</span></td>
+                  <td><strong>${u.loja}</strong></td>
+                  <td><code>${u.tokenAcesso}</code></td>
+                  <td>
+                    <div style="display: flex; gap: 6px; align-items: center;">
+                      <button class="btn btn-sm btn-primary btn-copy-whatsapp-link" data-loja="${u.loja}" data-link="${fullLink}">
+                        Copiar Link
+                      </button>
+                      <button class="btn btn-sm btn-secondary btn-regerar-token" data-id="${u.id}" data-loja="${u.loja}">
+                        Regerar Token
+                      </button>
+                      <a href="${fullLink}" target="_blank" class="btn btn-sm btn-secondary" title="Abrir link em nova aba" style="display: inline-flex; align-items: center; justify-content: center; padding: 6px 10px; border-radius: 8px;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+
+    body.querySelectorAll('.btn-copy-module-link').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const link = btn.getAttribute('data-link');
+        const name = btn.getAttribute('data-name');
+        const temp = document.createElement('textarea');
+        temp.value = link;
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand('copy');
+        document.body.removeChild(temp);
+        alert(`Link direto restrito para ${name} copiado com sucesso!`);
+      });
+    });
+
+    body.querySelectorAll('.btn-copy-whatsapp-link').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const loja = btn.getAttribute('data-loja');
+        const link = btn.getAttribute('data-link');
+        
+        const temp = document.createElement('textarea');
+        temp.value = link;
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand('copy');
+        document.body.removeChild(temp);
+        
+        alert(`Link da unidade ${loja} copiado com sucesso!`);
+      });
+    });
+
+    body.querySelectorAll('.btn-regerar-token').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        const id = btn.getAttribute('data-id');
+        const loja = btn.getAttribute('data-loja');
+        if (confirm(`Atenção: Deseja revogar o link antigo e gerar um NOVO token seguro para a unidade ${loja}?\n\nO link antigo deixará de funcionar.`)) {
+          await regenerateUnitToken(id);
+          alert(`Novo token gerado com sucesso para a unidade ${loja}!`);
+          await this.renderLinksWhatsAppTab(body);
+        }
+      });
+    });
+  }
+
   // --- ABA 1: GESTÃO DE UNIDADES ---
   async renderUnidadesTab(body) {
     const unidades = await getUnidades();
 
     body.innerHTML = `
       <div class="tab-header">
-        <h3>🏢 Cadastro e Gestão das 21 Unidades</h3>
-        <button id="btn-nova-unidade" class="btn btn-primary">➕ Nova Unidade</button>
+        <h3> Cadastro e Gestão das 21 Unidades</h3>
+        <button id="btn-nova-unidade" class="btn btn-primary">Nova Unidade</button>
       </div>
 
       <div class="table-responsive-card">
@@ -152,9 +295,9 @@ export class AdminPanel {
                 <td><strong>${u.loja}</strong></td>
                 <td>${u.unidade || '-'}</td>
                 <td><code>${u.cnpj || '-'}</code></td>
-                <td>${u.ativo !== false ? '🟢 Ativo' : '🔴 Inativo'}</td>
+                <td>${u.ativo !== false ? '🟢 Ativo' : 'Inativo'}</td>
                 <td>
-                  <button class="btn btn-sm btn-secondary btn-edit-unidade" data-id="${u.id}">✏️ Editar</button>
+                  <button class="btn btn-sm btn-secondary btn-edit-unidade" data-id="${u.id}">Editar</button>
                 </td>
               </tr>
             `).join('')}
@@ -220,7 +363,7 @@ export class AdminPanel {
     body.querySelectorAll('.btn-edit-unidade').forEach(btn => {
       btn.addEventListener('click', () => {
         const id = btn.getAttribute('data-id');
-        const target = unidades.find(x => x.id === id);
+        const target = unidades.find(u => u.id === id);
         if (target) {
           body.querySelector('#edit-unidade-id').value = target.id;
           body.querySelector('#u-codigo').value = target.codigo || '';
@@ -237,26 +380,28 @@ export class AdminPanel {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const id = body.querySelector('#edit-unidade-id').value;
-      const codigo = body.querySelector('#u-codigo').value;
-      const grupo = body.querySelector('#u-grupo').value;
-      const loja = body.querySelector('#u-loja').value;
-      const unidade = body.querySelector('#u-unidade').value;
-      const cnpj = body.querySelector('#u-cnpj').value;
+      const target = unidades.find(u => u.id === id) || {};
 
-      await saveUnidade({ id: id || undefined, codigo, grupo, loja, unidade, cnpj, ativo: true });
+      target.codigo = body.querySelector('#u-codigo').value;
+      target.grupo = body.querySelector('#u-grupo').value;
+      target.loja = body.querySelector('#u-loja').value;
+      target.unidade = body.querySelector('#u-unidade').value;
+      target.cnpj = body.querySelector('#u-cnpj').value;
+
+      await saveUnidade(target);
       modal.classList.add('hidden');
       await this.renderUnidadesTab(body);
     });
   }
 
-  // --- ABA 2: GESTÃO DE PÚBLICOS ---
+  // --- ABA 2: PÚBLICOS ---
   async renderPublicosTab(body) {
     const publicos = await getPublicos();
 
     body.innerHTML = `
       <div class="tab-header">
-        <h3>👥 Categorias de Públicos de Refeição</h3>
-        <button id="btn-novo-publico" class="btn btn-primary">➕ Novo Público</button>
+        <h3>Categorias de Públicos de Comensais</h3>
+        <button id="btn-novo-publico" class="btn btn-primary">Novo Público</button>
       </div>
 
       <div class="table-responsive-card">
@@ -264,7 +409,7 @@ export class AdminPanel {
           <thead>
             <tr>
               <th>Ordem</th>
-              <th>Nome da Categoria</th>
+              <th>Nome do Público</th>
               <th>Status</th>
               <th>Ações</th>
             </tr>
@@ -272,11 +417,11 @@ export class AdminPanel {
           <tbody>
             ${publicos.map(p => `
               <tr>
-                <td>${p.ordem || 1}</td>
+                <td>${p.ordem || '-'}</td>
                 <td><strong>${p.nome}</strong></td>
-                <td>${p.ativo !== false ? '🟢 Ativo' : '🔴 Inativo'}</td>
+                <td>${p.ativo !== false ? '🟢 Ativo' : 'Inativo'}</td>
                 <td>
-                  <button class="btn btn-sm btn-secondary btn-edit-pub" data-id="${p.id}">✏️ Editar</button>
+                  <button class="btn btn-sm btn-secondary btn-edit-publico" data-id="${p.id}">Editar</button>
                 </td>
               </tr>
             `).join('')}
@@ -284,170 +429,138 @@ export class AdminPanel {
         </table>
       </div>
     `;
-
-    body.querySelector('#btn-novo-publico').addEventListener('click', async () => {
-      const nome = prompt("Nome da nova categoria de público (ex: Diretoria, Eventos):");
-      if (nome) {
-        await savePublico({ nome });
-        await this.renderPublicosTab(body);
-      }
-    });
-
-    body.querySelectorAll('.btn-edit-pub').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const id = btn.getAttribute('data-id');
-        const pub = publicos.find(x => x.id === id);
-        if (pub) {
-          const novoNome = prompt("Novo nome para o público:", pub.nome);
-          if (novoNome) {
-            await savePublico({ ...pub, nome: novoNome });
-            await this.renderPublicosTab(body);
-          }
-        }
-      });
-    });
   }
 
-  // --- ABA 3: PERFIS E VISIBILIDADE DE CAMPOS ---
+  // --- ABA 3: PERFIS DE ACESSO ---
   async renderPerfisTab(body) {
     const perfis = await getPerfis();
 
     body.innerHTML = `
       <div class="tab-header">
-        <h3>👤 Gerenciamento de Perfis e Permissões de Visibilidade</h3>
-        <button id="btn-novo-perfil" class="btn btn-primary">➕ Novo Perfil</button>
+        <h3>Perfis de Acesso & Permissões</h3>
       </div>
 
-      <p class="help-text">Defina aqui quais campos das empresas (Código, Grupo, Loja, Unidade, CNPJ) ficam visíveis para cada perfil:</p>
-
-      <div class="perfis-cards-grid">
-        ${perfis.map(p => {
-          const campos = p.permissoesCamposUnidade || ["loja"];
-          return `
-            <div class="card-perfil-admin">
-              <div class="card-perfil-header">
-                <span class="perfil-icon">${p.icone || '👤'}</span>
-                <div>
-                  <h4>${p.nome}</h4>
-                  <p class="perfil-desc">${p.descricao || ''}</p>
-                </div>
-              </div>
-
-              <div class="field-permissions-box">
-                <h5>👁️ Campos das Empresas Visíveis:</h5>
-                <div class="checkbox-grid" data-perfil-id="${p.id}">
-                  <label><input type="checkbox" value="codigo" ${campos.includes('codigo') ? 'checked' : ''}> Código</label>
-                  <label><input type="checkbox" value="grupo" ${campos.includes('grupo') ? 'checked' : ''}> Grupo (AC/ABIB/MOC)</label>
-                  <label><input type="checkbox" value="loja" ${campos.includes('loja') ? 'checked' : ''}> Nome da Loja</label>
-                  <label><input type="checkbox" value="unidade" ${campos.includes('unidade') ? 'checked' : ''}> Filial / Matriz</label>
-                  <label><input type="checkbox" value="cnpj" ${campos.includes('cnpj') ? 'checked' : ''}> CNPJ</label>
-                </div>
-              </div>
-
-              <div class="card-perfil-actions">
-                <button class="btn btn-sm btn-primary btn-save-perfil-perm" data-id="${p.id}">💾 Salvar Permissões</button>
-                <button class="btn btn-sm btn-danger btn-del-perfil" data-id="${p.id}">🗑️ Excluir</button>
-              </div>
+      <div class="perfis-grid">
+        ${perfis.map(p => `
+          <div class="card-perfil">
+            <div class="card-perfil-header">
+              <span>${p.icone || ''}</span>
+              <h4>${p.nome}</h4>
             </div>
-          `;
-        }).join('')}
+            <p>${p.descricao || ''}</p>
+          </div>
+        `).join('')}
       </div>
     `;
-
-    body.querySelector('#btn-novo-perfil').addEventListener('click', async () => {
-      const nome = prompt("Nome do novo perfil (ex: Supervisor Regional):");
-      if (nome) {
-        await savePerfil({ nome, icone: '👩‍💻', modulos: ['comensais'], permissoesCamposUnidade: ['loja', 'grupo'] });
-        await this.renderPerfisTab(body);
-      }
-    });
-
-    body.querySelectorAll('.btn-save-perfil-perm').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const id = btn.getAttribute('data-id');
-        const perfil = perfis.find(x => x.id === id);
-        const box = body.querySelector(`.checkbox-grid[data-perfil-id="${id}"]`);
-        const checked = Array.from(box.querySelectorAll('input:checked')).map(cb => cb.value);
-
-        await savePerfil({ ...perfil, permissoesCamposUnidade: checked });
-        alert(`✅ Permissões de campos salvas para o perfil ${perfil.nome}!`);
-      });
-    });
-
-    body.querySelectorAll('.btn-del-perfil').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const id = btn.getAttribute('data-id');
-        if (confirm("Deseja realmente excluir este perfil?")) {
-          await deletePerfil(id);
-          await this.renderPerfisTab(body);
-        }
-      });
-    });
   }
 
-  // --- ABA 4: CONFIGURAÇÃO DO FIREBASE (REALTIME DATABASE) ---
+  // --- ABA 4: FIREBASE CONFIG & SENHAS ---
   async renderFirebaseTab(body) {
     const config = await getAdminConfig();
     const fb = config.firebaseConfig || {};
 
     body.innerHTML = `
       <div class="tab-header">
-        <h3>🔥 Configuração do Google Firebase (Realtime Database)</h3>
+        <h3>Configuração de Senhas & Banco Cloud (Firebase)</h3>
       </div>
 
-      <p class="help-text">Cole aqui as credenciais do seu aplicativo Firebase para ativar a sincronização em tempo real na nuvem do Google:</p>
+      <div class="card" style="background: #ffffff; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 18px; margin-bottom: 24px; box-shadow: var(--shadow-sm);">
+        <h4 style="font-size: 1rem; font-weight: 800; color: var(--text-title); margin-bottom: 6px;">
+          Senhas de Acesso aos Módulos & Gerência
+        </h4>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 14px;">
+          Defina a Senha Máster Geral e as senhas exclusivas de cada módulo. A Senha Máster de Gerente libera acesso total.
+        </p>
+
+        <form id="form-passwords-config" style="display: flex; flex-direction: column; gap: 12px;">
+          <div class="form-group">
+            <label style="font-weight: 700;">Senha Máster Geral (Gerência / Diretoria):</label>
+            <input type="text" id="cfg-adminPassword" class="input-field" value="${config.adminPassword || 'Gestao@5170'}">
+          </div>
+          <div class="form-group">
+            <label style="font-weight: 700;">Senha Exclusiva: Módulo Comensais Diários:</label>
+            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+              <input type="text" id="cfg-passwordComensais" class="input-field" style="flex: 1; min-width: 200px;" value="${config.passwordComensais || 'Comensais@3928'}">
+              <button type="button" id="btn-gen-pass-comensais" class="btn btn-sm btn-secondary" style="white-space: nowrap;">
+                Gerar Nova Sequência
+              </button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label style="font-weight: 700;">Senha Exclusiva: Módulo Hortifrúti Semanal:</label>
+            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+              <input type="text" id="cfg-passwordHortifruti" class="input-field" style="flex: 1; min-width: 200px;" value="${config.passwordHortifruti || 'Hortifruti@6481'}">
+              <button type="button" id="btn-gen-pass-hortifruti" class="btn btn-sm btn-secondary" style="white-space: nowrap;">
+                Gerar Nova Sequência
+              </button>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary" style="align-self: flex-start; margin-top: 4px;">Salvar Senhas</button>
+        </form>
+      </div>
 
       <form id="form-firebase-config" class="form-card">
+        <h4 style="font-size: 1rem; font-weight: 800; color: var(--text-title); margin-bottom: 12px;">
+          Conexão Google Firebase (Cloud Sync)
+        </h4>
         <div class="form-group">
-          <label>API Key (apiKey):*</label>
-          <input type="text" id="fb-apikey" class="input-field" value="${fb.apiKey || ''}" placeholder="AIzaSyD-...">
+          <label>API Key:</label>
+          <input type="text" id="fb-apiKey" class="input-field" value="${fb.apiKey || ''}">
         </div>
         <div class="form-group">
-          <label>Database URL (databaseURL):*</label>
-          <input type="text" id="fb-databaseurl" class="input-field" value="${fb.databaseURL || ''}" placeholder="https://abib-gestao-default-rtdb.firebaseio.com">
+          <label>Database URL:</label>
+          <input type="text" id="fb-databaseURL" class="input-field" value="${fb.databaseURL || ''}">
         </div>
         <div class="form-group">
-          <label>Project ID (projectId):</label>
-          <input type="text" id="fb-projectid" class="input-field" value="${fb.projectId || ''}" placeholder="abib-gestao">
+          <label>Project ID:</label>
+          <input type="text" id="fb-projectId" class="input-field" value="${fb.projectId || ''}">
         </div>
-
-        <button type="submit" class="btn btn-primary btn-block">💾 Salvar Credenciais do Realtime Database</button>
+        <button type="submit" class="btn btn-secondary">Salvar Configuração Firebase</button>
       </form>
     `;
 
+    body.querySelector('#btn-gen-pass-comensais')?.addEventListener('click', () => {
+      const randNum = Math.floor(1000 + Math.random() * 9000);
+      body.querySelector('#cfg-passwordComensais').value = `Comensais@${randNum}`;
+    });
+
+    body.querySelector('#btn-gen-pass-hortifruti')?.addEventListener('click', () => {
+      const randNum = Math.floor(1000 + Math.random() * 9000);
+      body.querySelector('#cfg-passwordHortifruti').value = `Hortifruti@${randNum}`;
+    });
+
+    body.querySelector('#form-passwords-config').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const adminPassword = body.querySelector('#cfg-adminPassword').value.trim();
+      const passwordComensais = body.querySelector('#cfg-passwordComensais').value.trim();
+      const passwordHortifruti = body.querySelector('#cfg-passwordHortifruti').value.trim();
+      
+      await updateAdminConfig({ adminPassword, passwordComensais, passwordHortifruti });
+      alert("Senhas de acesso atualizadas com sucesso!");
+    });
+
     body.querySelector('#form-firebase-config').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const fbConfig = {
-        apiKey: body.querySelector('#fb-apikey').value.trim(),
-        databaseURL: body.querySelector('#fb-databaseurl').value.trim(),
-        projectId: body.querySelector('#fb-projectid').value.trim()
+      const newFbConfig = {
+        apiKey: body.querySelector('#fb-apiKey').value,
+        databaseURL: body.querySelector('#fb-databaseURL').value,
+        projectId: body.querySelector('#fb-projectId').value
       };
-
-      await updateAdminConfig({ firebaseConfig: fbConfig });
-      initFirebase(fbConfig);
-      alert("✅ Configurações do Firebase Realtime Database salvas e inicializadas!");
+      await updateAdminConfig({ firebaseConfig: newFbConfig });
+      initFirebase(newFbConfig);
+      alert("Configuração do Firebase atualizada com sucesso!");
     });
   }
 
-  // --- ABA 5: BACKUP & IMPORTAÇÃO ---
+  // --- ABA 5: BACKUP ---
   async renderBackupTab(body) {
     body.innerHTML = `
       <div class="tab-header">
-        <h3>💾 Backup e Importação de Dados</h3>
+        <h3>Backup e Restauração JSON</h3>
       </div>
 
-      <div class="backup-grid">
-        <div class="backup-card">
-          <h4>📥 Exportar Backup Completo</h4>
-          <p>Baixe um arquivo JSON contendo todas as 21 unidades, perfis, públicos e históricos de comensais.</p>
-          <button id="btn-export-json" class="btn btn-primary">Download Backup JSON</button>
-        </div>
-
-        <div class="backup-card">
-          <h4>📤 Restaurar Backup</h4>
-          <p>Selecione um arquivo JSON de backup salvo anteriormente para restaurar o sistema.</p>
-          <input type="file" id="input-import-json" accept=".json" class="input-file">
-        </div>
+      <div class="backup-actions">
+        <button id="btn-export-json" class="btn btn-primary">Baixar Backup JSON Completo</button>
       </div>
     `;
 
@@ -457,28 +570,10 @@ export class AdminPanel {
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `backup_gestao_abib_${new Date().toISOString().split('T')[0]}.json`);
+      link.setAttribute('download', `backup_abib_${new Date().toISOString().split('T')[0]}.json`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-    });
-
-    body.querySelector('#input-import-json').addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = async (evt) => {
-          try {
-            const parsed = JSON.parse(evt.target.result);
-            await importFullBackup(parsed);
-            alert("✅ Backup restaurado com sucesso!");
-            window.location.reload();
-          } catch (err) {
-            alert("❌ Erro ao importar backup: " + err.message);
-          }
-        };
-        reader.readAsText(file);
-      }
     });
   }
 }

@@ -230,6 +230,11 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   user-select: none;
 }
 
+.header-brand.locked-brand,
+.header-brand.locked-brand * {
+  cursor: default !important;
+}
+
 .brand-icon-box {
   width: 32px;
   height: 32px;
@@ -939,6 +944,13 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   padding-right: 2px;
 }
 
+html.modal-open,
+body.modal-open {
+  overflow: hidden !important;
+  height: 100vh !important;
+  touch-action: none;
+}
+
 .modal-footer {
   margin-top: 12px;
   padding-top: 10px;
@@ -946,14 +958,36 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   flex-shrink: 0;
 }
 
-.btn-close-modal, .btn-close-modal-unidades {
-  background: none;
-  border: none;
-  font-size: 1.4rem;
+.btn-close-modal, 
+.btn-close-modal-unidades, 
+.btn-close-modal-links-horti, 
+.btn-close-modal-links-unidades {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #64748b;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 700;
   cursor: pointer;
-  color: var(--text-muted);
-  padding: 0 4px;
+  transition: all 0.2s ease;
   line-height: 1;
+  padding: 0;
+  outline: none;
+}
+
+.btn-close-modal:hover, 
+.btn-close-modal-unidades:hover, 
+.btn-close-modal-links-horti:hover, 
+.btn-close-modal-links-unidades:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+  border-color: #94a3b8;
+  transform: scale(1.05);
 }
 
 .whatsapp-textarea {
@@ -1090,3 +1124,1305 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   margin-top: 32px;
   background: var(--bg-surface);
 }
+
+/* --- SEÇÃO DE FILTROS DO RELATÓRIO --- */
+.report-filters-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  margin-bottom: 18px;
+  box-shadow: var(--shadow-sm);
+}
+
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 14px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.filter-group label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.filter-group select,
+.filter-group input {
+  height: 38px;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  background: #ffffff;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-title);
+}
+
+#select-periodo {
+  min-width: 160px;
+}
+
+#select-filtro-loja {
+  min-width: 220px;
+  max-width: 280px;
+}
+
+.custom-date-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-row .btn {
+  height: 38px;
+  padding: 0 16px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+/* Ocultar texto bruto de filtro na tela (exibir apenas no PDF print) */
+.pdf-filter-info {
+  display: none;
+}
+
+.report-view-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 8px;
+}
+
+.report-tab-btn {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.report-tab-btn:hover {
+  border-color: var(--primary-border);
+  color: var(--primary);
+}
+
+.report-tab-btn.active {
+  background: var(--primary);
+  color: #ffffff;
+  border-color: var(--primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.visual-dashboard-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.dashboard-charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.chart-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.chart-card-full {
+  grid-column: 1 / -1;
+}
+
+.chart-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 10px;
+}
+
+.chart-card-header h3 {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text-title);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.chart-card-header .chart-badge {
+  font-size: 0.72rem;
+  background: var(--primary-light);
+  color: var(--primary);
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 12px;
+}
+
+/* --- GRÁFICO DE ONDA / ÁREA SVG --- */
+.svg-wave-container {
+  width: 100%;
+  position: relative;
+  padding-top: 10px;
+}
+
+.svg-wave-chart {
+  width: 100%;
+  height: 220px;
+  overflow: visible;
+  display: block;
+}
+
+.wave-point {
+  fill: #ffffff;
+  stroke: #10b981;
+  stroke-width: 3px;
+  cursor: pointer;
+  transition: r 0.2s ease, stroke-width 0.2s ease;
+}
+
+.wave-point:hover {
+  r: 7;
+  stroke: #047857;
+  stroke-width: 4px;
+}
+
+.wave-value-text {
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  fill: var(--text-title);
+  text-anchor: middle;
+  dominant-baseline: auto;
+}
+
+.wave-label-text {
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  fill: var(--text-muted);
+  text-anchor: middle;
+}
+
+/* --- GRÁFICO DONUT SVG --- */
+.donut-chart-flex {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 0;
+}
+
+.svg-donut-chart {
+  width: 180px;
+  height: 180px;
+  transform: rotate(-90deg);
+}
+
+.donut-segment {
+  fill: transparent;
+  stroke-width: 24;
+  transition: stroke-dasharray 0.6s ease, stroke-width 0.2s ease;
+}
+
+.donut-segment:hover {
+  stroke-width: 28;
+  cursor: pointer;
+}
+
+.donut-legend-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  width: 100%;
+}
+
+.donut-legend-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f8fafc;
+  border: 1px solid var(--border-color);
+  padding: 4px 10px;
+  border-radius: 16px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+/* --- GRÁFICO COMPARATIVO POR GRUPO (AC, ABIB, MOC) --- */
+.groups-comparison-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.group-comp-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: #f8fafc;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+}
+
+.group-comp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.group-badge-tag {
+  padding: 2px 8px;
+  border-radius: 12px;
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.group-badge-ac { background: #6366f1; }
+.group-badge-abib { background: #10b981; }
+.group-badge-moc { background: #8b5cf6; }
+
+.group-comp-val {
+  color: var(--text-title);
+  font-size: 0.92rem;
+}
+
+.group-track {
+  width: 100%;
+  height: 12px;
+  background: #e2e8f0;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.group-bar-fill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Ranking de Unidades Otimizado */
+.ranking-units-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ranking-unit-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: #f8fafc;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+}
+
+.ranking-unit-pos {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ranking-unit-name {
+  font-weight: 700;
+  font-size: 0.85rem;
+  flex: 1;
+  color: var(--text-title);
+}
+
+.ranking-unit-total {
+  font-weight: 800;
+  font-size: 0.88rem;
+  color: var(--primary);
+}
+
+/* Banner de Unidade Travada (Modo Operacional por Token) */
+.unit-lock-banner {
+  background: linear-gradient(135deg, #065f46 0%, #047857 100%);
+  color: #ffffff;
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.unit-lock-banner strong {
+  color: #a7f3d0;
+}
+
+.input-link-readonly {
+  background: #f1f5f9 !important;
+  color: var(--text-muted) !important;
+  cursor: pointer;
+  border: 1px dashed var(--border-color) !important;
+}
+
+/* --- GRÁFICO DE BARRAS DE TODAS AS 21 UNIDADES --- */
+.all-units-chart-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.all-units-bars-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 12px;
+  width: 100%;
+}
+
+.all-units-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  background: #f8fafc;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+}
+
+.all-units-bar-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-title);
+  width: 150px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.all-units-bar-track {
+  flex: 1;
+  height: 12px;
+  background: #e2e8f0;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.all-units-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+  border-radius: 6px;
+  transition: width 0.5s ease;
+}
+
+.all-units-bar-val {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: var(--primary);
+  width: 50px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.all-units-footer-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--border-color);
+}
+
+.summary-group-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.summary-group-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  background: #f8fafc;
+  border: 1px solid var(--border-color);
+  font-size: 0.82rem;
+  color: var(--text-title);
+}
+
+.summary-total-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: var(--primary-light);
+  color: var(--primary);
+  border: 1px solid var(--primary-border);
+  border-radius: var(--radius-sm);
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+
+/* Print Banner PDF */
+.pdf-print-header {
+  display: none;
+}
+
+/* ==========================================================================
+   REGRAS DE IMPRESSÃO (@MEDIA PRINT) PARA GERAR PDF PERFEITO
+   ========================================================================== */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 11pt;
+  }
+
+  .app-header,
+  .app-footer,
+  .module-header .header-actions,
+  .report-filters-card,
+  .report-view-tabs,
+  .btn,
+  .btn-sm,
+  .btn-secondary,
+  .btn-primary,
+  .btn-success {
+    display: none !important;
+  }
+
+  .app-container {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    box-shadow: none !important;
+  }
+
+  .pdf-print-header {
+    display: block !important;
+    text-align: center;
+    border-bottom: 2px solid #000000;
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+  }
+
+  .pdf-print-header h1 {
+    font-size: 18pt;
+    font-weight: bold;
+    margin: 0;
+    color: #047857;
+  }
+
+  .pdf-print-header p {
+    font-size: 10pt;
+    margin: 4px 0 0 0;
+    color: #4b5563;
+  }
+
+  .pdf-filter-info {
+    display: block !important;
+    font-size: 9pt;
+    background: #f3f4f6;
+    padding: 6px 12px;
+    border-radius: 4px;
+    margin-bottom: 16px;
+    font-weight: bold;
+  }
+
+  .visual-dashboard-container,
+  .kpi-grid,
+  .table-responsive-card,
+  .chart-card {
+    page-break-inside: avoid;
+    break-inside: avoid;
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: none !important;
+  }
+
+  svg {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .donut-segment, .group-bar-fill, .wave-point {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .kpi-card {
+    border: 1px solid #cbd5e1 !important;
+    background: #f8fafc !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  table.data-table th {
+    background: #e2e8f0 !important;
+    color: #000000 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
+
+/* ==========================================================================
+   ESTILOS DO MÓDULO HORTIFRÚTI (COTAÇÃO, COMPARATIVO E AUDITORIA)
+   ========================================================================== */
+
+/* Abas de Navegação no Header do Módulo */
+.tab-pill-group {
+  display: flex;
+  background: var(--bg-body);
+  border: 1px solid var(--border-color);
+  padding: 4px;
+  border-radius: var(--radius-md);
+  gap: 4px;
+}
+
+.tab-pill {
+  padding: 8px 16px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.tab-pill.active {
+  background: var(--bg-surface);
+  color: var(--primary);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+  font-weight: 700;
+}
+
+.horti-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.horti-section.hidden {
+  display: none !important;
+}
+
+.table-responsive-container {
+  width: 100%;
+  overflow: visible;
+  background: var(--bg-surface);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-card);
+  margin-bottom: 14px;
+}
+
+.horti-table {
+  width: 100%;
+  table-layout: fixed;
+  min-width: 750px;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.88rem;
+  background: var(--bg-surface);
+}
+
+.horti-table th.col-produto, .horti-table td.col-produto { width: 25%; }
+.horti-table th.col-estoque, .horti-table td.col-estoque { width: 11%; text-align: center !important; }
+.horti-table th.col-sacolao, .horti-table td.col-sacolao { width: 14%; text-align: center !important; }
+.horti-table th.col-martminas, .horti-table td.col-martminas { width: 14%; text-align: center !important; }
+.horti-table th.col-qtd, .horti-table td.col-qtd { width: 11%; text-align: center !important; }
+.horti-table th.col-vencedor, .horti-table td.col-vencedor { 
+  width: 14%; 
+  text-align: center !important; 
+}
+.horti-table td.col-vencedor select {
+  margin: 0 auto;
+  display: inline-block;
+  text-align: center;
+  text-align-last: center;
+}
+.horti-table th.col-subtotal, .horti-table td.col-subtotal { 
+  width: 12%; 
+  text-align: center !important; 
+}
+
+.search-and-category-bar {
+  position: sticky;
+  top: 56px;
+  z-index: 90;
+  background: var(--bg-surface);
+  margin-bottom: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.horti-table th {
+  position: sticky;
+  top: 114px;
+  z-index: 85;
+  background: #f8fafc;
+  color: var(--text-title);
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 12px 14px;
+  border-bottom: 2px solid var(--border-color);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* --- FIXAÇÃO PERFEITA DE CABEÇALHOS EM RELATÓRIOS (TETO DA PÁGINA: TOP 56PX) --- */
+#section-relatorio .horti-table th,
+.table-auditoria-unidades th,
+.table-consumo-produtos th {
+  position: sticky !important;
+  top: 56px !important;
+  z-index: 85 !important;
+  background: #f8fafc !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+}
+
+.horti-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-color);
+  vertical-align: middle;
+}
+
+.tr-category-header td {
+  background: #f1f5f9;
+  color: #334155;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 10px 14px;
+  border-top: 2px solid #cbd5e1;
+  border-bottom: 1px solid #cbd5e1;
+}
+
+.tr-produto-row:hover {
+  background: rgba(16, 185, 129, 0.03);
+}
+
+/* Destaque de Linha Preenchida com Dados */
+.tr-produto-row.tr-filled {
+  background-color: rgba(16, 185, 129, 0.05);
+}
+
+.tr-produto-row.tr-filled:hover {
+  background-color: rgba(16, 185, 129, 0.09);
+}
+
+/* Destaque de Menor Preço (Fundo Verde Leve) */
+.bg-green-highlight {
+  background-color: rgba(16, 185, 129, 0.15) !important;
+  border-radius: var(--radius-sm);
+  transition: background-color 0.2s ease;
+}
+
+.input-money-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 4px 8px;
+}
+
+.input-money-wrapper:focus-within {
+  border-color: #10b981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+
+.currency-symbol {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.input-table-number {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-title);
+  outline: none;
+  text-align: right;
+}
+
+select.select-vencedor-override,
+.select-vencedor-override {
+  display: block !important;
+  margin: 0 auto !important;
+  padding: 4px 0 !important;
+  width: 105px !important;
+  max-width: 100% !important;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  background: var(--bg-surface) !important;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center !important;
+  text-align-last: center !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  background-image: none !important;
+}
+
+.select-vencedor-override::-ms-expand {
+  display: none !important;
+}
+
+.select-vencedor-override option {
+  text-align: center !important;
+}
+
+.tag-override {
+  display: block;
+  font-size: 0.68rem;
+  color: #d97706;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+/* Cards de Rodapé da Cotação */
+.horti-footer-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 14px;
+}
+
+.cards-summary-row, .rel-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.summary-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  box-shadow: var(--shadow-card);
+}
+
+.summary-card .card-title {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  display: block;
+}
+
+.summary-card .card-value {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--text-title);
+}
+
+.green-text {
+  color: #059669 !important;
+}
+
+.footer-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Sub-abas do Modal do WhatsApp */
+.modal-tabs {
+  display: flex;
+  gap: 10px;
+  border-bottom: 2px solid var(--border-color);
+  margin-bottom: 14px;
+}
+
+.modal-tab-btn {
+  padding: 8px 16px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-weight: 600;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+}
+
+.modal-tab-btn.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+  font-weight: 700;
+}
+
+.badge-sem {
+  display: inline-block;
+  background: #e2e8f0;
+  color: #334155;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.badge-pendente {
+  display: inline-block;
+  background: #fee2e2;
+  color: #dc2626;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.mobile-label {
+  display: none !important;
+}
+
+.tag-cat {
+  display: inline-block;
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+/* --- OTIMIZAÇÃO RESPONSIVA EM CARDS PARA DISPOSITIVOS MÓVEIS (SMARTPHONES) --- */
+@media (max-width: 768px) {
+  /* Exibe os rótulos internos de cada campo no celular */
+  .mobile-label {
+    display: block !important;
+    font-size: 0.65rem !important;
+    font-weight: 700 !important;
+    color: var(--text-muted) !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.3px !important;
+    margin-bottom: 4px !important;
+  }
+
+  /* Oculta os cabeçalhos padrão da tabela no celular */
+  .horti-table thead {
+    display: none !important;
+  }
+
+  /* Transforma a estrutura da tabela em lista de cards fluídos */
+  .table-responsive-container {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+  }
+
+  .horti-table, 
+  .horti-table tbody {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  /* Título da Categoria no Celular */
+  .tr-category-header {
+    display: block !important;
+    width: 100% !important;
+    margin: 14px 0 8px 0 !important;
+  }
+
+  .tr-category-header td {
+    display: block !important;
+    border-radius: var(--radius-sm) !important;
+    border: 1px solid var(--border-color) !important;
+    background: #f1f5f9 !important;
+    color: #334155 !important;
+    font-size: 0.85rem !important;
+    font-weight: 700 !important;
+    padding: 8px 12px !important;
+  }
+
+  /* Card do Produto no Celular (Grid de 3 Linhas) */
+  .tr-produto-row {
+    display: grid !important;
+    grid-template-columns: 0.9fr 1.1fr 1.1fr 0.9fr !important;
+    gap: 8px 6px !important;
+    background: var(--bg-surface) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: var(--radius-md) !important;
+    padding: 12px 14px !important;
+    margin-bottom: 10px !important;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04) !important;
+  }
+
+  /* Linha 1: Nome do Produto (Largura Total - Colunas 1 a 4) */
+  .tr-produto-row td.col-produto {
+    grid-column: 1 / -1 !important;
+    display: block !important;
+    width: 100% !important;
+    padding: 0 0 6px 0 !important;
+    border: none !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+  }
+
+  .tr-produto-row td.col-produto strong {
+    font-size: 0.95rem !important;
+    color: var(--text-title) !important;
+  }
+
+  /* Linha 2: Estoque (col 1) | Sacolão (col 2) | Mart Minas (col 3) | Quantidade (col 4) */
+  .tr-produto-row td.col-estoque {
+    grid-column: 1 / 2 !important;
+    display: block !important;
+    width: 100% !important;
+    padding: 0 !important;
+    border: none !important;
+  }
+
+  .tr-produto-row td.col-sacolao {
+    grid-column: 2 / 3 !important;
+    display: block !important;
+    width: 100% !important;
+    padding: 0 !important;
+    border: none !important;
+  }
+
+  .tr-produto-row td.col-martminas {
+    grid-column: 3 / 4 !important;
+    display: block !important;
+    width: 100% !important;
+    padding: 0 !important;
+    border: none !important;
+  }
+
+  .tr-produto-row td.col-qtd {
+    grid-column: 4 / 5 !important;
+    display: block !important;
+    width: 100% !important;
+    padding: 0 !important;
+    border: none !important;
+  }
+
+  .input-money-wrapper, 
+  .input-qtd-wrapper {
+    background: var(--bg-surface) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: var(--radius-sm) !important;
+    padding: 3px 4px !important;
+    min-height: 36px !important;
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .input-money-wrapper .currency-symbol {
+    font-size: 0.72rem !important;
+    opacity: 0.7;
+    margin-right: 2px;
+  }
+
+  .input-table-number {
+    font-size: 0.85rem !important;
+    height: 28px !important;
+    padding: 2px 2px !important;
+    text-align: right !important;
+    width: 100% !important;
+    border: none !important;
+    background: transparent !important;
+  }
+
+  /* Linha 3: Fornecedor Vencedor (colunas 1 a 3) e Subtotal (coluna 4) */
+  .tr-produto-row td.col-vencedor {
+    grid-column: 1 / 3 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+    width: 100% !important;
+    padding: 8px 0 0 0 !important;
+    border: none !important;
+    border-top: 1px dashed #e2e8f0 !important;
+  }
+
+  .tr-produto-row td.col-subtotal {
+    grid-column: 3 / 5 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-end !important;
+    justify-content: center !important;
+    width: 100% !important;
+    padding: 8px 0 0 0 !important;
+    border: none !important;
+    border-top: 1px dashed #e2e8f0 !important;
+  }
+
+  select.select-vencedor-override {
+    height: 34px !important;
+    min-width: 100px !important;
+    width: 100% !important;
+    max-width: 120px !important;
+    font-size: 0.82rem !important;
+    padding: 2px 6px !important;
+    display: block !important;
+    margin: 0 !important;
+    text-align: center !important;
+    text-align-last: center !important;
+  }
+
+  .subtotal-val {
+    white-space: nowrap !important;
+    font-size: 0.95rem !important;
+    color: #059669 !important;
+  }
+
+  /* Previne zoom-in indesejado do navegador mobile ao focar nos inputs */
+  .input-table-number, 
+  .input-date, 
+  .input-search, 
+  .select-field, 
+  .select-vencedor-override {
+    font-size: 16px !important;
+  }
+
+  /* Cabeçalho do Módulo e Filtros Empilhados no Celular */
+  .module-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .date-and-filter-bar {
+    padding: 12px;
+  }
+
+  .date-picker-group {
+    width: 100%;
+  }
+
+  .date-picker-group select, 
+  .date-picker-group input {
+    width: 100% !important;
+  }
+
+  .filter-pills {
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .filter-pills .pill {
+    flex: 1;
+    text-align: center;
+    padding: 8px 4px;
+    font-size: 0.78rem;
+  }
+
+  #btn-copiar-anterior {
+    width: 100%;
+    margin-top: 4px;
+    text-align: center;
+    justify-content: center;
+  }
+
+  /* Barra de Busca e Categorias em Telas Pequenas */
+  .search-and-category-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 12px;
+    top: 56px !important;
+  }
+
+  .search-group {
+    width: 100% !important;
+    flex: none !important;
+  }
+
+  .search-group input,
+  #input-search-horti-produto {
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .category-toggle-pills {
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .category-toggle-pills .pill {
+    flex: 1;
+    text-align: center;
+    padding: 6px 2px;
+    font-size: 0.75rem;
+  }
+
+  /* Cards do Rodapé em Coluna Única no Celular */
+  .cards-summary-row {
+    grid-template-columns: 1fr !important;
+    gap: 10px;
+  }
+
+  .summary-card {
+    padding: 12px 14px;
+  }
+
+  /* --- CARDS DE AUDITORIA POR UNIDADE E CONSUMO DE PRODUTOS NO CELULAR --- */
+  .table-auditoria-unidades thead,
+  .table-consumo-produtos thead {
+    display: none !important;
+  }
+
+  .table-auditoria-unidades,
+  .table-auditoria-unidades tbody,
+  .table-consumo-produtos,
+  .table-consumo-produtos tbody {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  .tr-auditoria-row,
+  .tr-consumo-row {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr 1fr !important;
+    gap: 8px 6px !important;
+    background: var(--bg-surface) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: var(--radius-md) !important;
+    padding: 12px 14px !important;
+    margin-bottom: 10px !important;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04) !important;
+  }
+
+  /* Linha 1: Nome (Largura Total) */
+  .tr-auditoria-row td.col-unidade-nome,
+  .tr-consumo-row td.col-consumo-nome {
+    grid-column: 1 / -1 !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 100% !important;
+    padding: 0 0 6px 0 !important;
+    border: none !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    text-align: left !important;
+  }
+
+  .tr-auditoria-row td.col-unidade-nome strong,
+  .tr-consumo-row td.col-consumo-nome strong {
+    font-size: 0.95rem !important;
+    color: var(--text-title) !important;
+  }
+
+  /* Linha 2: 3 Colunas Horizontais */
+  .tr-auditoria-row td.col-auditoria-sacolao,
+  .tr-consumo-row td.col-consumo-sacolao {
+    grid-column: 1 / 2 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    padding: 0 !important;
+    border: none !important;
+    text-align: left !important;
+  }
+
+  .tr-auditoria-row td.col-auditoria-martminas,
+  .tr-consumo-row td.col-consumo-martminas {
+    grid-column: 2 / 3 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    padding: 0 !important;
+    border: none !important;
+    text-align: center !important;
+  }
+
+  .tr-auditoria-row td.col-auditoria-economia,
+  .tr-consumo-row td.col-consumo-qtd {
+    grid-column: 3 / 4 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-end !important;
+    padding: 0 !important;
+    border: none !important;
+    text-align: right !important;
+  }
+
+  /* Linha 3: Total Geral / Valor Acumulado */
+  .tr-auditoria-row td.col-auditoria-total,
+  .tr-consumo-row td.col-consumo-valor {
+    grid-column: 1 / -1 !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 100% !important;
+    padding: 8px 0 0 0 !important;
+    border: none !important;
+    border-top: 1px dashed #e2e8f0 !important;
+  }
+
+  .tr-auditoria-row td.col-auditoria-total strong,
+  .tr-consumo-row td.col-consumo-valor strong {
+    font-size: 0.98rem !important;
+    color: #059669 !important;
+  }
+}
+
+
+

@@ -36,7 +36,7 @@ class Registry {
       throw new Error("Instância de módulo inválida. Deve estender BaseModule.");
     }
     this.modules.set(moduleInstance.id, moduleInstance);
-    console.log(`📦 Módulo '${moduleInstance.name}' (${moduleInstance.id}) registrado.`);
+    console.log(` Módulo '${moduleInstance.name}' (${moduleInstance.id}) registrado.`);
   }
 
   get(id) {

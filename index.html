@@ -7,7 +7,7 @@
   <title>Gestão ABIB - Refeições Coletivas</title>
   
   <!-- CSS Principal Responsivo -->
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=20260812">
 
   <!-- Google Firebase Web SDK (v10 compat - Realtime Database) -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -37,10 +37,10 @@
     </div>
 
     <div class="header-user-controls">
-      <!-- Badge do Perfil Ativo -->
-      <button id="btn-change-profile" class="btn-profile-badge" style="display: none;" title="Clique para alterar de perfil">
-        <span id="active-profile-name">Perfil</span>
-        <small style="opacity: 0.7; margin-left: 2px;">(Alterar)</small>
+      <button id="btn-open-admin" class="btn btn-sm btn-secondary" style="display: none; margin-right: 8px;">Painel Admin</button>
+      <button id="btn-change-profile" class="btn-profile-badge" style="display: none;" title="Clique para sair da Gestão">
+        <span id="active-profile-badge"></span>
+        <span id="active-profile-name">Sair</span>
       </button>
     </div>
   </header>
@@ -58,6 +58,6 @@
   </footer>
 
   <!-- SCRIPT PRINCIPAL UNIFICADO -->
-  <script src="js/bundle.js"></script>
+  <script src="js/bundle.js?v=20260812"></script>
 </body>
 </html>

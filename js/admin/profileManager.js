@@ -28,14 +28,14 @@ export async function renderProfileSelectorModal(containerElement, onProfileSele
   modalOverlay.innerHTML = `
     <div class="profile-modal-card">
       <div class="profile-modal-header">
-        <h2>👋 Bem-vindo ao Sistema de Gestão ABIB</h2>
+        <h2>Bem-vindo ao Sistema de Gestão ABIB</h2>
         <p class="subtitle">Selecione seu Perfil de Acesso para continuar:</p>
       </div>
 
       <div class="profiles-selection-grid">
         ${perfis.map(p => `
           <button class="btn-profile-card" data-profile-id="${p.id}">
-            <span class="profile-card-icon">${p.icone || '👤'}</span>
+            <span class="profile-card-icon">${p.icone || ''}</span>
             <div class="profile-card-text">
               <h4>${p.nome}</h4>
               <p>${p.descricao || ''}</p>

@@ -1,6 +1,6 @@
 /**
  * Comensais Service - Negócio de Registro de Refeições Diárias
- * Salva lançamentos, calcula status 🔴/🟢, gera texto WhatsApp, calcula discrepâncias e exporta relatórios.
+ * Salva lançamentos, calcula status /🟢, gera texto WhatsApp, calcula discrepâncias e exporta relatórios.
  */
 
 import { getCollection, saveDoc } from './storageService.js';
@@ -23,7 +23,7 @@ export async function getRegistrosPorData(dataISO) {
   return todos.filter(r => r.data === dataISO);
 }
 
-// Obter status de preenchimento (🔴 Pendente / 🟢 Concluído) para cada unidade no dia
+// Obter status de preenchimento (Pendente / 🟢 Concluído) para cada unidade no dia
 export async function getStatusUnidadesNoDia(dataISO) {
   const unidades = await getUnidades();
   const registros = await getRegistrosPorData(dataISO);
@@ -63,8 +63,8 @@ export async function generateWhatsAppSummary(dataISO) {
   let totalGeralEmpresa = 0;
   let concluidasCount = 0;
 
-  let texto = `📊 *RESUMO DE COMENSAIS - ${dataFormatada}*\n`;
-  texto += `🏢 *ABIB Refeições Coletivas*\n\n`;
+  let texto = `*RESUMO DE COMENSAIS - ${dataFormatada}*\n`;
+  texto += ` *ABIB Refeições Coletivas*\n\n`;
 
   const concluidas = statusLista.filter(item => item.status === 'concluido');
   const pendentes = statusLista.filter(item => item.status !== 'concluido');
@@ -121,8 +121,8 @@ export async function generateWhatsAppSummary(dataISO) {
     texto += `*[PENDENTE] ${item.unidade.loja}*\n`;
   });
 
-  texto += `\n📌 *TOTAL DA EMPRESA:* ${totalGeralEmpresa} refeições`;
-  texto += `\n✅ *Status:* ${concluidasCount}/${statusLista.length} unidades preenchidas.`;
+  texto += `\n*TOTAL DA EMPRESA:* ${totalGeralEmpresa} refeições`;
+  texto += `\n*Status:* ${concluidasCount}/${statusLista.length} unidades preenchidas.`;
 
   return texto;
 }
