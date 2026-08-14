@@ -539,11 +539,33 @@
     if (!localStorage.getItem(STORAGE_KEYS.CONFIG)) {
       updateMemoryCache(STORAGE_KEYS.CONFIG, {
         adminPassword: DEFAULT_ADMIN_PASSWORD,
+        passwordComensais: DEFAULT_COMENSAIS_PASSWORD,
+        passwordHortifruti: DEFAULT_HORTIFRUTI_PASSWORD,
         divisaoPorRefeicao: false,
         sensibilidadeAlertaPct: 30,
         permitirTrocaPerfil: false,
         firebaseConfig: DEFAULT_FIREBASE_CONFIG
       });
+    } else {
+      try {
+        const cfg = JSON.parse(localStorage.getItem(STORAGE_KEYS.CONFIG));
+        let changed = false;
+        if (!cfg.adminPassword || cfg.adminPassword === 'admin123') {
+          cfg.adminPassword = DEFAULT_ADMIN_PASSWORD;
+          changed = true;
+        }
+        if (!cfg.passwordComensais || cfg.passwordComensais === 'comensais123') {
+          cfg.passwordComensais = DEFAULT_COMENSAIS_PASSWORD;
+          changed = true;
+        }
+        if (!cfg.passwordHortifruti || cfg.passwordHortifruti === 'hortifruti123') {
+          cfg.passwordHortifruti = DEFAULT_HORTIFRUTI_PASSWORD;
+          changed = true;
+        }
+        if (changed) {
+          updateMemoryCache(STORAGE_KEYS.CONFIG, cfg);
+        }
+      } catch (e) {}
     }
     if (!localStorage.getItem(STORAGE_KEYS.COMENSAIS)) {
       updateMemoryCache(STORAGE_KEYS.COMENSAIS, []);
@@ -3716,7 +3738,7 @@
                 <button class="btn-close-modal-links-horti">&times;</button>
               </div>
               <div class="modal-body">
-                <p class="help-text">Cada loja possui um token secreto único. Clique em <strong>"Copiar p/ WhatsApp"</strong> para enviar à RT ou Cozinheira da unidade:</p>
+                <p class="help-text">Clique em <strong>"Copiar Link"</strong> para copiar a URL exclusiva de cada unidade:</p>
                 <div class="table-responsive-card">
                   <table class="data-table">
                     <thead>
@@ -3724,12 +3746,11 @@
                         <th>Cód</th>
                         <th>Grupo</th>
                         <th>Loja / Unidade</th>
-                        <th>Link Direto WhatsApp</th>
                         <th>Ações</th>
                       </tr>
                     </thead>
                     <tbody id="tbody-links-whatsapp-horti-modal">
-                      <tr><td colspan="5" class="text-center">Carregando links...</td></tr>
+                      <tr><td colspan="4" class="text-center">Carregando links...</td></tr>
                     </tbody>
                   </table>
                 </div>
@@ -3957,21 +3978,9 @@
           <td><span class="group-badge-tag ${grpClass}">${u.grupo || '-'}</span></td>
           <td><strong>${u.loja}</strong></td>
           <td>
-            <div style="display: flex; gap: 6px; align-items: center;">
-              <button class="btn btn-sm btn-primary btn-copy-whatsapp-link" data-loja="${u.loja}" data-link="${fullLink}">
-                Copiar Link
-              </button>
-              <button class="btn btn-sm btn-secondary btn-regerar-token" data-id="${u.id}" data-loja="${u.loja}">
-                Regerar Token
-              </button>
-              <a href="${fullLink}" target="_blank" class="btn btn-sm btn-secondary" title="Abrir link em nova aba" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center; padding: 6px 10px;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                  <polyline points="15 3 21 3 21 9"></polyline>
-                  <line x1="10" y1="14" x2="21" y2="3"></line>
-                </svg>
-              </a>
-            </div>
+            <button class="btn btn-sm btn-primary btn-copy-whatsapp-link" data-loja="${u.loja}" data-link="${fullLink}">
+              Copiar Link
+            </button>
           </td>
         `;
 
@@ -3982,15 +3991,7 @@
           temp.select();
           document.execCommand('copy');
           document.body.removeChild(temp);
-          showToast(`Link do WhatsApp para ${u.loja} copiado!`, "success");
-        });
-
-        tr.querySelector('.btn-regerar-token').addEventListener('click', async () => {
-          if (confirm(`Atenção: Deseja revogar o link antigo e gerar um NOVO token seguro para a unidade ${u.loja}?`)) {
-            await regenerateUnitToken(u.id);
-            showToast(`Novo token gerado para ${u.loja}!`, "success");
-            await this.renderModalLinksWhatsapp();
-          }
+          showToast(`Link da unidade ${u.loja} copiado!`, "success");
         });
 
         tbody.appendChild(tr);

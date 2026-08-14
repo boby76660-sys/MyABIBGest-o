@@ -45,10 +45,32 @@ export function seedInitialData() {
   if (!localStorage.getItem(STORAGE_KEYS.CONFIG)) {
     localStorage.setItem(STORAGE_KEYS.CONFIG, JSON.stringify({
       adminPassword: DEFAULT_ADMIN_PASSWORD,
+      passwordComensais: DEFAULT_COMENSAIS_PASSWORD,
+      passwordHortifruti: DEFAULT_HORTIFRUTI_PASSWORD,
       divisaoPorRefeicao: false,
       sensibilidadeAlertaPct: 30,
       firebaseConfig: null
     }));
+  } else {
+    try {
+      const cfg = JSON.parse(localStorage.getItem(STORAGE_KEYS.CONFIG));
+      let changed = false;
+      if (!cfg.adminPassword || cfg.adminPassword === 'admin123') {
+        cfg.adminPassword = DEFAULT_ADMIN_PASSWORD;
+        changed = true;
+      }
+      if (!cfg.passwordComensais || cfg.passwordComensais === 'comensais123') {
+        cfg.passwordComensais = DEFAULT_COMENSAIS_PASSWORD;
+        changed = true;
+      }
+      if (!cfg.passwordHortifruti || cfg.passwordHortifruti === 'hortifruti123') {
+        cfg.passwordHortifruti = DEFAULT_HORTIFRUTI_PASSWORD;
+        changed = true;
+      }
+      if (changed) {
+        localStorage.setItem(STORAGE_KEYS.CONFIG, JSON.stringify(cfg));
+      }
+    } catch (e) {}
   }
   if (!localStorage.getItem(STORAGE_KEYS.COMENSAIS)) {
     localStorage.setItem(STORAGE_KEYS.COMENSAIS, JSON.stringify([]));

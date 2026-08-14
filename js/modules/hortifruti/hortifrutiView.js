@@ -252,7 +252,7 @@ export class HortifrutiModule extends BaseModule {
               <button class="btn-close-modal-links-horti">&times;</button>
             </div>
             <div class="modal-body">
-              <p class="help-text">Cada loja possui um token secreto único. Clique em <strong>"Copiar p/ WhatsApp"</strong> para enviar à RT ou Cozinheira da unidade:</p>
+              <p class="help-text">Clique em <strong>"Copiar Link"</strong> para copiar a URL exclusiva de cada unidade:</p>
               <div class="table-responsive-card">
                 <table class="data-table">
                   <thead>
@@ -260,12 +260,11 @@ export class HortifrutiModule extends BaseModule {
                       <th>Cód</th>
                       <th>Grupo</th>
                       <th>Loja / Unidade</th>
-                      <th>Link Direto WhatsApp</th>
                       <th>Ações</th>
                     </tr>
                   </thead>
                   <tbody id="tbody-links-whatsapp-horti-modal">
-                    <tr><td colspan="5" class="text-center">Carregando links...</td></tr>
+                    <tr><td colspan="4" class="text-center">Carregando links...</td></tr>
                   </tbody>
                 </table>
               </div>
@@ -479,43 +478,21 @@ export class HortifrutiModule extends BaseModule {
         <td>${u.codigo || '-'}</td>
         <td><span class="group-badge-tag ${grpClass}">${u.grupo || '-'}</span></td>
         <td><strong>${u.loja}</strong></td>
-        <td><input type="text" readonly value="${fullLink}" class="input-field input-sm input-link-readonly" style="font-size: 0.75rem;"></td>
         <td>
-          <div style="display: flex; gap: 6px; align-items: center;">
-            <button class="btn btn-sm btn-primary btn-copy-whatsapp-link" data-loja="${u.loja}" data-link="${fullLink}">
-              Copiar p/ WhatsApp
-            </button>
-            <button class="btn btn-sm btn-secondary btn-regerar-token" data-id="${u.id}" data-loja="${u.loja}">
-              Regerar Token
-            </button>
-            <a href="${fullLink}" target="_blank" class="btn btn-sm btn-secondary" title="Abrir link em nova aba" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center; padding: 6px 10px;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                <polyline points="15 3 21 3 21 9"></polyline>
-                <line x1="10" y1="14" x2="21" y2="3"></line>
-              </svg>
-            </a>
-          </div>
+          <button class="btn btn-sm btn-primary btn-copy-whatsapp-link" data-loja="${u.loja}" data-link="${fullLink}">
+            Copiar Link
+          </button>
         </td>
       `;
 
       tr.querySelector('.btn-copy-whatsapp-link').addEventListener('click', () => {
-        const text = `Olá Nutricionista da unidade *Mart Minas - ${u.loja}*!\n\nAcesse o formulário de cotação de Hortifrúti por este link exclusivo:\n${fullLink}\n\nEste link é seguro e restrito à sua loja.`;
         const temp = document.createElement('textarea');
-        temp.value = text;
+        temp.value = fullLink;
         document.body.appendChild(temp);
         temp.select();
         document.execCommand('copy');
         document.body.removeChild(temp);
-        alert(`Link do WhatsApp para ${u.loja} copiado com sucesso!`);
-      });
-
-      tr.querySelector('.btn-regerar-token').addEventListener('click', async () => {
-        if (confirm(`Atenção: Deseja revogar o link antigo e gerar um NOVO token seguro para a unidade ${u.loja}?`)) {
-          await regenerateUnitToken(u.id);
-          alert(`Novo token gerado para ${u.loja}!`);
-          await this.renderModalLinksWhatsapp();
-        }
+        alert(`Link da unidade ${u.loja} copiado com sucesso!`);
       });
 
       tbody.appendChild(tr);

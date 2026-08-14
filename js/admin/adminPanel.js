@@ -5,6 +5,7 @@
 
 import { getUnidades, saveUnidade, regenerateUnitToken, getPublicos, savePublico, getPerfis, savePerfil, deletePerfil, getAdminConfig, updateAdminConfig, exportFullBackup } from '../services/adminService.js';
 import { initFirebase } from '../firebaseClient.js';
+import { DEFAULT_ADMIN_PASSWORD } from '../config.js';
 
 export class AdminPanel {
   constructor(appController) {
@@ -44,7 +45,7 @@ export class AdminPanel {
       e.preventDefault();
       const pass = this.container.querySelector('#input-admin-password').value;
       const config = await getAdminConfig();
-      const masterPass = config.adminPassword || 'admin123';
+      const masterPass = config.adminPassword || DEFAULT_ADMIN_PASSWORD;
 
       if (pass === masterPass) {
         this.isAuthenticated = true;
