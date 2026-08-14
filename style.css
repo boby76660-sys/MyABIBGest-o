@@ -958,36 +958,57 @@ body.modal-open {
   flex-shrink: 0;
 }
 
+[class^="btn-close-modal"],
+[class*=" btn-close-modal"],
 .btn-close-modal, 
 .btn-close-modal-unidades, 
+.btn-close-modal-links,
 .btn-close-modal-links-horti, 
-.btn-close-modal-links-unidades {
-  background: #f1f5f9;
-  border: 1px solid #cbd5e1;
-  color: #64748b;
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  line-height: 1;
-  padding: 0;
-  outline: none;
+.btn-close-modal-links-unidades,
+.btn-close-modal-perfil,
+.btn-close-modal-profile {
+  background: #f1f5f9 !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #475569 !important;
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  max-width: 32px !important;
+  min-height: 32px !important;
+  max-height: 32px !important;
+  aspect-ratio: 1 / 1 !important;
+  flex-shrink: 0 !important;
+  align-self: center !important;
+  box-sizing: border-box !important;
+  border-radius: 8px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 1.25rem !important;
+  font-weight: 700 !important;
+  font-family: inherit !important;
+  cursor: pointer !important;
+  transition: all 0.18s ease !important;
+  line-height: 1 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  outline: none !important;
+  -webkit-appearance: none !important;
 }
 
+[class^="btn-close-modal"]:hover,
+[class*=" btn-close-modal"]:hover,
 .btn-close-modal:hover, 
 .btn-close-modal-unidades:hover, 
+.btn-close-modal-links:hover,
 .btn-close-modal-links-horti:hover, 
-.btn-close-modal-links-unidades:hover {
-  background: #e2e8f0;
-  color: #0f172a;
-  border-color: #94a3b8;
-  transform: scale(1.05);
+.btn-close-modal-links-unidades:hover,
+.btn-close-modal-perfil:hover,
+.btn-close-modal-profile:hover {
+  background: #e2e8f0 !important;
+  color: #0f172a !important;
+  border-color: #94a3b8 !important;
+  transform: scale(1.05) !important;
 }
 
 .whatsapp-textarea {

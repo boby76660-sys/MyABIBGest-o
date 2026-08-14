@@ -1058,7 +1058,7 @@
             <h2 style="font-size: 1.15rem; font-weight: 800; color: var(--text-title);">Acesso ao Sistema de Gestão ABIB</h2>
             <p class="subtitle" style="margin-top: 2px;">Selecione seu Perfil de Acesso para continuar:</p>
           </div>
-          ${isAlreadyDefined ? '<button class="btn-close-modal-profile" style="background:none; border:none; font-size:1.4rem; cursor:pointer; color:var(--text-muted); padding: 0 4px; line-height: 1;">&times;</button>' : ''}
+          ${isAlreadyDefined ? '<button class="btn-close-modal-profile">&times;</button>' : ''}
         </div>
         <div class="profiles-selection-grid">
           ${perfis.map(p => `
@@ -2966,7 +2966,7 @@
           <div class="modal-content">
             <div class="modal-header">
               <h3 id="title-modal-perfil">Editar Perfil</h3>
-              <button class="btn-close-modal-perfil" style="background:none; border:none; font-size:1.3rem; cursor:pointer; color:var(--text-muted);">&times;</button>
+              <button class="btn-close-modal-perfil">&times;</button>
             </div>
             <form id="form-perfil-crud">
               <input type="hidden" id="edit-perfil-id">
