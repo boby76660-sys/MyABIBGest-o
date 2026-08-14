@@ -1003,6 +1003,55 @@ body.modal-open {
   background: var(--bg-app);
 }
 
+/* Otimização de Tabela em Modais no Celular (Sem Scroll Horizontal) */
+@media (max-width: 600px) {
+  .modal {
+    padding: 8px !important;
+  }
+  
+  .modal-content {
+    padding: 12px 10px !important;
+    max-height: 92vh !important;
+  }
+
+  .modal-body {
+    overflow-x: hidden !important;
+  }
+
+  .modal-body .table-responsive-card {
+    overflow-x: hidden !important;
+    border-radius: var(--radius-sm);
+  }
+
+  .modal-body .data-table {
+    table-layout: auto !important;
+    width: 100% !important;
+  }
+
+  .modal-body .data-table th,
+  .modal-body .data-table td {
+    padding: 8px 4px !important;
+    font-size: 0.78rem !important;
+  }
+
+  .modal-body .data-table th:first-child,
+  .modal-body .data-table td:first-child {
+    padding-left: 6px !important;
+  }
+
+  .modal-body .data-table th:last-child,
+  .modal-body .data-table td:last-child {
+    padding-right: 6px !important;
+    text-align: right !important;
+  }
+
+  .modal-body .btn-copy-whatsapp-link {
+    padding: 5px 8px !important;
+    font-size: 0.75rem !important;
+    white-space: nowrap !important;
+  }
+}
+
 /* --- PAINEL ADMIN E SIDEBAR COMPACTA --- */
 .admin-layout {
   display: flex;
