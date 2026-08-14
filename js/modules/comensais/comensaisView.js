@@ -89,7 +89,7 @@ export class ComensaisModule extends BaseModule {
           <div class="modal-content modal-large">
             <div class="modal-header">
               <h3>Links de Acesso Direto para o WhatsApp (21 Unidades)</h3>
-              <button class="btn-close-modal-links">&times;</button>
+              <button class="btn-close-modal-links"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
             </div>
             <div class="modal-body">
               <p class="help-text">Cada loja possui um token secreto único. Clique em <strong>"Copiar p/ WhatsApp"</strong> para enviar à RT ou Cozinheira da unidade:</p>
@@ -118,7 +118,7 @@ export class ComensaisModule extends BaseModule {
           <div class="modal-content">
             <div class="modal-header">
               <h3>Resumo Formatado para WhatsApp</h3>
-              <button class="btn-close-modal">&times;</button>
+              <button class="btn-close-modal"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
             </div>
             <div class="modal-body">
               <textarea id="whatsapp-preview-text" readonly class="whatsapp-textarea"></textarea>

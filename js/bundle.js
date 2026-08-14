@@ -1058,7 +1058,7 @@
             <h2 style="font-size: 1.15rem; font-weight: 800; color: var(--text-title);">Acesso ao Sistema de Gestão ABIB</h2>
             <p class="subtitle" style="margin-top: 2px;">Selecione seu Perfil de Acesso para continuar:</p>
           </div>
-          ${isAlreadyDefined ? '<button class="btn-close-modal-profile">&times;</button>' : ''}
+          ${isAlreadyDefined ? '<button class="btn-close-modal-profile"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>' : ''}
         </div>
         <div class="profiles-selection-grid">
           ${perfis.map(p => `
@@ -1173,7 +1173,7 @@
             <div class="modal-content modal-large">
               <div class="modal-header">
                 <h3>Links de Acesso Direto para o WhatsApp (21 Unidades)</h3>
-                <button class="btn-close-modal-links">&times;</button>
+                <button class="btn-close-modal-links"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
               </div>
               <div class="modal-body">
                 <p class="help-text">Cada loja possui um token secreto único. Clique em <strong>"Copiar p/ WhatsApp"</strong> para enviar à RT ou Cozinheira da unidade:</p>
@@ -1202,7 +1202,7 @@
             <div class="modal-content">
               <div class="modal-header">
                 <h3>Resumo Formatado para WhatsApp</h3>
-                <button class="btn-close-modal">&times;</button>
+                <button class="btn-close-modal"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
               </div>
               <div class="modal-body">
                 <textarea id="whatsapp-preview-text" readonly class="whatsapp-textarea"></textarea>
@@ -1888,7 +1888,7 @@
           <div class="modal-content modal-large">
             <div class="modal-header">
               <h3>Cadastro e Detalhamento Geral das Unidades</h3>
-              <button class="btn-close-modal-unidades">&times;</button>
+              <button class="btn-close-modal-unidades"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
             </div>
             <div class="modal-body">
               <p class="help-text">Exibição dos dados permitidos para o perfil ativo (<strong>${currentProfile ? currentProfile.nome : 'Padrão'}</strong>):</p>
@@ -2782,7 +2782,7 @@
           <div class="modal-content">
             <div class="modal-header">
               <h3 id="title-modal-unidade">Nova Unidade</h3>
-              <button class="btn-close-modal">&times;</button>
+              <button class="btn-close-modal"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
             </div>
             <form id="form-unidade-crud">
               <input type="hidden" id="edit-unidade-id">
@@ -2966,7 +2966,7 @@
           <div class="modal-content">
             <div class="modal-header">
               <h3 id="title-modal-perfil">Editar Perfil</h3>
-              <button class="btn-close-modal-perfil">&times;</button>
+              <button class="btn-close-modal-perfil"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
             </div>
             <form id="form-perfil-crud">
               <input type="hidden" id="edit-perfil-id">
@@ -3706,7 +3706,7 @@
           <div class="modal-content modal-lg">
             <div class="modal-header">
               <h3>Resumo Formatado para WhatsApp</h3>
-              <button class="btn-close-modal" id="btn-close-modal-listas">&times;</button>
+              <button class="btn-close-modal" id="btn-close-modal-listas"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
             </div>
             <div class="modal-body">
               <div class="modal-tabs">
@@ -3735,7 +3735,7 @@
             <div class="modal-content modal-large">
               <div class="modal-header">
                 <h3>Links de Acesso Direto para o WhatsApp (21 Unidades)</h3>
-                <button class="btn-close-modal-links-horti">&times;</button>
+                <button class="btn-close-modal-links-horti"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
               </div>
               <div class="modal-body">
                 <p class="help-text">Clique em <strong>"Copiar Link"</strong> para copiar a URL exclusiva de cada unidade:</p>

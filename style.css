@@ -981,19 +981,34 @@ body.modal-open {
   align-self: center !important;
   box-sizing: border-box !important;
   border-radius: 8px !important;
-  display: inline-flex !important;
+  display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  font-size: 1.25rem !important;
-  font-weight: 700 !important;
-  font-family: inherit !important;
+  font-size: 0 !important;
   cursor: pointer !important;
   transition: all 0.18s ease !important;
-  line-height: 1 !important;
+  line-height: 0 !important;
   padding: 0 !important;
   margin: 0 !important;
   outline: none !important;
   -webkit-appearance: none !important;
+}
+
+[class^="btn-close-modal"] svg,
+[class*=" btn-close-modal"] svg,
+.btn-close-modal svg, 
+.btn-close-modal-unidades svg, 
+.btn-close-modal-links svg,
+.btn-close-modal-links-horti svg, 
+.btn-close-modal-links-unidades svg,
+.btn-close-modal-perfil svg,
+.btn-close-modal-profile svg {
+  width: 14px !important;
+  height: 14px !important;
+  display: block !important;
+  stroke: currentColor !important;
+  pointer-events: none !important;
+  margin: 0 !important;
 }
 
 [class^="btn-close-modal"]:hover,

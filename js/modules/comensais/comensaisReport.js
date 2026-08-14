@@ -211,7 +211,7 @@ export class ComensaisReportView {
         <div class="modal-content modal-large">
           <div class="modal-header">
             <h3> Cadastro e Detalhamento Geral das Unidades</h3>
-            <button class="btn-close-modal-unidades">&times;</button>
+            <button class="btn-close-modal-unidades"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
           </div>
           <div class="modal-body">
             <p class="help-text">Exibição dos dados permitidos para o perfil ativo (<strong>${currentProfile ? currentProfile.nome : 'Padrão'}</strong>):</p>
