@@ -2133,6 +2133,25 @@ select.select-vencedor-override,
   border-radius: 12px;
 }
 
+.btn-clear-item-row {
+  background: transparent;
+  border: 1px solid transparent;
+  color: #94a3b8;
+  padding: 4px 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-clear-item-row:hover {
+  background: #fee2e2;
+  color: #dc2626;
+  border-color: #fca5a5;
+}
+
 /* --- OTIMIZAÇÃO RESPONSIVA EM CARDS PARA DISPOSITIVOS MÓVEIS (SMARTPHONES) --- */
 @media (max-width: 768px) {
   /* Exibe os rótulos internos de cada campo no celular */

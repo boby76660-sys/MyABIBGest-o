@@ -123,14 +123,9 @@ export class HortifrutiModule extends BaseModule {
               <button class="pill ${this.currentSemana === 4 ? 'active' : ''}" data-semana="4">Semana 4</button>
             </div>
 
-            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-              <button id="btn-copiar-anterior" class="btn btn-secondary" style="white-space: nowrap; font-size: 0.82rem; padding: 6px 14px;">
-                Copiar Preços da Semana Anterior
-              </button>
-              <button id="btn-zerar-cotacao" class="btn btn-secondary" style="white-space: nowrap; font-size: 0.82rem; padding: 6px 14px; color: #dc2626; border-color: #fca5a5;">
-                Zerar Valores
-              </button>
-            </div>
+            <button id="btn-copiar-anterior" class="btn btn-secondary" style="white-space: nowrap; font-size: 0.82rem; padding: 6px 14px;">
+              Copiar Preços da Semana Anterior
+            </button>
           </div>
         </div>
 
@@ -277,6 +272,28 @@ export class HortifrutiModule extends BaseModule {
           </div>
         </div>
       ` : ''}
+
+      <!-- Modal de Confirmação para Zerar Produto -->
+      <div id="modal-confirm-zerar-item" class="modal hidden">
+        <div class="modal-content" style="max-width: 420px; text-align: center; padding: 24px; border-radius: var(--radius-lg);">
+          <div style="width: 54px; height: 54px; border-radius: 50%; background: #fee2e2; color: #dc2626; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px auto;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 6h18"></path>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              <line x1="10" y1="11" x2="10" y2="17"></line>
+              <line x1="14" y1="11" x2="14" y2="17"></line>
+            </svg>
+          </div>
+          <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--text-title); margin-bottom: 6px;">Zerar Valores do Produto</h3>
+          <p id="confirm-zerar-item-msg" style="font-size: 0.88rem; color: var(--text-body); margin-bottom: 20px; line-height: 1.4;">
+            Tem certeza que deseja zerar os valores deste produto?
+          </p>
+          <div style="display: flex; gap: 10px; justify-content: center;">
+            <button id="btn-cancel-zerar-item" class="btn btn-secondary" style="flex: 1; padding: 10px; font-weight: 700;">Cancelar</button>
+            <button id="btn-confirm-zerar-item" class="btn btn-danger" style="flex: 1; padding: 10px; background: #dc2626; border-color: #dc2626; color: #ffffff; font-weight: 700;">Sim, Zerar Produto</button>
+          </div>
+        </div>
+      </div>
     `;
 
     this.bindEvents();
@@ -284,6 +301,59 @@ export class HortifrutiModule extends BaseModule {
   }
 
   bindEvents() {
+    this.pendingClearItemIndex = null;
+    this.pendingClearItemTr = null;
+
+    const modalConfirm = this.container.querySelector('#modal-confirm-zerar-item');
+    const btnCancelConfirm = this.container.querySelector('#btn-cancel-zerar-item');
+    const btnDoConfirm = this.container.querySelector('#btn-confirm-zerar-item');
+
+    if (btnCancelConfirm) {
+      btnCancelConfirm.addEventListener('click', () => {
+        if (modalConfirm) modalConfirm.classList.add('hidden');
+        this.pendingClearItemIndex = null;
+        this.pendingClearItemTr = null;
+      });
+    }
+
+    if (btnDoConfirm) {
+      btnDoConfirm.addEventListener('click', async () => {
+        if (this.pendingClearItemIndex !== null && this.itensState[this.pendingClearItemIndex]) {
+          const idx = this.pendingClearItemIndex;
+          const item = this.itensState[idx];
+          item.estoque = '';
+          item.precoSacolao = '';
+          item.precoMartMinas = '';
+          item.quantidade = '';
+          item.fornecedorEscolhido = '';
+          item.isManual = false;
+
+          const tr = this.pendingClearItemTr;
+          if (tr) {
+            tr.querySelectorAll('input').forEach(inp => inp.value = '');
+            const select = tr.querySelector('select');
+            if (select) select.value = '';
+          }
+
+          this.updateRowCalculations(tr, idx);
+          this.updateResumoCards();
+
+          const rawDoc = {
+            unidadeId: this.currentUnidadeId,
+            mesAno: this.currentMesAno,
+            semana: this.currentSemana,
+            nutricionistaId: this.currentProfile ? this.currentProfile.id : 'nutri_geral',
+            itens: this.itensState
+          };
+          await savePedidoSemanal(rawDoc);
+        }
+
+        if (modalConfirm) modalConfirm.classList.add('hidden');
+        this.pendingClearItemIndex = null;
+        this.pendingClearItemTr = null;
+      });
+    }
+
     const tabRelatorio = this.container.querySelector('#tab-btn-relatorio');
     const secCotacao = this.container.querySelector('#section-cotacao');
     const secRelatorio = this.container.querySelector('#section-relatorio');
@@ -609,7 +679,17 @@ export class HortifrutiModule extends BaseModule {
       tr.className = `tr-produto-row ${isFilled ? 'tr-filled' : ''}`;
       tr.innerHTML = `
         <td class="col-produto">
-          <strong>${item.nome}</strong> <small class="text-muted">(${item.unidadeMedida})</small>
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%;">
+            <div>
+              <strong>${item.nome}</strong> <small class="text-muted">(${item.unidadeMedida})</small>
+            </div>
+            <button class="btn-clear-item-row" data-index="${globalIdx}" title="Zerar valores deste produto">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+            </button>
+          </div>
         </td>
         <td class="col-estoque text-center">
           <label class="mobile-label">Estoque</label>
@@ -685,6 +765,30 @@ export class HortifrutiModule extends BaseModule {
           itens: this.itensState
         };
         await savePedidoSemanal(rawDoc);
+      });
+    });
+
+    tbody.querySelectorAll('.btn-clear-item-row').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const idx = parseInt(btn.getAttribute('data-index'));
+        if (!isNaN(idx) && this.itensState[idx]) {
+          const item = this.itensState[idx];
+          const nomeProd = item.nome || item.nomeProduto || 'este produto';
+          
+          this.pendingClearItemIndex = idx;
+          this.pendingClearItemTr = btn.closest('tr');
+
+          const modalConfirm = this.container.querySelector('#modal-confirm-zerar-item');
+          const msgConfirm = this.container.querySelector('#confirm-zerar-item-msg');
+
+          if (msgConfirm) {
+            msgConfirm.innerHTML = `Tem certeza que deseja apagar o estoque, preços e quantidade de <strong>${nomeProd}</strong>?`;
+          }
+          if (modalConfirm) {
+            modalConfirm.classList.remove('hidden');
+          }
+        }
       });
     });
   }
