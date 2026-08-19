@@ -5770,7 +5770,7 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
       this.name = 'Hortifrúti Semanal';
       const now = new Date();
       this.currentMesAno = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-      this.currentSemana = 1;
+      this.currentSemana = Math.min(4, Math.max(1, Math.ceil(now.getDate() / 7)));
       this.currentUnidadeId = UNIDADES_SEED[0].id;
       this.activeTab = 'cotacao';
       this.produtosCache = [];
