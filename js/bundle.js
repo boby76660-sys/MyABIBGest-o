@@ -273,27 +273,27 @@
   ];
 
   const UNIDADES_SEED = [
-    { id: "u239", codigo: "239", grupo: "AC", loja: "ITABIRA", unidade: "MATRIZ", cnpj: "44.509.964/0001-35", ordem: 1, ativo: true },
-    { id: "u220", codigo: "220", grupo: "AC", loja: "UBÁ", unidade: "FILIAL 1", cnpj: "44.509.964/0002-16", ordem: 2, ativo: true },
-    { id: "u253", codigo: "253", grupo: "AC", loja: "JUIZ DE FORA II", unidade: "FILIAL 2", cnpj: "44.509.964/0003-05", ordem: 3, ativo: true },
-    { id: "u206", codigo: "206", grupo: "AC", loja: "JUIZ DE FORA I", unidade: "FILIAL 3", cnpj: "44.509.964/0004-88", ordem: 4, ativo: true },
-    { id: "u230", codigo: "230", grupo: "AC", loja: "BARBACENA", unidade: "FILIAL 4", cnpj: "44.509.964/0005-69", ordem: 5, ativo: true },
-    { id: "u257", codigo: "257", grupo: "AC", loja: "CONGONHAS", unidade: "FILIAL 5", cnpj: "44.509.964/0006-40", ordem: 6, ativo: true },
-    { id: "u234", codigo: "234", grupo: "AC", loja: "CONSELHEIRO LAFAIETE", unidade: "FILIAL 6", cnpj: "44.509.964/0007-20", ordem: 7, ativo: true },
-    { id: "u241", codigo: "241", grupo: "AC", loja: "SÃO JOÃO DEL REI", unidade: "FILIAL 7", cnpj: "44.509.964/0008-01", ordem: 8, ativo: true },
-    { id: "u217", codigo: "217", grupo: "ABIB", loja: "SANTANA DO PARAÍSO", unidade: "MATRIZ", cnpj: "25.191.364/0001-27", ordem: 9, ativo: true },
-    { id: "u244", codigo: "244", grupo: "ABIB", loja: "JOÃO MONLEVADE", unidade: "FILIAL 1", cnpj: "25.191.364/0002-08", ordem: 10, ativo: true },
-    { id: "u255", codigo: "255", grupo: "ABIB", loja: "LEOPOLDINA", unidade: "FILIAL 2", cnpj: "25.191.364/0003-99", ordem: 11, ativo: true },
-    { id: "u256", codigo: "256", grupo: "ABIB", loja: "CARATINGA", unidade: "FILIAL 3", cnpj: "25.191.364/0004-70", ordem: 12, ativo: true },
-    { id: "u224", codigo: "224", grupo: "ABIB", loja: "PARACATU", unidade: "FILIAL 4", cnpj: "25.191.364/0005-50", ordem: 13, ativo: true },
-    { id: "u240", codigo: "240", grupo: "ABIB", loja: "UNAÍ", unidade: "FILIAL 5", cnpj: "25.191.364/0006-31", ordem: 14, ativo: true },
-    { id: "u219", codigo: "219", grupo: "MOC", loja: "MONTES CLAROS I", unidade: "MATRIZ", cnpj: "50.940.370/0001-87", ordem: 15, ativo: true },
-    { id: "u259", codigo: "259", grupo: "MOC", loja: "MONTES CLAROS II", unidade: "FILIAL 1", cnpj: "50.940.370/0002-68", ordem: 16, ativo: true },
-    { id: "u260", codigo: "260", grupo: "MOC", loja: "MONTES CLAROS III", unidade: "FILIAL 2", cnpj: "50.940.370/0003-49", ordem: 17, ativo: true },
-    { id: "u250", codigo: "250", grupo: "MOC", loja: "JANAÚBA", unidade: "FILIAL 3", cnpj: "50.940.370/0004-20", ordem: 18, ativo: true },
-    { id: "u267", codigo: "267", grupo: "MOC", loja: "CURVELO", unidade: "FILIAL 4", cnpj: "50.940.370/0005-00", ordem: 19, ativo: true },
-    { id: "u272", codigo: "272", grupo: "MOC", loja: "PIRAPORA", unidade: "FILIAL 5", cnpj: "50.940.370/0006-91", ordem: 20, ativo: true },
-    { id: "u274", codigo: "274", grupo: "MOC", loja: "JANUÁRIA", unidade: "FILIAL 6", cnpj: "50.940.370/0007-72", ordem: 21, ativo: true }
+    { id: "u239", codigo: "239", grupo: "AC", loja: "ITABIRA", unidade: "MATRIZ", cnpj: "44.509.964/0001-35", tokenAcesso: "abib_itabira_239", ordem: 1, ativo: true },
+    { id: "u220", codigo: "220", grupo: "AC", loja: "UBÁ", unidade: "FILIAL 1", cnpj: "44.509.964/0002-16", tokenAcesso: "abib_uba_220", ordem: 2, ativo: true },
+    { id: "u253", codigo: "253", grupo: "AC", loja: "JUIZ DE FORA II", unidade: "FILIAL 2", cnpj: "44.509.964/0003-05", tokenAcesso: "abib_juizdeforaii_253", ordem: 3, ativo: true },
+    { id: "u206", codigo: "206", grupo: "AC", loja: "JUIZ DE FORA I", unidade: "FILIAL 3", cnpj: "44.509.964/0004-88", tokenAcesso: "abib_juizdeforai_206", ordem: 4, ativo: true },
+    { id: "u230", codigo: "230", grupo: "AC", loja: "BARBACENA", unidade: "FILIAL 4", cnpj: "44.509.964/0005-69", tokenAcesso: "abib_barbacena_230", ordem: 5, ativo: true },
+    { id: "u257", codigo: "257", grupo: "AC", loja: "CONGONHAS", unidade: "FILIAL 5", cnpj: "44.509.964/0006-40", tokenAcesso: "abib_congonhas_257", ordem: 6, ativo: true },
+    { id: "u234", codigo: "234", grupo: "AC", loja: "CONSELHEIRO LAFAIETE", unidade: "FILIAL 6", cnpj: "44.509.964/0007-20", tokenAcesso: "abib_conselheirolafaiete_234", ordem: 7, ativo: true },
+    { id: "u241", codigo: "241", grupo: "AC", loja: "SÃO JOÃO DEL REI", unidade: "FILIAL 7", cnpj: "44.509.964/0008-01", tokenAcesso: "abib_saojoaodelrei_241", ordem: 8, ativo: true },
+    { id: "u217", codigo: "217", grupo: "ABIB", loja: "SANTANA DO PARAÍSO", unidade: "MATRIZ", cnpj: "25.191.364/0001-27", tokenAcesso: "abib_santanadoparaiso_217", ordem: 9, ativo: true },
+    { id: "u244", codigo: "244", grupo: "ABIB", loja: "JOÃO MONLEVADE", unidade: "FILIAL 1", cnpj: "25.191.364/0002-08", tokenAcesso: "abib_joaomonlevade_244", ordem: 10, ativo: true },
+    { id: "u255", codigo: "255", grupo: "ABIB", loja: "LEOPOLDINA", unidade: "FILIAL 2", cnpj: "25.191.364/0003-99", tokenAcesso: "abib_leopoldina_255", ordem: 11, ativo: true },
+    { id: "u256", codigo: "256", grupo: "ABIB", loja: "CARATINGA", unidade: "FILIAL 3", cnpj: "25.191.364/0004-70", tokenAcesso: "abib_caratinga_256", ordem: 12, ativo: true },
+    { id: "u224", codigo: "224", grupo: "ABIB", loja: "PARACATU", unidade: "FILIAL 4", cnpj: "25.191.364/0005-50", tokenAcesso: "abib_paracatu_224", ordem: 13, ativo: true },
+    { id: "u240", codigo: "240", grupo: "ABIB", loja: "UNAÍ", unidade: "FILIAL 5", cnpj: "25.191.364/0006-31", tokenAcesso: "abib_unai_240", ordem: 14, ativo: true },
+    { id: "u219", codigo: "219", grupo: "MOC", loja: "MONTES CLAROS I", unidade: "MATRIZ", cnpj: "50.940.370/0001-87", tokenAcesso: "abib_montesclarosi_219", ordem: 15, ativo: true },
+    { id: "u259", codigo: "259", grupo: "MOC", loja: "MONTES CLAROS II", unidade: "FILIAL 1", cnpj: "50.940.370/0002-68", tokenAcesso: "abib_montesclarosii_259", ordem: 16, ativo: true },
+    { id: "u260", codigo: "260", grupo: "MOC", loja: "MONTES CLAROS III", unidade: "FILIAL 2", cnpj: "50.940.370/0003-49", tokenAcesso: "abib_montesclarosiii_260", ordem: 17, ativo: true },
+    { id: "u250", codigo: "250", grupo: "MOC", loja: "JANAÚBA", unidade: "FILIAL 3", cnpj: "50.940.370/0004-20", tokenAcesso: "abib_janauba_250", ordem: 18, ativo: true },
+    { id: "u267", codigo: "267", grupo: "MOC", loja: "CURVELO", unidade: "FILIAL 4", cnpj: "50.940.370/0005-00", tokenAcesso: "abib_curvelo_267", ordem: 19, ativo: true },
+    { id: "u272", codigo: "272", grupo: "MOC", loja: "PIRAPORA", unidade: "FILIAL 5", cnpj: "50.940.370/0006-91", tokenAcesso: "abib_pirapora_272", ordem: 20, ativo: true },
+    { id: "u274", codigo: "274", grupo: "MOC", loja: "JANUÁRIA", unidade: "FILIAL 6", cnpj: "50.940.370/0007-72", tokenAcesso: "abib_januaria_274", ordem: 21, ativo: true }
   ];
 
   const PERFIS_SEED = [
@@ -353,60 +353,27 @@
   ];
 
   const PRODUTOS_HORTIFRUTI_SEED = [
-    // --- VERDURAS & FOLHOSAS ---
-    { id: "hprod_alface_crespa", nome: "Alface Crespa", unidadeMedida: "un", categoria: "Verduras", ordem: 1, ativo: true },
-    { id: "hprod_alface_lisa", nome: "Alface Lisa", unidadeMedida: "un", categoria: "Verduras", ordem: 2, ativo: true },
-    { id: "hprod_alface_roxa", nome: "Alface Roxa / Hidropônica", unidadeMedida: "un", categoria: "Verduras", ordem: 3, ativo: true },
-    { id: "hprod_acelga", nome: "Acelga", unidadeMedida: "un", categoria: "Verduras", ordem: 4, ativo: true },
-    { id: "hprod_agriao", nome: "Agrião", unidadeMedida: "un", categoria: "Verduras", ordem: 5, ativo: true },
-    { id: "hprod_almeirao", nome: "Almeirão / Chicória", unidadeMedida: "un", categoria: "Verduras", ordem: 6, ativo: true },
-    { id: "hprod_brocolis", nome: "Brócolis Ninja", unidadeMedida: "un", categoria: "Verduras", ordem: 7, ativo: true },
-    { id: "hprod_cebolinha", nome: "Cebolinha Verde", unidadeMedida: "un", categoria: "Verduras", ordem: 8, ativo: true },
-    { id: "hprod_cheiro_verde", nome: "Cheiro Verde / Coentro", unidadeMedida: "un", categoria: "Verduras", ordem: 9, ativo: true },
-    { id: "hprod_couve", nome: "Couve Manteiga", unidadeMedida: "un", categoria: "Verduras", ordem: 10, ativo: true },
-    { id: "hprod_couve_flor", nome: "Couve-Flor", unidadeMedida: "un", categoria: "Verduras", ordem: 11, ativo: true },
-    { id: "hprod_mostarda", nome: "Mostarda", unidadeMedida: "un", categoria: "Verduras", ordem: 12, ativo: true },
-    { id: "hprod_repolho_verde", nome: "Repolho Verde", unidadeMedida: "kg", categoria: "Verduras", ordem: 13, ativo: true },
-    { id: "hprod_rucula", nome: "Rúcula", unidadeMedida: "un", categoria: "Verduras", ordem: 14, ativo: true },
-
-    // --- LEGUMES, RAÍZES & TUBÉRCULOS ---
-    { id: "hprod_abobora_japonesa", nome: "Abóbora Moranga Japonesa", unidadeMedida: "kg", categoria: "Legumes", ordem: 15, ativo: true },
-    { id: "hprod_abobrinha", nome: "Abobrinha Italiana", unidadeMedida: "kg", categoria: "Legumes", ordem: 16, ativo: true },
-    { id: "hprod_alho", nome: "Alho", unidadeMedida: "kg", categoria: "Legumes", ordem: 17, ativo: true },
-    { id: "hprod_alho_descascado", nome: "Alho Descascado / Congelado", unidadeMedida: "kg", categoria: "Legumes", ordem: 18, ativo: true },
-    { id: "hprod_batata_extra", nome: "Batata Inglesa Extra", unidadeMedida: "kg", categoria: "Legumes", ordem: 19, ativo: true },
-    { id: "hprod_batata_doce", nome: "Batata Doce Roxa", unidadeMedida: "kg", categoria: "Legumes", ordem: 20, ativo: true },
-    { id: "hprod_batata_bolinha", nome: "Batata Bolinha", unidadeMedida: "kg", categoria: "Legumes", ordem: 21, ativo: true },
-    { id: "hprod_berinjela", nome: "Berinjela", unidadeMedida: "kg", categoria: "Legumes", ordem: 22, ativo: true },
-    { id: "hprod_beterraba", nome: "Beterraba", unidadeMedida: "kg", categoria: "Legumes", ordem: 23, ativo: true },
-    { id: "hprod_cebola", nome: "Cebola Amarela", unidadeMedida: "kg", categoria: "Legumes", ordem: 24, ativo: true },
-    { id: "hprod_cenoura", nome: "Cenoura", unidadeMedida: "kg", categoria: "Legumes", ordem: 25, ativo: true },
-    { id: "hprod_chuchu", nome: "Chuchu", unidadeMedida: "kg", categoria: "Legumes", ordem: 26, ativo: true },
-    { id: "hprod_inhame", nome: "Inhame", unidadeMedida: "kg", categoria: "Legumes", ordem: 27, ativo: true },
-    { id: "hprod_jilo", nome: "Jiló", unidadeMedida: "kg", categoria: "Legumes", ordem: 28, ativo: true },
-    { id: "hprod_mandioca", nome: "Mandioca", unidadeMedida: "kg", categoria: "Legumes", ordem: 29, ativo: true },
-    { id: "hprod_pepino", nome: "Pepino Japonês / Caipira", unidadeMedida: "kg", categoria: "Legumes", ordem: 30, ativo: true },
-    { id: "hprod_pimentao_verde", nome: "Pimentão Verde", unidadeMedida: "kg", categoria: "Legumes", ordem: 31, ativo: true },
-    { id: "hprod_quiabo", nome: "Quiabo", unidadeMedida: "kg", categoria: "Legumes", ordem: 32, ativo: true },
-    { id: "hprod_tomate", nome: "Tomate Longa Vida", unidadeMedida: "kg", categoria: "Legumes", ordem: 33, ativo: true },
-    { id: "hprod_vagem", nome: "Vagem", unidadeMedida: "kg", categoria: "Legumes", ordem: 34, ativo: true },
-
-    // --- FRUTAS ---
-    { id: "hprod_abacate", nome: "Abacate", unidadeMedida: "kg", categoria: "Frutas", ordem: 35, ativo: true },
-    { id: "hprod_abacaxi", nome: "Abacaxi Pérola", unidadeMedida: "un", categoria: "Frutas", ordem: 36, ativo: true },
-    { id: "hprod_banana_prata", nome: "Banana Prata", unidadeMedida: "kg", categoria: "Frutas", ordem: 37, ativo: true },
-    { id: "hprod_banana_caturra", nome: "Banana Caturra / Nanica", unidadeMedida: "kg", categoria: "Frutas", ordem: 38, ativo: true },
-    { id: "hprod_laranja_pera", nome: "Laranja Pera Rio", unidadeMedida: "kg", categoria: "Frutas", ordem: 39, ativo: true },
-    { id: "hprod_maca", nome: "Maçã Gala", unidadeMedida: "kg", categoria: "Frutas", ordem: 40, ativo: true },
-    { id: "hprod_mamao_formosa", nome: "Mamão Formosa", unidadeMedida: "kg", categoria: "Frutas", ordem: 41, ativo: true },
-    { id: "hprod_manga_tommy", nome: "Manga Tommy / Palmer", unidadeMedida: "kg", categoria: "Frutas", ordem: 42, ativo: true },
-    { id: "hprod_melancia", nome: "Melancia", unidadeMedida: "kg", categoria: "Frutas", ordem: 43, ativo: true },
-    { id: "hprod_melao_amarelo", nome: "Melão Amarelo", unidadeMedida: "kg", categoria: "Frutas", ordem: 44, ativo: true },
-    { id: "hprod_pera", nome: "Pera Importada", unidadeMedida: "kg", categoria: "Frutas", ordem: 45, ativo: true },
-    { id: "hprod_uva_thompson", nome: "Uva Thompson Sem Semente", unidadeMedida: "kg", categoria: "Frutas", ordem: 46, ativo: true },
-
-    // --- OVOS ---
-    { id: "hprod_ovo_pente", nome: "Ovo Branco (Pente c/ 30)", unidadeMedida: "pente", categoria: "Ovos", ordem: 47, ativo: true }
+    { id: "hprod_abacaxi", nome: "Abacaxi", unidadeMedida: "un", categoria: "Frutas", ordem: 1, ativo: true },
+    { id: "hprod_abobrinha", nome: "Abobrinha", unidadeMedida: "kg", categoria: "Legumes", ordem: 2, ativo: true },
+    { id: "hprod_batata_doce", nome: "Batata Doce", unidadeMedida: "kg", categoria: "Legumes", ordem: 3, ativo: true },
+    { id: "hprod_batata_inglesa", nome: "Batata Inglesa", unidadeMedida: "kg", categoria: "Legumes", ordem: 4, ativo: true },
+    { id: "hprod_beterraba", nome: "Beterraba", unidadeMedida: "kg", categoria: "Legumes", ordem: 5, ativo: true },
+    { id: "hprod_brocolis", nome: "Brócolis", unidadeMedida: "un", categoria: "Verduras", ordem: 6, ativo: true },
+    { id: "hprod_cebola", nome: "Cebola", unidadeMedida: "kg", categoria: "Legumes", ordem: 7, ativo: true },
+    { id: "hprod_cenoura", nome: "Cenoura", unidadeMedida: "kg", categoria: "Legumes", ordem: 8, ativo: true },
+    { id: "hprod_chuchu", nome: "Chuchu", unidadeMedida: "kg", categoria: "Legumes", ordem: 9, ativo: true },
+    { id: "hprod_inhame", nome: "Inhame", unidadeMedida: "kg", categoria: "Legumes", ordem: 10, ativo: true },
+    { id: "hprod_laranja", nome: "Laranja", unidadeMedida: "kg", categoria: "Frutas", ordem: 11, ativo: true },
+    { id: "hprod_mamao_formoso", nome: "Mamão Formoso", unidadeMedida: "kg", categoria: "Frutas", ordem: 12, ativo: true },
+    { id: "hprod_mandioca", nome: "Mandioca", unidadeMedida: "kg", categoria: "Legumes", ordem: 13, ativo: true },
+    { id: "hprod_melao", nome: "Melão", unidadeMedida: "kg", categoria: "Frutas", ordem: 14, ativo: true },
+    { id: "hprod_moranga", nome: "Moranga / Abóbora", unidadeMedida: "kg", categoria: "Legumes", ordem: 15, ativo: true },
+    { id: "hprod_ovo", nome: "Ovo", unidadeMedida: "pente", categoria: "Ovos", ordem: 16, ativo: true },
+    { id: "hprod_pepino", nome: "Pepino", unidadeMedida: "kg", categoria: "Legumes", ordem: 17, ativo: true },
+    { id: "hprod_pimentao_verde", nome: "Pimentão Verde", unidadeMedida: "kg", categoria: "Legumes", ordem: 18, ativo: true },
+    { id: "hprod_quiabo", nome: "Quiabo", unidadeMedida: "kg", categoria: "Legumes", ordem: 19, ativo: true },
+    { id: "hprod_repolho", nome: "Repolho", unidadeMedida: "kg", categoria: "Verduras", ordem: 20, ativo: true },
+    { id: "hprod_tomate", nome: "Tomate", unidadeMedida: "kg", categoria: "Legumes", ordem: 21, ativo: true }
   ];
 
   // --- 2. FIREBASE CLIENT E LISTENER TEMPO REAL ---
@@ -541,6 +508,8 @@
         adminPassword: DEFAULT_ADMIN_PASSWORD,
         passwordComensais: DEFAULT_COMENSAIS_PASSWORD,
         passwordHortifruti: DEFAULT_HORTIFRUTI_PASSWORD,
+        openRouterApiKey: '',
+        openRouterModel: 'google/gemini-2.5-flash',
         divisaoPorRefeicao: false,
         sensibilidadeAlertaPct: 30,
         permitirTrocaPerfil: false,
@@ -562,6 +531,10 @@
           cfg.passwordHortifruti = DEFAULT_HORTIFRUTI_PASSWORD;
           changed = true;
         }
+        if (!cfg.openRouterModel) {
+          cfg.openRouterModel = 'google/gemini-2.5-flash';
+          changed = true;
+        }
         if (changed) {
           updateMemoryCache(STORAGE_KEYS.CONFIG, cfg);
         }
@@ -571,7 +544,7 @@
       updateMemoryCache(STORAGE_KEYS.COMENSAIS, []);
     }
     const storedHorti = localStorage.getItem(STORAGE_KEYS.HORTIFRUTI_PRODUTOS);
-    if (!storedHorti || storedHorti === 'undefined' || storedHorti === 'null') {
+    if (!storedHorti || storedHorti === 'undefined' || storedHorti === 'null' || (storedHorti && JSON.parse(storedHorti).length !== PRODUTOS_HORTIFRUTI_SEED.length)) {
       updateMemoryCache(STORAGE_KEYS.HORTIFRUTI_PRODUTOS, PRODUTOS_HORTIFRUTI_SEED);
     }
     if (!localStorage.getItem(STORAGE_KEYS.HORTIFRUTI_PEDIDOS)) {
@@ -863,7 +836,7 @@
     return true;
   }
 
-  // --- 6. COMENSAIS SERVICE ---
+  // --- 6. COMENSAIS SERVICE & IA VISION (OPENROUTER) ---
   async function saveComensaisRegistro(registroData) {
     const id = `reg_${registroData.data}_${registroData.unidadeId}`;
     return await saveDoc(STORAGE_KEYS.COMENSAIS, {
@@ -871,6 +844,318 @@
       ...registroData,
       atualizadoEm: new Date().toISOString()
     });
+  }
+
+  async function saveComensaisLote(unidadeId, registrosArray) {
+    const todos = await getCollection(STORAGE_KEYS.COMENSAIS);
+    const nowISO = new Date().toISOString();
+
+    registrosArray.forEach(reg => {
+      const dataISO = reg.data || reg.dataISO;
+      if (!dataISO) return;
+
+      const id = `reg_${dataISO}_${unidadeId}`;
+      const idx = todos.findIndex(r => r.id === id || (r.data === dataISO && r.unidadeId === unidadeId));
+      
+      const docData = {
+        id,
+        unidadeId,
+        data: dataISO,
+        publicos: reg.publicos || {},
+        observacao: reg.observacao || '',
+        atualizadoEm: nowISO
+      };
+
+      if (idx >= 0) {
+        todos[idx] = { ...todos[idx], ...docData };
+      } else {
+        docData.criadoEm = nowISO;
+        todos.push(docData);
+      }
+    });
+
+    await saveCollection(STORAGE_KEYS.COMENSAIS, todos);
+    return todos;
+  }
+
+  // Obter configurações da IA
+  async function getAiConfig() {
+    const config = await getConfig();
+    return {
+      apiKey: config.openRouterApiKey || '',
+      model: config.openRouterModel || 'google/gemini-2.5-flash'
+    };
+  }
+
+  // Salvar configurações da IA
+  async function saveAiConfig({ apiKey, model }) {
+    const current = await getConfig();
+    const updated = {
+      ...current,
+      openRouterApiKey: (apiKey || '').trim(),
+      openRouterModel: (model || '').trim() || 'google/gemini-2.5-flash'
+    };
+    return await saveConfig(updated);
+  }
+
+  // Comprimir imagem para base64 JPEG via Canvas
+  function compressImageFile(file, maxDimension = 1800, quality = 0.85) {
+    return new Promise((resolve, reject) => {
+      if (!file || !file.type.startsWith('image/')) {
+        return reject(new Error('Arquivo não é uma imagem válida.'));
+      }
+
+      const reader = new FileReader();
+      reader.onerror = () => reject(new Error('Falha ao ler o arquivo de imagem.'));
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onerror = () => reject(new Error('Falha ao carregar a imagem na memória.'));
+        img.onload = () => {
+          let width = img.width;
+          let height = img.height;
+
+          if (width > maxDimension || height > maxDimension) {
+            if (width > height) {
+              height = Math.round((height * maxDimension) / width);
+              width = maxDimension;
+            } else {
+              width = Math.round((width * maxDimension) / height);
+              height = maxDimension;
+            }
+          }
+
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+
+          const ctx = canvas.getContext('2d');
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, width, height);
+          ctx.drawImage(img, 0, 0, width, height);
+
+          const dataUrl = canvas.toDataURL('image/jpeg', quality);
+          resolve(dataUrl);
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // Testar conexão com o OpenRouter
+  async function testOpenRouterConnection(apiKey, modelName) {
+    if (!apiKey) throw new Error('Chave API não informada.');
+    const model = modelName || 'google/gemini-2.5-flash';
+
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey.trim()}`,
+        'Content-Type': 'application/json',
+        'HTTP-Referer': window.location.origin || 'https://gestao-abib.local',
+        'X-Title': 'Gestao ABIB'
+      },
+      body: JSON.stringify({
+        model: model.trim(),
+        messages: [{ role: "user", content: "Responda apenas 'OK'." }],
+        max_tokens: 10
+      })
+    });
+
+    if (!response.ok) {
+      const errData = await response.json().catch(() => ({}));
+      throw new Error(errData?.error?.message || `Erro de autenticação (Status ${response.status})`);
+    }
+    return true;
+  }
+
+  // Extrair comensais de imagens via OpenRouter
+  async function extractComensaisFromImages(imageFiles, options = {}) {
+    if (!imageFiles || imageFiles.length === 0) {
+      throw new Error('Nenhuma imagem foi selecionada para processamento.');
+    }
+
+    const aiConfig = await getAiConfig();
+    if (!aiConfig.apiKey) {
+      throw new Error('A Chave API do OpenRouter não foi informada. Por favor, configure sua chave API nas configurações da IA.');
+    }
+
+    const base64Images = await Promise.all(
+      imageFiles.map(file => compressImageFile(file, 1800, 0.85))
+    );
+
+    const systemInstruction = `Você é um especialista em OCR e extração estruturada de dados de folhas de contagem de refeições da empresa ABIB Refeições Coletivas.
+Analise a(s) imagem(ns) com extrema atenção aos números manuscritos.
+
+ESTRUTURA DAS FOLHAS DA ABIB:
+A folha é dividida em blocos/células diárias organizadas em colunas e linhas:
+- DIA: [data manuscrita no formato DD/MM, ex: 05/08, 06/08, 10/08, 15/08]
+- TICKET: [número manuscrito ou traço -]
+- GARRA/DALVA: [número manuscrito ou traço -]
+- CARTÃO R$ 19,50: [número manuscrito ou traço -]
+- PIX R$ 19,50: [número manuscrito ou traço -]
+- ASSINATURAS: [número manuscrito ou traço -]
+- TOTAL GERAL: [número total manuscrito na folha]
+
+REGRAS CRÍTICAS DE EXTRAÇÃO:
+1. Extraia TODOS os blocos de dias visíveis na imagem. Uma foto pode ter 1 único dia ou vários dias (5, 8, 10 ou mais dias).
+2. Traços ('-', '—') ou campos em branco significam 0 (zero).
+3. Para cada dia identificado, extraia exatamente o número escrito em cada linha.
+4. Extraia também o número escrito no campo "TOTAL GERAL" exatamente como a nutricionista escreveu (para conferência posterior).
+5. Se houver rasuras ou números corrigidos, considere o valor final corrigido.
+6. Retorne EXCLUSIVAMENTE um objeto JSON no seguinte formato:
+
+{
+  "dias": [
+    {
+      "dia": "05/08",
+      "ticket": 50,
+      "garra": 0,
+      "cartao": 1,
+      "pix": 2,
+      "assinaturas": 15,
+      "totalEscritoFolha": 68,
+      "observacao": ""
+    }
+  ]
+}`;
+
+    const contentArray = [
+      {
+        type: "text",
+        text: "Extraia todos os dias e contagens de refeições presentes nestas fotos das folhas de comensais, seguindo rigorosamente a estrutura JSON especificada."
+      }
+    ];
+
+    base64Images.forEach((dataUrl) => {
+      contentArray.push({
+        type: "image_url",
+        image_url: { url: dataUrl }
+      });
+    });
+
+    const modelName = aiConfig.model || 'google/gemini-2.5-flash';
+
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${aiConfig.apiKey}`,
+        'Content-Type': 'application/json',
+        'HTTP-Referer': window.location.origin || 'https://gestao-abib.local',
+        'X-Title': 'Gestao ABIB - OCR Comensais'
+      },
+      body: JSON.stringify({
+        model: modelName,
+        messages: [
+          { role: "system", content: systemInstruction },
+          { role: "user", content: contentArray }
+        ],
+        temperature: 0.1,
+        response_format: { type: "json_object" }
+      })
+    });
+
+    if (!response.ok) {
+      let errMsg = `Erro na API OpenRouter (Status ${response.status})`;
+      try {
+        const errData = await response.json();
+        if (errData && errData.error && errData.error.message) {
+          errMsg = `Erro OpenRouter: ${errData.error.message}`;
+        }
+      } catch (e) {}
+      throw new Error(errMsg);
+    }
+
+    const resultData = await response.json();
+    const rawText = resultData.choices?.[0]?.message?.content || '';
+
+    if (!rawText) {
+      throw new Error('A IA não retornou nenhum dado legível para as imagens enviadas.');
+    }
+
+    let parsedJson = null;
+    try {
+      const cleanJson = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
+      parsedJson = JSON.parse(cleanJson);
+    } catch (e) {
+      console.error("Falha ao parsear resposta da IA:", rawText);
+      throw new Error("Não foi possível interpretar a resposta estruturada da IA. Tente novamente.");
+    }
+
+    const rawDias = parsedJson.dias || (Array.isArray(parsedJson) ? parsedJson : []);
+    if (rawDias.length === 0) {
+      throw new Error('Nenhum dia ou tabela de contagem foi identificada com nitidez nas imagens enviadas.');
+    }
+
+    const currentYear = options.referenciaAno || new Date().getFullYear();
+    const processedDias = [];
+
+    rawDias.forEach((item, index) => {
+      const diaRaw = (item.dia || '').trim();
+      if (!diaRaw) return;
+
+      let day = 1;
+      let month = 1;
+      let year = currentYear;
+
+      const parts = diaRaw.split(/[\/\-\.]/);
+      if (parts.length >= 2) {
+        day = parseInt(parts[0], 10) || 1;
+        month = parseInt(parts[1], 10) || 1;
+        if (parts[2]) {
+          const yr = parseInt(parts[2], 10);
+          if (yr > 2000) year = yr;
+          else if (yr < 100) year = 2000 + yr;
+        }
+      }
+
+      const dayPad = String(day).padStart(2, '0');
+      const monthPad = String(month).padStart(2, '0');
+      const dataISO = `${year}-${monthPad}-${dayPad}`;
+      const dataDisplay = `${dayPad}/${monthPad}/${year}`;
+
+      const ticket = parseInt(item.ticket || 0, 10) || 0;
+      const garra = parseInt(item.garra || 0, 10) || 0;
+      const cartao = parseInt(item.cartao || 0, 10) || 0;
+      const pix = parseInt(item.pix || 0, 10) || 0;
+      const assinaturas = parseInt(item.assinaturas || 0, 10) || 0;
+
+      // SOMA REAL OBRIGATÓRIA (Soma aritmética real dos itens)
+      const somaReal = ticket + garra + cartao + pix + assinaturas;
+
+      const totalEscrito = (item.totalEscritoFolha !== undefined && item.totalEscritoFolha !== null && item.totalEscritoFolha !== '')
+        ? parseInt(item.totalEscritoFolha, 10)
+        : null;
+
+      const temDivergencia = totalEscrito !== null && !isNaN(totalEscrito) && totalEscrito !== somaReal;
+
+      processedDias.push({
+        idTemp: `temp_${Date.now()}_${index}`,
+        diaTexto: diaRaw,
+        dataISO,
+        dataDisplay,
+        publicos: {
+          pub_ticket: ticket,
+          pub_garra: garra,
+          pub_promotores_cartao: cartao,
+          pub_promotores_pix: pix,
+          pub_assinaturas: assinaturas
+        },
+        somaReal,
+        totalComensais: somaReal,
+        totalEscritoFolha: totalEscrito,
+        temDivergencia,
+        observacao: item.observacao || ''
+      });
+    });
+
+    processedDias.sort((a, b) => a.dataISO.localeCompare(b.dataISO));
+
+    return {
+      success: true,
+      totalDias: processedDias.length,
+      dias: processedDias
+    };
   }
 
   async function getRegistrosPorData(dataISO) {
@@ -1105,7 +1390,145 @@
     });
   }
 
-  // --- 8. COMENSAIS VIEW ---
+  // --- GERENCIADOR DE FILA E LOTES EM SEGUNDO PLANO (IA OCR) ---
+  const AI_QUEUE_STORAGE_KEY = 'abib_ai_job_queue';
+  let memoryAiJobs = [];
+
+  function loadJobsFromStorage() {
+    try {
+      const raw = localStorage.getItem(AI_QUEUE_STORAGE_KEY);
+      if (raw) {
+        memoryAiJobs = JSON.parse(raw);
+        memoryAiJobs.forEach(job => {
+          if (job.status === 'processing') {
+            job.status = 'error';
+            job.erro = 'Processamento interrompido ao fechar/recarregar a página.';
+          }
+        });
+      } else {
+        memoryAiJobs = [];
+      }
+    } catch (e) {
+      memoryAiJobs = [];
+    }
+    return memoryAiJobs;
+  }
+
+  function saveJobsToStorage() {
+    try {
+      const serializable = memoryAiJobs.map(j => ({
+        id: j.id,
+        unidadeId: j.unidadeId,
+        unidadeNome: j.unidadeNome,
+        grupo: j.grupo,
+        anoRef: j.anoRef,
+        totalFotos: j.totalFotos,
+        status: j.status,
+        progressoTexto: j.progressoTexto,
+        criadoEm: j.criadoEm,
+        finalizadoEm: j.finalizadoEm,
+        resultadoDias: j.resultadoDias || [],
+        erro: j.erro || null
+      }));
+      localStorage.setItem(AI_QUEUE_STORAGE_KEY, JSON.stringify(serializable));
+    } catch (e) {
+      console.error("Erro ao salvar fila de jobs no storage:", e);
+    }
+  }
+
+  function emitQueueChangeEvent() {
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('abib_ai_queue_change', {
+        detail: { jobs: [...memoryAiJobs] }
+      }));
+    }
+  }
+
+  loadJobsFromStorage();
+
+  function getAiJobs() {
+    return [...memoryAiJobs];
+  }
+
+  function removeAiJob(jobId) {
+    memoryAiJobs = memoryAiJobs.filter(j => j.id !== jobId);
+    saveJobsToStorage();
+    emitQueueChangeEvent();
+    return memoryAiJobs;
+  }
+
+  function clearCompletedAiJobs() {
+    memoryAiJobs = memoryAiJobs.filter(j => j.status === 'processing');
+    saveJobsToStorage();
+    emitQueueChangeEvent();
+    return memoryAiJobs;
+  }
+
+  async function enqueueAiJob({ unidadeId, unidadeNome, grupo, anoRef, files }) {
+    const jobId = `job_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+    const novoJob = {
+      id: jobId,
+      unidadeId,
+      unidadeNome: unidadeNome || 'Unidade',
+      grupo: grupo || '-',
+      anoRef: anoRef || new Date().getFullYear(),
+      totalFotos: files ? files.length : 0,
+      status: 'processing',
+      progressoTexto: 'Preparando e comprimindo fotos...',
+      criadoEm: new Date().toISOString(),
+      finalizadoEm: null,
+      resultadoDias: [],
+      erro: null
+    };
+
+    memoryAiJobs.unshift(novoJob);
+    saveJobsToStorage();
+    emitQueueChangeEvent();
+
+    executeJobInBackground(novoJob, files).catch(err => {
+      console.error(`Erro inesperado no job ${jobId}:`, err);
+    });
+
+    return novoJob;
+  }
+
+  async function executeJobInBackground(job, files) {
+    try {
+      job.progressoTexto = `Comprimindo ${files.length} foto(s)...`;
+      saveJobsToStorage();
+      emitQueueChangeEvent();
+
+      job.progressoTexto = `Analisando ${files.length} foto(s) com IA (OpenRouter)...`;
+      saveJobsToStorage();
+      emitQueueChangeEvent();
+
+      const resultado = await extractComensaisFromImages(files, { referenciaAno: job.anoRef });
+
+      if (!resultado || !resultado.dias || resultado.dias.length === 0) {
+        throw new Error("Nenhum dia ou tabela de contagem foi identificada nas fotos.");
+      }
+
+      job.status = 'ready';
+      job.progressoTexto = `Pronto! ${resultado.dias.length} dia(s) identificado(s).`;
+      job.resultadoDias = resultado.dias;
+      job.finalizadoEm = new Date().toISOString();
+      job.erro = null;
+
+      saveJobsToStorage();
+      emitQueueChangeEvent();
+    } catch (err) {
+      console.error(`Falha no processamento do lote ${job.unidadeNome}:`, err);
+      job.status = 'error';
+      job.erro = err.message || 'Erro ao comunicar com a IA do OpenRouter.';
+      job.progressoTexto = 'Falha na leitura.';
+      job.finalizadoEm = new Date().toISOString();
+
+      saveJobsToStorage();
+      emitQueueChangeEvent();
+    }
+  }
+
+   // --- 8. COMENSAIS VIEW (COM OCR DE FOTOS VIA OPENROUTER) ---
   class ComensaisModuleView {
     constructor() {
       this.id = 'comensais';
@@ -1114,6 +1537,13 @@
       this.filterStatus = 'todos';
       this.searchQuery = '';
       this.realtimeHandler = null;
+
+      // Estados do OCR e Fila
+      this.ocrSelectedFiles = [];
+      this.ocrSelectedUnitId = '';
+      this.ocrExtractedDays = [];
+      this.activeJobId = null;
+      this.openedFromCentralLotes = false;
     }
 
     async render(container, currentProfile, lockedUnit = null) {
@@ -1126,7 +1556,7 @@
       container.innerHTML = `
         ${isLocked ? `
           <div class="unit-lock-banner">
-            <span> <strong>Mart Minas - ${this.lockedUnit.loja}</strong></span>
+            <span><strong>Mart Minas - ${this.lockedUnit.loja}</strong></span>
             <small style="margin-left: auto;">Grupo ${this.lockedUnit.grupo || '-'}</small>
           </div>
         ` : ''}
@@ -1134,13 +1564,61 @@
         <div class="module-header">
           <div class="header-titles">
             <h2>Registro de Comensais Diários</h2>
-            <p class="subtitle">${isLocked ? `Unidade ${this.lockedUnit.loja} • Lançamento rápido no celular` : 'Gestão consolidada das 21 unidades, geração de links e relatórios'}</p>
+            <p class="subtitle">${isLocked ? `Unidade ${this.lockedUnit.loja} • Lançamento rápido no celular` : 'Gestão consolidada das 21 unidades, leitura por foto e relatórios'}</p>
           </div>
           <div class="header-actions">
             ${!isLocked ? `
-              <button id="btn-links-whatsapp-unidades" class="btn btn-primary">Links WhatsApp das Lojas</button>
-              <button id="btn-whatsapp" class="btn btn-whatsapp">Copiar Resumo Diário</button>
-              <button id="btn-relatorios" class="btn btn-secondary">Histórico e Relatórios</button>
+              <button id="btn-ocr-comensais" class="btn btn-primary btn-ocr-action" title="Ler fotos de folhas físicas com IA">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                  <circle cx="12" cy="13" r="4"></circle>
+                </svg>
+                <span>Leitura por Foto</span>
+              </button>
+              <button id="btn-central-lotes-ia" class="btn btn-secondary btn-central-lotes" title="Central de Lotes da IA (Processamentos em Segundo Plano)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                  <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                </svg>
+                <span>Central de Lotes</span>
+                <span id="queue-header-badge" class="queue-badge-count hidden">0</span>
+              </button>
+              <button id="btn-whatsapp" class="btn btn-whatsapp" title="Copiar resumo diário para o WhatsApp">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                </svg>
+                <span>Resumo Diário</span>
+              </button>
+              <button id="btn-relatorios" class="btn btn-secondary" title="Histórico e Relatórios">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="20" x2="18" y2="10"></line>
+                  <line x1="12" y1="20" x2="12" y2="4"></line>
+                  <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+                <span>Relatórios</span>
+              </button>
+              <div class="dropdown-container">
+                <button type="button" id="btn-dropdown-mais-acoes" class="btn btn-secondary" title="Mais Opções">
+                  <span>Mais</span>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </button>
+                <div id="dropdown-menu-comensais" class="dropdown-menu hidden">
+                  <button type="button" id="btn-links-whatsapp-unidades" class="dropdown-item">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                    </svg>
+                    <span>Links WhatsApp das Lojas</span>
+                  </button>
+                  <button type="button" id="btn-config-ia-shortcut" class="dropdown-item">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="3"></circle>
+                      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                    </svg>
+                    <span>Configurações da IA (API)</span>
+                  </button>
+                </div>
+              </div>
             ` : ''}
           </div>
         </div>
@@ -1167,6 +1645,245 @@
         </div>
 
         <div id="unidades-cards-container" class="cards-grid-vertical"></div>
+
+        <!-- ========================================================= -->
+        <!-- MODAL 1: UPLOAD DE FOTOS DAS FOLHAS (OCR IA) -->
+        <!-- ========================================================= -->
+        <div id="modal-ocr-comensais" class="modal hidden">
+          <div class="modal-content modal-large">
+            <div class="modal-header">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                  <circle cx="12" cy="13" r="4"></circle>
+                </svg>
+                <h3>Leitura Automática de Folhas com IA (OCR)</h3>
+              </div>
+              <button class="btn-close-modal-ocr"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+            </div>
+            <div class="modal-body">
+              <p class="help-text">
+                Anexe uma ou mais fotos das folhas físicas manuscritas. A IA fará a leitura de todos os dias contidos nas imagens e calculará a soma real das refeições.
+              </p>
+
+              <div class="ocr-config-box">
+                <div class="form-row-grid">
+                  <div class="form-group" style="flex: 2;">
+                    <label for="ocr-select-unidade" style="font-weight: 700;">Unidade / Loja (Obrigatório):</label>
+                    <select id="ocr-select-unidade" class="select-field">
+                      <option value="">Selecione a Loja correspondente a estas fotos...</option>
+                    </select>
+                  </div>
+                  <div class="form-group" style="flex: 1;">
+                    <label for="ocr-ano-referencia" style="font-weight: 700;">Ano de Referência:</label>
+                    <input type="number" id="ocr-ano-referencia" class="input-field" value="${new Date().getFullYear()}" min="2020" max="2030">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Área de Drop e Seleção de Fotos -->
+              <div class="ocr-dropzone" id="ocr-dropzone-area">
+                <input type="file" id="ocr-file-input" multiple accept="image/*" style="display: none;">
+                <div class="dropzone-icon">
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                    <polyline points="21 15 16 10 5 21"></polyline>
+                  </svg>
+                </div>
+                <div class="dropzone-text">
+                  <strong>Clique para selecionar fotos</strong> ou arraste as imagens aqui
+                </div>
+                <small style="color: var(--text-muted);">Suporta JPG, PNG, WEBP (fotos tiradas pelo celular ou galeria)</small>
+              </div>
+
+              <!-- Galeria de Miniaturas das Fotos Anexadas -->
+              <div id="ocr-thumbnails-wrapper" class="ocr-thumbnails-wrapper hidden">
+                <div class="thumbnails-header">
+                  <span id="ocr-files-count-badge" style="font-weight: 700; color: var(--text-title);">0 foto(s) selecionada(s)</span>
+                  <button type="button" id="btn-ocr-clear-all" class="btn btn-sm btn-link" style="color: var(--danger, #dc2626); text-decoration: none;">Remover Todas</button>
+                </div>
+                <div id="ocr-thumbnails-grid" class="ocr-thumbnails-grid"></div>
+              </div>
+
+              <!-- Status e Barra de Carregamento -->
+              <div id="ocr-loading-area" class="ocr-loading-container hidden">
+                <div class="spinner-dot-flow"></div>
+                <p id="ocr-loading-msg" style="font-weight: 700; color: var(--primary); margin-top: 10px;">Lendo e interpretando folhas com IA... Aguarde alguns instantes.</p>
+                <small style="color: var(--text-muted);">Comprimindo imagens e analisando números manuscritos com o modelo configurado.</small>
+              </div>
+            </div>
+
+            <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+              <button type="button" id="btn-ocr-open-settings" class="btn btn-secondary btn-sm">
+                Configurar API / Modelo
+              </button>
+              <div style="display: flex; gap: 8px;">
+                <button type="button" class="btn btn-secondary btn-cancelar-ocr">Cancelar</button>
+                <button type="button" id="btn-ocr-processar" class="btn btn-primary" style="font-weight: 700;">
+                  Processar em Segundo Plano
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- MODAL 2: CONFIGURAÇÕES DA IA (OPENROUTER) -->
+        <!-- ========================================================= -->
+        <div id="modal-config-ia" class="modal hidden">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h3>Configurações da IA (OpenRouter)</h3>
+              <button class="btn-close-modal-config-ia"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+            </div>
+            <div class="modal-body">
+              <p class="help-text">
+                Insira sua Chave API do OpenRouter e o modelo de visão desejado. A chave é armazenada de forma segura nas configurações locais do sistema.
+              </p>
+              <form id="form-config-ia-modal">
+                <div class="form-group">
+                  <label for="input-openrouter-key" style="font-weight: 700;">Chave API do OpenRouter (API Key):</label>
+                  <input type="password" id="input-openrouter-key" class="input-field" placeholder="sk-or-v1-..." required>
+                  <small style="color: var(--text-muted); display: block; margin-top: 4px;">Obtenha sua chave em: openrouter.ai/keys</small>
+                </div>
+
+                <div class="form-group">
+                  <label for="input-openrouter-model" style="font-weight: 700;">Modelo de IA (Model ID):</label>
+                  <input type="text" id="input-openrouter-model" class="input-field" value="google/gemini-2.5-flash" placeholder="google/gemini-2.5-flash" required>
+                  <small style="color: var(--text-muted); display: block; margin-top: 4px;">Exemplos recomendados: google/gemini-2.5-flash, google/gemini-2.0-flash-001, openai/gpt-4o-mini</small>
+                </div>
+
+                <div id="ia-test-result-box" style="margin-top: 8px; font-size: 0.85rem;"></div>
+
+                <div style="display: flex; gap: 8px; margin-top: 16px;">
+                  <button type="button" id="btn-testar-conexao-ia" class="btn btn-secondary" style="flex: 1;">
+                    Testar Conexão
+                  </button>
+                  <button type="submit" class="btn btn-primary" style="flex: 1;">
+                    Salvar Configuração
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- MODAL 3: CONFERÊNCIA E VALIDAÇÃO DOS DIAS EXTRAÍDOS -->
+        <!-- ========================================================= -->
+        <div id="modal-ocr-revisao" class="modal hidden">
+          <div class="modal-content modal-large">
+            <div class="modal-header">
+              <div>
+                <h3>Conferência e Validação dos Lançamentos</h3>
+                <p class="subtitle" id="ocr-revisao-subtitle">Unidade: Carregando...</p>
+              </div>
+              <button class="btn-close-modal-revisao"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+            </div>
+            <div class="modal-body">
+              <div class="revisao-alert-info">
+                <span>O total de cada dia é calculado pela <strong>soma real dos itens</strong>. Se houver divergência em relação ao total anotado na folha física, um aviso em amarelo será sinalizado na coluna de status.</span>
+              </div>
+
+              <div class="table-responsive-card" style="max-height: 420px; overflow-y: auto; overflow-x: hidden;">
+                <table class="data-table" id="table-ocr-revisao">
+                  <thead>
+                    <tr>
+                      <th style="width: 32px; text-align: center;" title="Marcar como conferido">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                      </th>
+                      <th style="width: 120px;">Data</th>
+                      <th style="width: 50px;">Tickets</th>
+                      <th style="width: 50px;">Garra</th>
+                      <th style="width: 50px;">Cartão</th>
+                      <th style="width: 50px;">Pix</th>
+                      <th style="width: 50px;">Assin.</th>
+                      <th style="width: 50px; text-align: center;">Soma Real</th>
+                      <th style="width: 48px; text-align: center;">Folha</th>
+                      <th style="min-width: 140px; text-align: left;">Conferência / Status</th>
+                      <th style="width: 32px; text-align: center;"></th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-ocr-revisao">
+                    <!-- Linhas geradas dinamicamente -->
+                  </tbody>
+                </table>
+              </div>
+
+              <div style="margin-top: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <button type="button" id="btn-ocr-add-dia-manual" class="btn btn-sm btn-secondary">
+                  + Adicionar Outro Dia Manualmente
+                </button>
+                <div style="font-weight: 800; font-size: 1rem; color: var(--text-title);">
+                  Total Geral dos Dias: <span id="ocr-revisao-total-geral" style="color: var(--primary);">0</span> refeições
+                </div>
+              </div>
+            </div>
+
+            <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 8px;">
+              <button type="button" class="btn btn-secondary btn-cancelar-revisao">Voltar</button>
+              <button type="button" id="btn-ocr-confirmar-salvar" class="btn btn-primary" style="font-weight: 700;">
+                Confirmar e Salvar Lançamentos
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- MODAL 4: COMPARATIVO DETALHADO (BANCO VS IA) -->
+        <!-- ========================================================= -->
+        <div id="modal-ocr-diff" class="modal hidden" style="z-index: 1060;">
+          <div class="modal-content" style="max-width: 540px;">
+            <div class="modal-header">
+              <div>
+                <h3 id="ocr-diff-title">Comparativo de Lançamento</h3>
+                <p class="subtitle" id="ocr-diff-subtitle">Comparando dados atuais no sistema com a nova extração</p>
+              </div>
+              <button class="btn-close-modal-diff"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+            </div>
+            <div class="modal-body" id="ocr-diff-body">
+              <!-- Tabela comparativa gerada dinamicamente -->
+            </div>
+            <div class="modal-footer" style="display: flex; justify-content: flex-end;">
+              <button type="button" class="btn btn-secondary btn-close-modal-diff-footer">Fechar Comparativo</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- MODAL 5: CENTRAL DE LOTES DA IA (SEGUNDO PLANO) -->
+        <!-- ========================================================= -->
+        <div id="modal-central-lotes" class="modal hidden" style="z-index: 1050;">
+          <div class="modal-content" style="max-width: 680px;">
+            <div class="modal-header">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                  <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                </svg>
+                <h3>Central de Lotes da IA</h3>
+              </div>
+              <button class="btn-close-modal-central-lotes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+            </div>
+            <div class="modal-body">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <span style="font-size: 0.84rem; color: var(--text-muted);">Acompanhe o processamento das fotos e confira os lançamentos de cada loja:</span>
+                <button type="button" id="btn-clear-completed-jobs" class="btn btn-sm btn-link" style="color: var(--text-muted); text-decoration: none; font-size: 0.76rem;">Limpar Concluídos</button>
+              </div>
+
+              <div id="central-lotes-list" class="queue-jobs-container">
+                <!-- Lista de jobs gerada dinamicamente -->
+              </div>
+            </div>
+            <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+              <button type="button" id="btn-novo-lote-shortcut" class="btn btn-primary btn-sm">
+                + Processar Outra Unidade
+              </button>
+              <button type="button" class="btn btn-secondary btn-close-modal-central-footer">Fechar</button>
+            </div>
+          </div>
+        </div>
 
         ${!isLocked ? `
           <!-- Modal WhatsApp Links das 21 Lojas -->
@@ -1217,6 +1934,16 @@
       `;
 
       this.bindEvents();
+      this.updateCentralLotesHeaderBadge();
+
+      if (!this.queueListenerAttached) {
+        this.queueListenerAttached = true;
+        window.addEventListener('abib_ai_queue_change', () => {
+          this.updateCentralLotesHeaderBadge();
+          this.renderCentralLotesList();
+        });
+      }
+
       await this.loadData();
     }
 
@@ -1266,9 +1993,59 @@
         });
       });
 
+      // --- EVENTOS DO OCR / IA E CENTRAL DE LOTES ---
+      const btnDropdown = this.container.querySelector('#btn-dropdown-mais-acoes');
+      const dropdownMenu = this.container.querySelector('#dropdown-menu-comensais');
+      if (btnDropdown && dropdownMenu) {
+        btnDropdown.addEventListener('click', (e) => {
+          e.stopPropagation();
+          dropdownMenu.classList.toggle('hidden');
+        });
+        document.addEventListener('click', (e) => {
+          if (!btnDropdown.contains(e.target) && !dropdownMenu.contains(e.target)) {
+            dropdownMenu.classList.add('hidden');
+          }
+        });
+      }
+
+      const btnCentralLotes = this.container.querySelector('#btn-central-lotes-ia');
+      if (btnCentralLotes) {
+        btnCentralLotes.addEventListener('click', () => {
+          this.openCentralLotesModal();
+        });
+      }
+
+      const btnOcr = this.container.querySelector('#btn-ocr-comensais');
+      if (btnOcr) {
+        btnOcr.addEventListener('click', async () => {
+          await this.openOcrModal();
+        });
+      }
+
+      const btnConfigIaShortcut = this.container.querySelector('#btn-config-ia-shortcut');
+      if (btnConfigIaShortcut) {
+        btnConfigIaShortcut.addEventListener('click', async () => {
+          if (dropdownMenu) dropdownMenu.classList.add('hidden');
+          await this.openConfigIaModal();
+        });
+      }
+
+      const btnOcrOpenSettings = this.container.querySelector('#btn-ocr-open-settings');
+      if (btnOcrOpenSettings) {
+        btnOcrOpenSettings.addEventListener('click', async () => {
+          await this.openConfigIaModal();
+        });
+      }
+
+      this.bindOcrDropzoneEvents();
+      this.bindConfigIaEvents();
+      this.bindOcrRevisaoEvents();
+      this.bindCentralLotesEvents();
+
       const btnLinksWhatsapp = this.container.querySelector('#btn-links-whatsapp-unidades');
       if (btnLinksWhatsapp) {
         btnLinksWhatsapp.addEventListener('click', async () => {
+          if (dropdownMenu) dropdownMenu.classList.add('hidden');
           await this.renderModalLinksWhatsapp();
         });
       }
@@ -1358,6 +2135,795 @@
       };
       document.addEventListener('visibilitychange', this.comensaisVisibilityHandler);
       window.addEventListener('focus', this.comensaisVisibilityHandler);
+    }
+
+    // --- LÓGICA DO MODAL DE UPLOAD OCR ---
+    async openOcrModal() {
+      const modal = this.container.querySelector('#modal-ocr-comensais');
+      const selectUnidade = this.container.querySelector('#ocr-select-unidade');
+      const unidades = await getUnidades();
+      const ativas = unidades.filter(u => u.ativo !== false);
+
+      selectUnidade.innerHTML = '<option value="">Selecione a Loja correspondente a estas fotos...</option>';
+      ativas.forEach(u => {
+        const opt = document.createElement('option');
+        opt.value = u.id;
+        opt.textContent = `${u.loja} ${u.grupo ? `(Grupo ${u.grupo})` : ''}`;
+        if (this.lockedUnit && this.lockedUnit.id === u.id) {
+          opt.selected = true;
+        }
+        selectUnidade.appendChild(opt);
+      });
+
+      if (this.lockedUnit) {
+        selectUnidade.value = this.lockedUnit.id;
+        selectUnidade.disabled = true;
+      }
+
+      this.ocrSelectedFiles = [];
+      this.renderOcrThumbnails();
+      modal.classList.remove('hidden');
+    }
+
+    bindOcrDropzoneEvents() {
+      const modal = this.container.querySelector('#modal-ocr-comensais');
+      const dropzone = this.container.querySelector('#ocr-dropzone-area');
+      const fileInput = this.container.querySelector('#ocr-file-input');
+      const btnProcessar = this.container.querySelector('#btn-ocr-processar');
+      const btnClearAll = this.container.querySelector('#btn-ocr-clear-all');
+
+      const btnClose = this.container.querySelector('.btn-close-modal-ocr');
+      const btnCloseFooter = this.container.querySelector('.btn-cancelar-ocr');
+
+      const closeModalFunc = () => {
+        modal.classList.add('hidden');
+        this.ocrSelectedFiles = [];
+        this.renderOcrThumbnails();
+      };
+
+      if (btnClose) btnClose.addEventListener('click', closeModalFunc);
+      if (btnCloseFooter) btnCloseFooter.addEventListener('click', closeModalFunc);
+
+      dropzone.addEventListener('click', () => {
+        fileInput.click();
+      });
+
+      fileInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+          Array.from(e.target.files).forEach(file => {
+            if (file.type.startsWith('image/')) {
+              this.ocrSelectedFiles.push(file);
+            }
+          });
+          this.renderOcrThumbnails();
+          fileInput.value = '';
+        }
+      });
+
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropzone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          dropzone.classList.add('dragover');
+        });
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropzone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          dropzone.classList.remove('dragover');
+        });
+      });
+
+      dropzone.addEventListener('drop', (e) => {
+        if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+          Array.from(e.dataTransfer.files).forEach(file => {
+            if (file.type.startsWith('image/')) {
+              this.ocrSelectedFiles.push(file);
+            }
+          });
+          this.renderOcrThumbnails();
+        }
+      });
+
+      btnClearAll.addEventListener('click', () => {
+        this.ocrSelectedFiles = [];
+        this.renderOcrThumbnails();
+      });
+
+      // Disparar Processamento em Segundo Plano
+      btnProcessar.addEventListener('click', async () => {
+        const selectUnidade = this.container.querySelector('#ocr-select-unidade');
+        const unidadeId = selectUnidade.value;
+        const anoRef = parseInt(this.container.querySelector('#ocr-ano-referencia').value || new Date().getFullYear(), 10);
+
+        if (!unidadeId) {
+          alert("Por favor, selecione de qual Unidade / Loja são as fotos antes de processar.");
+          selectUnidade.focus();
+          return;
+        }
+
+        if (this.ocrSelectedFiles.length === 0) {
+          alert("Por favor, selecione ao menos uma foto das folhas para leitura.");
+          return;
+        }
+
+        const aiConfig = await getAiConfig();
+        if (!aiConfig.apiKey) {
+          alert("A Chave API do OpenRouter não está configurada. Por favor, insira sua chave API para continuar.");
+          await this.openConfigIaModal();
+          return;
+        }
+
+        const unidades = await getUnidades();
+        const targetUnit = unidades.find(u => u.id === unidadeId) || { loja: 'Loja' };
+        const filesToProcess = [...this.ocrSelectedFiles];
+
+        // Disparar job na fila em segundo plano
+        await enqueueAiJob({
+          unidadeId,
+          unidadeNome: targetUnit.loja,
+          grupo: targetUnit.grupo,
+          anoRef,
+          files: filesToProcess
+        });
+
+        // Fechar modal imediatamente e liberar a interface
+        modal.classList.add('hidden');
+        this.ocrSelectedFiles = [];
+        this.renderOcrThumbnails();
+
+        this.updateCentralLotesHeaderBadge();
+        showToast(`Lote da unidade ${targetUnit.loja} (${filesToProcess.length} foto(s)) enviado para processamento em segundo plano!`, "success");
+      });
+    }
+
+    renderOcrThumbnails() {
+      const wrapper = this.container.querySelector('#ocr-thumbnails-wrapper');
+      const grid = this.container.querySelector('#ocr-thumbnails-grid');
+      const countBadge = this.container.querySelector('#ocr-files-count-badge');
+
+      if (this.ocrSelectedFiles.length === 0) {
+        wrapper.classList.add('hidden');
+        grid.innerHTML = '';
+        return;
+      }
+
+      wrapper.classList.remove('hidden');
+      countBadge.textContent = `${this.ocrSelectedFiles.length} foto(s) anexada(s)`;
+      grid.innerHTML = '';
+
+      this.ocrSelectedFiles.forEach((file, index) => {
+        const card = document.createElement('div');
+        card.className = 'ocr-thumbnail-card';
+
+        const imgPreview = document.createElement('img');
+        imgPreview.alt = file.name;
+        const objectUrl = URL.createObjectURL(file);
+        imgPreview.src = objectUrl;
+
+        const infoBox = document.createElement('div');
+        infoBox.className = 'thumbnail-info';
+        infoBox.innerHTML = `
+          <span class="thumb-name" title="${file.name}">${file.name}</span>
+          <span class="thumb-size">${(file.size / 1024).toFixed(0)} KB</span>
+        `;
+
+        const btnRemove = document.createElement('button');
+        btnRemove.type = 'button';
+        btnRemove.className = 'btn-thumb-remove';
+        btnRemove.title = 'Remover foto';
+        btnRemove.innerHTML = '&times;';
+        btnRemove.addEventListener('click', (e) => {
+          e.stopPropagation();
+          URL.revokeObjectURL(objectUrl);
+          this.ocrSelectedFiles.splice(index, 1);
+          this.renderOcrThumbnails();
+        });
+
+        card.appendChild(imgPreview);
+        card.appendChild(infoBox);
+        card.appendChild(btnRemove);
+        grid.appendChild(card);
+      });
+    }
+
+    // --- LÓGICA DO MODAL DE CONFIGURAÇÃO DA IA ---
+    async openConfigIaModal() {
+      const modal = this.container.querySelector('#modal-config-ia');
+      const aiConfig = await getAiConfig();
+
+      this.container.querySelector('#input-openrouter-key').value = aiConfig.apiKey || '';
+      this.container.querySelector('#input-openrouter-model').value = aiConfig.model || 'google/gemini-2.5-flash';
+      this.container.querySelector('#ia-test-result-box').innerHTML = '';
+
+      modal.classList.remove('hidden');
+    }
+
+    bindConfigIaEvents() {
+      const modal = this.container.querySelector('#modal-config-ia');
+      const btnClose = this.container.querySelector('.btn-close-modal-config-ia');
+      const form = this.container.querySelector('#form-config-ia-modal');
+      const btnTest = this.container.querySelector('#btn-testar-conexao-ia');
+      const resultBox = this.container.querySelector('#ia-test-result-box');
+
+      if (btnClose) {
+        btnClose.addEventListener('click', () => {
+          modal.classList.add('hidden');
+        });
+      }
+
+      btnTest.addEventListener('click', async () => {
+        const apiKey = this.container.querySelector('#input-openrouter-key').value.trim();
+        const model = this.container.querySelector('#input-openrouter-model').value.trim();
+
+        if (!apiKey) {
+          resultBox.innerHTML = '<span style="color: var(--danger, #dc2626); font-weight: 700;">Por favor, digite a Chave API primeiro.</span>';
+          return;
+        }
+
+        btnTest.disabled = true;
+        btnTest.textContent = 'Testando...';
+        resultBox.innerHTML = '<span style="color: var(--text-muted);">Verificando conexão com o OpenRouter...</span>';
+
+        try {
+          await testOpenRouterConnection(apiKey, model);
+          resultBox.innerHTML = '<span style="color: var(--primary); font-weight: 700;">Conexão com a API do OpenRouter estabelecida com sucesso!</span>';
+        } catch (err) {
+          resultBox.innerHTML = `<span style="color: var(--danger, #dc2626); font-weight: 700;">Falha: ${err.message}</span>`;
+        } finally {
+          btnTest.disabled = false;
+          btnTest.textContent = 'Testar Conexão';
+        }
+      });
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const apiKey = this.container.querySelector('#input-openrouter-key').value.trim();
+        const model = this.container.querySelector('#input-openrouter-model').value.trim();
+
+        await saveAiConfig({ apiKey, model });
+        showToast("Configurações do OpenRouter salvas com sucesso!", "success");
+        modal.classList.remove('hidden');
+      });
+    }
+
+    // --- LÓGICA DO MODAL DE CONFERÊNCIA E EDIÇÃO (REVISÃO) ---
+    async openOcrRevisaoModal() {
+      const modal = this.container.querySelector('#modal-ocr-revisao');
+      const subtitle = this.container.querySelector('#ocr-revisao-subtitle');
+      const unidades = await getUnidades();
+      const targetUnit = unidades.find(u => u.id === this.ocrSelectedUnitId) || { loja: 'Loja Não Identificada' };
+
+      // Mapear lançamentos já existentes nesta unidade no banco
+      const todosComensais = await getCollection(STORAGE_KEYS.COMENSAIS);
+      this.ocrExistingMap = new Map();
+      todosComensais
+        .filter(r => r.unidadeId === this.ocrSelectedUnitId)
+        .forEach(r => this.ocrExistingMap.set(r.data, r));
+
+      subtitle.innerHTML = `Unidade: <strong>${targetUnit.loja}</strong> ${targetUnit.grupo ? `(Grupo ${targetUnit.grupo})` : ''} • <strong>${this.ocrExtractedDays.length} dia(s)</strong> extraído(s)`;
+
+      this.renderOcrRevisaoTable();
+      modal.classList.remove('hidden');
+    }
+
+    buildOcrStatusHtml(diaItem, somaReal) {
+      const temDivergencia = diaItem.totalEscritoFolha !== null && diaItem.totalEscritoFolha !== undefined && parseInt(diaItem.totalEscritoFolha, 10) !== somaReal;
+      
+      const badgeStatus = temDivergencia
+        ? `<span class="badge badge-warning" title="O valor total escrito na folha (${diaItem.totalEscritoFolha}) difere da soma real dos itens (${somaReal})">Divergência: Folha ${diaItem.totalEscritoFolha} vs Real ${somaReal}</span>`
+        : `<span class="badge badge-success">Soma correta (${somaReal})</span>`;
+
+      const regExistente = this.ocrExistingMap ? this.ocrExistingMap.get(diaItem.dataISO) : null;
+      let overwriteHtml = '';
+      if (regExistente && regExistente.publicos) {
+        const pAnt = regExistente.publicos;
+        let totalAnterior = 0;
+        Object.values(pAnt).forEach(v => totalAnterior += parseInt(v || 0, 10));
+
+        if (totalAnterior > 0 || Object.keys(pAnt).length > 0) {
+          overwriteHtml = `
+            <div style="display: flex; align-items: center; gap: 4px; margin-top: 3px; flex-wrap: wrap;">
+              <span class="badge badge-overwrite">Substituição</span>
+              <button type="button" class="btn-ver-diff" title="Clique para ver os valores atuais vs novos">Ver dados salvos</button>
+            </div>
+          `;
+        }
+      }
+
+      return `
+        <div style="display: flex; flex-direction: column; gap: 2px; align-items: flex-start;">
+          ${badgeStatus}
+          ${overwriteHtml}
+        </div>
+      `;
+    }
+
+    openOcrDiffModal(diaItem) {
+      const modalDiff = this.container.querySelector('#modal-ocr-diff');
+      const titleEl = this.container.querySelector('#ocr-diff-title');
+      const subtitleEl = this.container.querySelector('#ocr-diff-subtitle');
+      const bodyEl = this.container.querySelector('#ocr-diff-body');
+
+      const regExistente = this.ocrExistingMap ? this.ocrExistingMap.get(diaItem.dataISO) : null;
+      const pAnt = (regExistente && regExistente.publicos) ? regExistente.publicos : {};
+      const pNovo = diaItem.publicos || {};
+
+      const dataFormatada = diaItem.dataISO.split('-').reverse().join('/');
+      titleEl.textContent = `Comparativo do Dia ${dataFormatada}`;
+      subtitleEl.textContent = `Comparando dados atuais no sistema com a nova extração das fotos`;
+
+      const labels = [
+        { id: 'pub_ticket', label: 'Tickets' },
+        { id: 'pub_garra', label: "Garra / Estrela D'Alva" },
+        { id: 'pub_promotores_cartao', label: 'Cartão R$ 19,50' },
+        { id: 'pub_promotores_pix', label: 'Pix R$ 19,50' },
+        { id: 'pub_assinaturas', label: 'Assinaturas' }
+      ];
+
+      let totalAnt = 0;
+      let totalNovo = 0;
+
+      let rowsHtml = '';
+      labels.forEach(item => {
+        const vAnt = parseInt(pAnt[item.id] || 0, 10);
+        const vNovo = parseInt(pNovo[item.id] || 0, 10);
+        totalAnt += vAnt;
+        totalNovo += vNovo;
+
+        const dif = vNovo - vAnt;
+        let difBadge = '<span style="color: var(--text-muted); font-weight: 600;">= 0</span>';
+        if (dif > 0) {
+          difBadge = `<span style="color: #16a34a; font-weight: 700;">+${dif}</span>`;
+        } else if (dif < 0) {
+          difBadge = `<span style="color: #dc2626; font-weight: 700;">${dif}</span>`;
+        }
+
+        rowsHtml += `
+          <tr>
+            <td><strong>${item.label}</strong></td>
+            <td style="text-align: center; font-weight: 600;">${vAnt}</td>
+            <td style="text-align: center; font-weight: 700; color: var(--primary);">${vNovo}</td>
+            <td style="text-align: center;">${difBadge}</td>
+          </tr>
+        `;
+      });
+
+      const difTotal = totalNovo - totalAnt;
+      let difTotalBadge = '<span style="color: var(--text-muted); font-weight: 700;">= 0</span>';
+      if (difTotal > 0) {
+        difTotalBadge = `<span style="color: #16a34a; font-weight: 800;">+${difTotal}</span>`;
+      } else if (difTotal < 0) {
+        difTotalBadge = `<span style="color: #dc2626; font-weight: 800;">${difTotal}</span>`;
+      }
+
+      bodyEl.innerHTML = `
+        <div style="margin-bottom: 12px; font-size: 0.84rem; color: var(--text-body); background: #f8fafc; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+          Se você confirmar e salvar, os valores <strong>Salvo no Banco</strong> serão atualizados pelos valores <strong>Novo da IA</strong>.
+        </div>
+        <div class="table-responsive-card">
+          <table class="diff-modal-table">
+            <thead>
+              <tr>
+                <th>Público / Refeição</th>
+                <th style="text-align: center;">Salvo no Banco</th>
+                <th style="text-align: center; color: var(--primary);">Novo da IA</th>
+                <th style="text-align: center;">Variação</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rowsHtml}
+              <tr style="background: #f1f5f9; font-weight: 800; border-top: 2px solid var(--border-color);">
+                <td>TOTAL GERAL</td>
+                <td style="text-align: center; font-size: 0.95rem;">${totalAnt}</td>
+                <td style="text-align: center; color: var(--primary); font-size: 1.05rem;">${totalNovo}</td>
+                <td style="text-align: center;">${difTotalBadge}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      `;
+
+      modalDiff.classList.remove('hidden');
+    }
+
+    renderOcrRevisaoTable() {
+      const tbody = this.container.querySelector('#tbody-ocr-revisao');
+      const totalGeralSpan = this.container.querySelector('#ocr-revisao-total-geral');
+      tbody.innerHTML = '';
+
+      if (this.ocrExtractedDays.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="10" class="text-center" style="padding: 24px; color: var(--text-muted);">Nenhum dia na lista de conferência.</td></tr>`;
+        totalGeralSpan.textContent = '0';
+        return;
+      }
+
+      let somaTodosOsDias = 0;
+
+      this.ocrExtractedDays.forEach((diaItem, index) => {
+        const tr = document.createElement('tr');
+        tr.dataset.index = index;
+
+        const p = diaItem.publicos || {};
+        const ticketVal = parseInt(p.pub_ticket || 0, 10);
+        const garraVal = parseInt(p.pub_garra || 0, 10);
+        const cartaoVal = parseInt(p.pub_promotores_cartao || 0, 10);
+        const pixVal = parseInt(p.pub_promotores_pix || 0, 10);
+        const assinatVal = parseInt(p.pub_assinaturas || 0, 10);
+
+        // Soma real estrita dos campos
+        const somaReal = ticketVal + garraVal + cartaoVal + pixVal + assinatVal;
+        diaItem.somaReal = somaReal;
+        diaItem.totalComensais = somaReal;
+        somaTodosOsDias += somaReal;
+
+        const totalEscrito = diaItem.totalEscritoFolha !== null && diaItem.totalEscritoFolha !== undefined ? diaItem.totalEscritoFolha : '-';
+        const statusHtml = this.buildOcrStatusHtml(diaItem, somaReal);
+
+        if (diaItem.conferido) {
+          tr.classList.add('row-conferido');
+        }
+
+        tr.innerHTML = `
+          <td style="text-align: center;">
+            <input type="checkbox" class="ocr-row-check" ${diaItem.conferido ? 'checked' : ''} style="cursor: pointer; width: 16px; height: 16px; accent-color: #16a34a;" title="Marcar como conferido">
+          </td>
+          <td style="text-align: center;">
+            <input type="date" class="input-field input-sm ocr-rev-date" value="${diaItem.dataISO}">
+          </td>
+          <td style="text-align: center;">
+            <input type="number" min="0" class="input-field input-sm ocr-rev-num" data-field="pub_ticket" value="${ticketVal}">
+          </td>
+          <td style="text-align: center;">
+            <input type="number" min="0" class="input-field input-sm ocr-rev-num" data-field="pub_garra" value="${garraVal}">
+          </td>
+          <td style="text-align: center;">
+            <input type="number" min="0" class="input-field input-sm ocr-rev-num" data-field="pub_promotores_cartao" value="${cartaoVal}">
+          </td>
+          <td style="text-align: center;">
+            <input type="number" min="0" class="input-field input-sm ocr-rev-num" data-field="pub_promotores_pix" value="${pixVal}">
+          </td>
+          <td style="text-align: center;">
+            <input type="number" min="0" class="input-field input-sm ocr-rev-num" data-field="pub_assinaturas" value="${assinatVal}">
+          </td>
+          <td style="text-align: center;">
+            <strong class="ocr-rev-soma-real" style="color: var(--primary); font-size: 0.95rem;">${somaReal}</strong>
+          </td>
+          <td style="text-align: center; color: var(--text-muted); font-size: 0.85rem;">
+            ${totalEscrito}
+          </td>
+          <td class="ocr-rev-status-cell">
+            ${statusHtml}
+          </td>
+          <td style="text-align: center;">
+            <button type="button" class="btn btn-sm btn-link btn-remove-rev-day" style="color: var(--danger, #dc2626); text-decoration: none; font-size: 1.1rem; padding: 0 4px;" title="Excluir este dia">&times;</button>
+          </td>
+        `;
+
+        // Evento de marcação de conferência
+        const chkConferido = tr.querySelector('.ocr-row-check');
+        if (chkConferido) {
+          chkConferido.addEventListener('change', (e) => {
+            diaItem.conferido = e.target.checked;
+            tr.classList.toggle('row-conferido', e.target.checked);
+          });
+        }
+
+        // Eventos de alteração dos inputs de valores
+        const dateInp = tr.querySelector('.ocr-rev-date');
+        dateInp.addEventListener('change', (e) => {
+          diaItem.dataISO = e.target.value;
+          const currentSoma = diaItem.somaReal || 0;
+          tr.querySelector('.ocr-rev-status-cell').innerHTML = this.buildOcrStatusHtml(diaItem, currentSoma);
+          this.bindRowDiffEvents(tr, diaItem);
+        });
+
+        const numInputs = tr.querySelectorAll('.ocr-rev-num');
+        numInputs.forEach(inp => {
+          inp.addEventListener('input', () => {
+            const field = inp.dataset.field;
+            const val = parseInt(inp.value || '0', 10);
+            diaItem.publicos[field] = val;
+
+            // Recalcular soma real e atualizar status instantaneamente
+            const nTicket = parseInt(diaItem.publicos.pub_ticket || 0, 10);
+            const nGarra = parseInt(diaItem.publicos.pub_garra || 0, 10);
+            const nCartao = parseInt(diaItem.publicos.pub_promotores_cartao || 0, 10);
+            const nPix = parseInt(diaItem.publicos.pub_promotores_pix || 0, 10);
+            const nAssinat = parseInt(diaItem.publicos.pub_assinaturas || 0, 10);
+
+            const nSomaReal = nTicket + nGarra + nCartao + nPix + nAssinat;
+            diaItem.somaReal = nSomaReal;
+            diaItem.totalComensais = nSomaReal;
+
+            tr.querySelector('.ocr-rev-soma-real').textContent = nSomaReal;
+            tr.querySelector('.ocr-rev-status-cell').innerHTML = this.buildOcrStatusHtml(diaItem, nSomaReal);
+            this.bindRowDiffEvents(tr, diaItem);
+
+            // Atualizar somatório geral de todos os dias
+            let totalGeralAcc = 0;
+            this.ocrExtractedDays.forEach(d => totalGeralAcc += (d.somaReal || 0));
+            totalGeralSpan.textContent = totalGeralAcc.toLocaleString('pt-BR');
+          });
+        });
+
+        this.bindRowDiffEvents(tr, diaItem);
+
+        const btnRemoveDay = tr.querySelector('.btn-remove-rev-day');
+        btnRemoveDay.addEventListener('click', () => {
+          this.ocrExtractedDays.splice(index, 1);
+          this.renderOcrRevisaoTable();
+        });
+
+        tbody.appendChild(tr);
+      });
+
+      totalGeralSpan.textContent = somaTodosOsDias.toLocaleString('pt-BR');
+    }
+
+    bindRowDiffEvents(tr, diaItem) {
+      const btnDiff = tr.querySelector('.btn-ver-diff');
+      if (btnDiff) {
+        btnDiff.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.openOcrDiffModal(diaItem);
+        });
+      }
+    }
+
+    bindOcrRevisaoEvents() {
+      const modal = this.container.querySelector('#modal-ocr-revisao');
+      const modalDiff = this.container.querySelector('#modal-ocr-diff');
+      const btnClose = this.container.querySelector('.btn-close-modal-revisao');
+      const btnCloseFooter = this.container.querySelector('.btn-cancelar-revisao');
+      const btnAddManual = this.container.querySelector('#btn-ocr-add-dia-manual');
+      const btnConfirmarSalvar = this.container.querySelector('#btn-ocr-confirmar-salvar');
+
+      const btnCloseDiff = this.container.querySelector('.btn-close-modal-diff');
+      const btnCloseDiffFooter = this.container.querySelector('.btn-close-modal-diff-footer');
+
+      const closeModal = () => {
+        modal.classList.add('hidden');
+        if (this.openedFromCentralLotes) {
+          this.openedFromCentralLotes = false;
+          this.openCentralLotesModal();
+        }
+      };
+
+      if (btnClose) btnClose.addEventListener('click', closeModal);
+      if (btnCloseFooter) btnCloseFooter.addEventListener('click', closeModal);
+
+      if (btnCloseDiff) {
+        btnCloseDiff.addEventListener('click', () => {
+          modalDiff.classList.add('hidden');
+        });
+      }
+      if (btnCloseDiffFooter) {
+        btnCloseDiffFooter.addEventListener('click', () => {
+          modalDiff.classList.add('hidden');
+        });
+      }
+
+      btnAddManual.addEventListener('click', () => {
+        const todayISO = new Date().toISOString().split('T')[0];
+        this.ocrExtractedDays.push({
+          idTemp: `temp_${Date.now()}`,
+          diaTexto: 'Manual',
+          dataISO: todayISO,
+          dataDisplay: todayISO.split('-').reverse().join('/'),
+          publicos: {
+            pub_ticket: 0,
+            pub_garra: 0,
+            pub_promotores_cartao: 0,
+            pub_promotores_pix: 0,
+            pub_assinaturas: 0
+          },
+          somaReal: 0,
+          totalComensais: 0,
+          totalEscritoFolha: null,
+          temDivergencia: false,
+          observacao: ''
+        });
+        this.renderOcrRevisaoTable();
+      });
+
+      btnConfirmarSalvar.addEventListener('click', async () => {
+        if (this.ocrExtractedDays.length === 0) {
+          alert("Não há dias para salvar.");
+          return;
+        }
+
+        btnConfirmarSalvar.disabled = true;
+        btnConfirmarSalvar.textContent = 'Salvando no banco...';
+
+        try {
+          const registrosParaSalvar = this.ocrExtractedDays.map(d => ({
+            dataISO: d.dataISO,
+            publicos: d.publicos,
+            observacao: d.temDivergencia ? `Leitura IA: soma real (${d.somaReal}) divergiu do total anotado na folha (${d.totalEscritoFolha})` : (d.observacao || '')
+          }));
+
+          await saveComensaisLote(this.ocrSelectedUnitId, registrosParaSalvar);
+
+          const wasFromCentral = this.openedFromCentralLotes;
+
+          if (this.activeJobId) {
+            removeAiJob(this.activeJobId);
+            this.activeJobId = null;
+            this.updateCentralLotesHeaderBadge();
+          }
+
+          this.openedFromCentralLotes = false;
+
+          showToast(`${this.ocrExtractedDays.length} lançamento(s) foram salvos com sucesso na unidade!`, "success");
+          modal.classList.add('hidden');
+          await this.loadData();
+
+          if (wasFromCentral) {
+            this.openCentralLotesModal();
+          }
+        } catch (err) {
+          console.error("Erro ao salvar lançamentos em lote:", err);
+          alert(`Erro ao salvar lançamentos: ${err.message}`);
+        } finally {
+          btnConfirmarSalvar.disabled = false;
+          btnConfirmarSalvar.textContent = 'Confirmar e Salvar Lançamentos';
+        }
+      });
+    }
+
+    // --- LÓGICA DA CENTRAL DE LOTES (BACKGROUND QUEUE) ---
+    openCentralLotesModal() {
+      const modal = this.container.querySelector('#modal-central-lotes');
+      if (!modal) return;
+      this.renderCentralLotesList();
+      modal.classList.remove('hidden');
+    }
+
+    updateCentralLotesHeaderBadge() {
+      const badge = this.container.querySelector('#queue-header-badge');
+      if (!badge) return;
+      const jobs = getAiJobs();
+      const readyCount = jobs.filter(j => j.status === 'ready').length;
+      const procCount = jobs.filter(j => j.status === 'processing').length;
+      const totalActive = readyCount + procCount;
+
+      if (totalActive === 0) {
+        badge.classList.add('hidden');
+        badge.classList.remove('queue-badge-ready');
+        badge.textContent = '0';
+      } else {
+        badge.classList.remove('hidden');
+        badge.textContent = `${totalActive}`;
+        if (readyCount > 0) {
+          badge.classList.add('queue-badge-ready');
+          badge.title = `${readyCount} lote(s) pronto(s) para conferência!`;
+        } else {
+          badge.classList.remove('queue-badge-ready');
+          badge.title = `${procCount} lote(s) sendo processado(s) em segundo plano...`;
+        }
+      }
+    }
+
+    renderCentralLotesList() {
+      const listEl = this.container.querySelector('#central-lotes-list');
+      if (!listEl) return;
+      const jobs = getAiJobs();
+      listEl.innerHTML = '';
+
+      if (jobs.length === 0) {
+        listEl.innerHTML = `
+          <div style="padding: 32px 16px; text-align: center; color: var(--text-muted); background: #f8fafc; border-radius: var(--radius-sm); border: 1px dashed var(--border-color);">
+            <div style="font-weight: 700; color: var(--text-title); margin-bottom: 4px;">Nenhum lote na fila</div>
+            <div style="font-size: 0.82rem;">Envie fotos de uma ou mais lojas para que a IA processe em segundo plano.</div>
+          </div>
+        `;
+        return;
+      }
+
+      jobs.forEach(job => {
+        const card = document.createElement('div');
+        card.className = `queue-job-card status-${job.status}`;
+
+        let statusBadge = '';
+        let actionsHtml = '';
+
+        if (job.status === 'processing') {
+          statusBadge = `<span class="badge badge-info"><span class="spinner-dot-flow" style="width: 10px; height: 10px; border-width: 2px; display: inline-block; vertical-align: middle; margin-right: 4px;"></span> Processando com IA...</span>`;
+          actionsHtml = `
+            <button type="button" class="btn btn-sm btn-secondary btn-cancel-job" data-job-id="${job.id}">Cancelar</button>
+          `;
+        } else if (job.status === 'ready') {
+          statusBadge = `<span class="badge badge-success">Pronto (${job.resultadoDias.length} dias lidos)</span>`;
+          actionsHtml = `
+            <button type="button" class="btn btn-sm btn-primary btn-review-job" data-job-id="${job.id}" style="font-weight: 700;">Conferir e Salvar</button>
+            <button type="button" class="btn btn-sm btn-secondary btn-discard-job" data-job-id="${job.id}">Descartar</button>
+          `;
+        } else if (job.status === 'error') {
+          statusBadge = `<span class="badge" style="background: #fef2f2; color: #dc2626; border: 1px solid #fecaca;">Erro no processamento</span>`;
+          actionsHtml = `
+            <button type="button" class="btn btn-sm btn-secondary btn-discard-job" data-job-id="${job.id}">Remover</button>
+          `;
+        }
+
+        const horaFormatada = new Date(job.criadoEm).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+        card.innerHTML = `
+          <div class="queue-job-header">
+            <div class="queue-job-title">
+              <h4>${job.unidadeNome}</h4>
+              <span class="group-badge-tag">${job.grupo || '-'}</span>
+              <small style="color: var(--text-muted);">${job.totalFotos} foto(s) • ${horaFormatada}</small>
+            </div>
+            <div>${statusBadge}</div>
+          </div>
+          <div class="queue-job-body">
+            <div style="color: var(--text-muted); font-size: 0.78rem;">
+              ${job.erro ? `<span style="color: #dc2626; font-weight: 600;">${job.erro}</span>` : job.progressoTexto}
+            </div>
+            <div class="queue-job-actions">
+              ${actionsHtml}
+            </div>
+          </div>
+        `;
+
+        // Eventos dos botões do card
+        const btnReview = card.querySelector('.btn-review-job');
+        if (btnReview) {
+          btnReview.addEventListener('click', async () => {
+            this.ocrSelectedUnitId = job.unidadeId;
+            this.ocrExtractedDays = job.resultadoDias;
+            this.activeJobId = job.id;
+            this.openedFromCentralLotes = true;
+
+            this.container.querySelector('#modal-central-lotes').classList.add('hidden');
+            await this.openOcrRevisaoModal();
+          });
+        }
+
+        const btnDiscard = card.querySelector('.btn-discard-job, .btn-cancel-job');
+        if (btnDiscard) {
+          btnDiscard.addEventListener('click', () => {
+            removeAiJob(job.id);
+            this.renderCentralLotesList();
+            this.updateCentralLotesHeaderBadge();
+          });
+        }
+
+        listEl.appendChild(card);
+      });
+    }
+
+    bindCentralLotesEvents() {
+      const modal = this.container.querySelector('#modal-central-lotes');
+      if (!modal) return;
+
+      const btnClose = this.container.querySelector('.btn-close-modal-central-lotes');
+      const btnCloseFooter = this.container.querySelector('.btn-close-modal-central-footer');
+      const btnNovoLote = this.container.querySelector('#btn-novo-lote-shortcut');
+      const btnClearCompleted = this.container.querySelector('#btn-clear-completed-jobs');
+
+      const closeModal = () => {
+        modal.classList.add('hidden');
+      };
+
+      if (btnClose) btnClose.addEventListener('click', closeModal);
+      if (btnCloseFooter) btnCloseFooter.addEventListener('click', closeModal);
+
+      if (btnNovoLote) {
+        btnNovoLote.addEventListener('click', async () => {
+          closeModal();
+          await this.openOcrModal();
+        });
+      }
+
+      if (btnClearCompleted) {
+        btnClearCompleted.addEventListener('click', () => {
+          clearCompletedAiJobs();
+          this.renderCentralLotesList();
+          this.updateCentralLotesHeaderBadge();
+        });
+      }
     }
 
     async handleRealtimeUpdate() {
@@ -1649,7 +3215,6 @@
           });
 
           input.addEventListener('input', () => {
-            // Permite somente números digitados
             const clean = input.value.replace(/\D/g, '');
             if (clean !== input.value) {
               input.value = clean;
@@ -1715,7 +3280,10 @@
       this.periodo = 'este_mes';
       this.dataInicio = '';
       this.dataFim = '';
-      this.activeTab = 'visual';
+      this.activeTab = 'visual'; // 'visual', 'tabela' ou 'matriz'
+      this.matrixAno = new Date().getFullYear();
+      this.matrixMes = new Date().getMonth();
+      this.matrixFilter = 'todas';
     }
 
     async render(container, currentProfile) {
@@ -1781,10 +3349,13 @@
         <!-- Abas de Alternância de Visualização -->
         <div class="report-view-tabs">
           <button id="tab-visual-view" class="report-tab-btn active">
-             Painel Gráfico (Donut & Curvas SVG)
+            Painel Gráfico (Donut & Curvas SVG)
           </button>
           <button id="tab-table-view" class="report-tab-btn">
-             Tabela Detalhada de Registros
+            Tabela Detalhada de Registros
+          </button>
+          <button id="tab-matriz-view" class="report-tab-btn">
+            Matriz de Preenchimento Mensal
           </button>
         </div>
 
@@ -1853,7 +3424,7 @@
             </div>
           </div>
 
-          <!-- 5. Gráfico de Barras de TODAS as 21 Unidades -->
+          <!-- 5. Gráfico de Barras de TODAS as 21 Unidades + Resumo Por Grupo e Total Geral -->
           <div class="chart-card chart-card-full">
             <div class="chart-card-header">
               <h3>Refeições Vendidas por Unidade (Todas as 21 Lojas)</h3>
@@ -1882,6 +3453,98 @@
               <tr><td colspan="6" class="text-center">Carregando dados...</td></tr>
             </tbody>
           </table>
+        </div>
+
+        <!-- MATRIZ DE PREENCHIMENTO MENSAL -->
+        <div id="container-matriz-view" class="matriz-dashboard-container hidden">
+          <div class="matrix-control-bar">
+            <div class="matrix-month-nav">
+              <button type="button" id="btn-matrix-prev-month" class="btn btn-secondary btn-sm" title="Mês anterior">◀ Mês Anterior</button>
+              <div class="matrix-month-picker-wrapper">
+                <select id="select-matrix-mes" class="select-field" style="width: auto; font-weight: 700;">
+                  <option value="0">Janeiro</option>
+                  <option value="1">Fevereiro</option>
+                  <option value="2">Março</option>
+                  <option value="3">Abril</option>
+                  <option value="4">Maio</option>
+                  <option value="5">Junho</option>
+                  <option value="6">Julho</option>
+                  <option value="7">Agosto</option>
+                  <option value="8">Setembro</option>
+                  <option value="9">Outubro</option>
+                  <option value="10">Novembro</option>
+                  <option value="11">Dezembro</option>
+                </select>
+                <select id="select-matrix-ano" class="select-field" style="width: auto; font-weight: 700;">
+                  <option value="2024">2024</option>
+                  <option value="2025">2025</option>
+                  <option value="2026">2026</option>
+                  <option value="2027">2027</option>
+                  <option value="2028">2028</option>
+                </select>
+              </div>
+              <button type="button" id="btn-matrix-next-month" class="btn btn-secondary btn-sm" title="Próximo mês">Próximo Mês ▶</button>
+            </div>
+
+            <!-- Controle de Data Limite com Atalhos -->
+            <div class="matrix-cutoff-control">
+              <span class="matrix-cutoff-label">Conferir até:</span>
+              <select id="select-matrix-dia-limite" class="select-field" style="width: auto; font-weight: 700; padding: 2px 6px; font-size: 0.76rem;">
+                <!-- Gerado dinamicamente via JS -->
+              </select>
+              <div class="matrix-cutoff-shortcuts">
+                <button type="button" class="btn-shortcut" data-cutoff="last-week" title="Última semana (até o último sábado)">Última Semana</button>
+                <button type="button" class="btn-shortcut" data-cutoff="yesterday" title="Dia de ontem">Ontem</button>
+                <button type="button" class="btn-shortcut" data-cutoff="today" title="Dia de hoje">Hoje</button>
+                <button type="button" class="btn-shortcut" data-cutoff="full-month" title="Mês completo">Mês Completo</button>
+              </div>
+            </div>
+
+            <div class="matrix-pills">
+              <button type="button" class="pill active" data-matrix-filter="todas">Todas as 21 Lojas</button>
+              <button type="button" class="pill pill-pending" data-matrix-filter="pendentes">Apenas com Pendências (<span id="matrix-count-pendentes">0</span>)</button>
+              <button type="button" class="pill pill-success" data-matrix-filter="completas">100% em Dia (<span id="matrix-count-completas">0</span>)</button>
+            </div>
+          </div>
+
+          <div class="matrix-kpi-grid">
+            <div class="matrix-kpi-card">
+              <span class="matrix-kpi-label">Taxa Geral de Preenchimento</span>
+              <span class="matrix-kpi-val" id="matrix-kpi-taxa">0%</span>
+              <small id="matrix-kpi-taxa-sub" style="color: var(--text-muted);">0 de 0 envios esperados</small>
+            </div>
+            <div class="matrix-kpi-card">
+              <span class="matrix-kpi-label">Lojas 100% em Dia</span>
+              <span class="matrix-kpi-val" id="matrix-kpi-lojas-completas" style="color: #16a34a;">0 / 21</span>
+              <small style="color: var(--text-muted);">Sem pendências até a data</small>
+            </div>
+            <div class="matrix-kpi-card">
+              <span class="matrix-kpi-label">Lojas com Pendências</span>
+              <span class="matrix-kpi-val" id="matrix-kpi-lojas-pendentes" style="color: #dc2626;">0</span>
+              <small style="color: var(--text-muted);">Necessitam envio de fotos</small>
+            </div>
+            <div class="matrix-kpi-card">
+              <span class="matrix-kpi-label">Total de Refeições no Mês</span>
+              <span class="matrix-kpi-val" id="matrix-kpi-total-refeicoes" style="color: var(--primary);">0</span>
+              <small style="color: var(--text-muted);">Soma de todos os dias registrados</small>
+            </div>
+          </div>
+
+          <div class="matrix-legend">
+            <div class="matrix-legend-item"><span class="matrix-legend-box cell-filled"></span> Preenchido (Dados Salvos)</div>
+            <div class="matrix-legend-item"><span class="matrix-legend-box cell-missing"></span> Pendente (Não Enviado)</div>
+            <div class="matrix-legend-item"><span class="matrix-legend-box cell-future"></span> Dia Futuro</div>
+            <div class="matrix-legend-item"><span class="matrix-legend-box cell-weekend-header"></span> Fim de Semana (Sáb/Dom)</div>
+          </div>
+
+          <div class="matrix-table-card">
+            <div class="matrix-table-wrapper" id="matrix-table-wrapper">
+              <!-- Tabela Heatmap gerada via JS -->
+            </div>
+          </div>
+
+          <!-- Tooltip Flutuante no Cursor -->
+          <div id="matrix-floating-tooltip" class="matrix-floating-tooltip hidden"></div>
         </div>
 
         <!-- Modal de Detalhes das Unidades -->
@@ -1949,25 +3612,154 @@
       });
 
       // Alternância de Abas
-      const tabVisual = this.container.querySelector('#tab-visual-view');
-      const tabTable = this.container.querySelector('#tab-table-view');
-      const visualBox = this.container.querySelector('#container-visual-dashboard');
+      const tabVisual = this.container.querySelector('#tab-relatorio-visual') || this.container.querySelector('#tab-visual-view');
+      const tabTable = this.container.querySelector('#tab-relatorio-tabela') || this.container.querySelector('#tab-table-view');
+      const tabMatriz = this.container.querySelector('#tab-relatorio-matriz') || this.container.querySelector('#tab-matriz-view');
+      const visualBox = this.container.querySelector('#container-visual-view') || this.container.querySelector('#container-visual-dashboard');
       const tableBox = this.container.querySelector('#container-table-view');
+      const matrizBox = this.container.querySelector('#container-matriz-view');
+      const filtersCard = this.container.querySelector('#container-relatorio-filtros') || this.container.querySelector('.report-filters-card');
+      const kpiGrid = this.container.querySelector('#container-relatorio-kpis') || this.container.querySelector('.kpi-grid');
 
-      tabVisual.addEventListener('click', () => {
-        tabVisual.classList.add('active');
-        tabTable.classList.remove('active');
-        visualBox.classList.remove('hidden');
-        tableBox.classList.add('hidden');
-        this.activeTab = 'visual';
+      if (tabVisual) {
+        tabVisual.addEventListener('click', () => {
+          tabVisual.classList.add('active');
+          if (tabTable) tabTable.classList.remove('active');
+          if (tabMatriz) tabMatriz.classList.remove('active');
+          if (filtersCard) filtersCard.classList.remove('hidden');
+          if (kpiGrid) kpiGrid.classList.remove('hidden');
+          if (visualBox) visualBox.classList.remove('hidden');
+          if (tableBox) tableBox.classList.add('hidden');
+          if (matrizBox) matrizBox.classList.add('hidden');
+          this.activeTab = 'visual';
+        });
+      }
+
+      if (tabTable) {
+        tabTable.addEventListener('click', () => {
+          tabTable.classList.add('active');
+          if (tabVisual) tabVisual.classList.remove('active');
+          if (tabMatriz) tabMatriz.classList.remove('active');
+          if (filtersCard) filtersCard.classList.remove('hidden');
+          if (kpiGrid) kpiGrid.classList.remove('hidden');
+          if (tableBox) tableBox.classList.remove('hidden');
+          if (visualBox) visualBox.classList.add('hidden');
+          if (matrizBox) matrizBox.classList.add('hidden');
+          this.activeTab = 'tabela';
+        });
+      }
+
+      if (tabMatriz) {
+        tabMatriz.addEventListener('click', async () => {
+          tabMatriz.classList.add('active');
+          if (tabVisual) tabVisual.classList.remove('active');
+          if (tabTable) tabTable.classList.remove('active');
+          if (filtersCard) filtersCard.classList.add('hidden');
+          if (kpiGrid) kpiGrid.classList.add('hidden');
+          if (matrizBox) matrizBox.classList.remove('hidden');
+          if (visualBox) visualBox.classList.add('hidden');
+          if (tableBox) tableBox.classList.add('hidden');
+          this.activeTab = 'matriz';
+          await this.renderMatrizView();
+        });
+      }
+
+      // Controles da Matriz de Preenchimento Mensal
+      const btnMatrixPrev = this.container.querySelector('#btn-matrix-prev-month');
+      const btnMatrixNext = this.container.querySelector('#btn-matrix-next-month');
+      const selectMatrixMes = this.container.querySelector('#select-matrix-mes');
+      const selectMatrixAno = this.container.querySelector('#select-matrix-ano');
+
+      if (btnMatrixPrev) {
+        btnMatrixPrev.addEventListener('click', async () => {
+          this.matrixDiaLimite = null;
+          if (this.matrixMes === 0) {
+            this.matrixMes = 11;
+            this.matrixAno--;
+          } else {
+            this.matrixMes--;
+          }
+          await this.renderMatrizView();
+        });
+      }
+
+      if (btnMatrixNext) {
+        btnMatrixNext.addEventListener('click', async () => {
+          this.matrixDiaLimite = null;
+          if (this.matrixMes === 11) {
+            this.matrixMes = 0;
+            this.matrixAno++;
+          } else {
+            this.matrixMes++;
+          }
+          await this.renderMatrizView();
+        });
+      }
+
+      if (selectMatrixMes) {
+        selectMatrixMes.addEventListener('change', async (e) => {
+          this.matrixDiaLimite = null;
+          this.matrixMes = parseInt(e.target.value, 10);
+          await this.renderMatrizView();
+        });
+      }
+
+      if (selectMatrixAno) {
+        selectMatrixAno.addEventListener('change', async (e) => {
+          this.matrixDiaLimite = null;
+          this.matrixAno = parseInt(e.target.value, 10);
+          await this.renderMatrizView();
+        });
+      }
+
+      const selectDiaLimite = this.container.querySelector('#select-matrix-dia-limite');
+      if (selectDiaLimite) {
+        selectDiaLimite.addEventListener('change', async (e) => {
+          this.matrixDiaLimite = parseInt(e.target.value, 10);
+          await this.renderMatrizView();
+        });
+      }
+
+      const cutoffShortcuts = this.container.querySelectorAll('.matrix-cutoff-shortcuts .btn-shortcut');
+      cutoffShortcuts.forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const type = btn.dataset.cutoff;
+          const daysInMonth = new Date(this.matrixAno, this.matrixMes + 1, 0).getDate();
+          const today = new Date();
+          const isCurrentMonth = (today.getFullYear() === this.matrixAno && today.getMonth() === this.matrixMes);
+
+          if (type === 'full-month') {
+            this.matrixDiaLimite = daysInMonth;
+          } else if (type === 'today') {
+            this.matrixDiaLimite = isCurrentMonth ? today.getDate() : daysInMonth;
+          } else if (type === 'yesterday') {
+            this.matrixDiaLimite = isCurrentMonth ? Math.max(1, today.getDate() - 1) : daysInMonth;
+          } else if (type === 'last-week') {
+            if (isCurrentMonth) {
+              const dow = today.getDay(); // 0 Dom, 1 Seg, ..., 6 Sab
+              const diffToSaturday = (dow === 6) ? 7 : (dow + 1);
+              const satDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - diffToSaturday);
+              if (satDate.getMonth() === this.matrixMes && satDate.getFullYear() === this.matrixAno) {
+                this.matrixDiaLimite = satDate.getDate();
+              } else {
+                this.matrixDiaLimite = 1;
+              }
+            } else {
+              this.matrixDiaLimite = daysInMonth;
+            }
+          }
+          await this.renderMatrizView();
+        });
       });
 
-      tabTable.addEventListener('click', () => {
-        tabTable.classList.add('active');
-        tabVisual.classList.remove('active');
-        tableBox.classList.remove('hidden');
-        visualBox.classList.add('hidden');
-        this.activeTab = 'tabela';
+      const matrixPills = this.container.querySelectorAll('.matrix-pills .pill');
+      matrixPills.forEach(pill => {
+        pill.addEventListener('click', async () => {
+          matrixPills.forEach(p => p.classList.remove('active'));
+          pill.classList.add('active');
+          this.matrixFilter = pill.dataset.matrixFilter;
+          await this.renderMatrizView();
+        });
       });
 
     const selectPeriodo = this.container.querySelector('#select-periodo');
@@ -2505,6 +4297,440 @@
       });
 
       modal.classList.remove('hidden');
+    }
+
+    async renderMatrizView() {
+      const todos = await getCollection('abib_gestao_comensais');
+      const unidades = await getUnidades();
+
+      // Sincronizar seletores de mês e ano
+      const selectMes = this.container.querySelector('#select-matrix-mes');
+      const selectAno = this.container.querySelector('#select-matrix-ano');
+      if (selectMes) selectMes.value = String(this.matrixMes);
+      if (selectAno) selectAno.value = String(this.matrixAno);
+
+      const daysInMonth = new Date(this.matrixAno, this.matrixMes + 1, 0).getDate();
+      const today = new Date();
+      const isCurrentMonth = (today.getFullYear() === this.matrixAno && today.getMonth() === this.matrixMes);
+      const isPastMonth = (new Date(this.matrixAno, this.matrixMes + 1, 0) < today && !isCurrentMonth);
+      const isFutureMonth = (new Date(this.matrixAno, this.matrixMes, 1) > today);
+
+      // Calcular dia limite padrão se não definido
+      if (this.matrixDiaLimite === null || this.matrixDiaLimite === undefined) {
+        if (isCurrentMonth) {
+          this.matrixDiaLimite = Math.max(1, today.getDate() - 1);
+        } else if (isPastMonth) {
+          this.matrixDiaLimite = daysInMonth;
+        } else {
+          this.matrixDiaLimite = 0;
+        }
+      }
+
+      let maxExpectedDay = Math.min(this.matrixDiaLimite, daysInMonth);
+
+      // Sincronizar seletor de dia limite
+      const selectDiaLimite = this.container.querySelector('#select-matrix-dia-limite');
+      if (selectDiaLimite) {
+        let optionsHtml = '';
+        for (let d = 1; d <= daysInMonth; d++) {
+          const dStr = String(d).padStart(2, '0');
+          const isFull = (d === daysInMonth);
+          optionsHtml += `<option value="${d}" ${d === maxExpectedDay ? 'selected' : ''}>Dia ${dStr}${isFull ? ' (Mês Todo)' : ''}</option>`;
+        }
+        selectDiaLimite.innerHTML = optionsHtml;
+      }
+
+      // Atualizar botões de atalho ativos
+      const shortcutButtons = this.container.querySelectorAll('.matrix-cutoff-shortcuts .btn-shortcut');
+      shortcutButtons.forEach(btn => {
+        const type = btn.dataset.cutoff;
+        let isBtnActive = false;
+        if (type === 'today' && isCurrentMonth && maxExpectedDay === today.getDate()) isBtnActive = true;
+        else if (type === 'yesterday' && isCurrentMonth && maxExpectedDay === Math.max(1, today.getDate() - 1)) isBtnActive = true;
+        else if (type === 'full-month' && maxExpectedDay === daysInMonth) isBtnActive = true;
+        else if (type === 'last-week' && isCurrentMonth) {
+          const dow = today.getDay();
+          const diffToSaturday = (dow === 6) ? 7 : (dow + 1);
+          const satDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - diffToSaturday);
+          let targetSat = satDate.getDate();
+          if (satDate.getMonth() !== this.matrixMes || satDate.getFullYear() !== this.matrixAno) {
+            targetSat = 1;
+          }
+          if (maxExpectedDay === targetSat) isBtnActive = true;
+        }
+        if (isBtnActive) btn.classList.add('active');
+        else btn.classList.remove('active');
+      });
+
+      // Mapa de registros por unidadeId + '_' + dataISO
+      const recordMap = new Map();
+      todos.forEach(r => {
+        if (r.unidadeId && r.data) {
+          recordMap.set(`${r.unidadeId}_${r.data}`, r);
+        }
+      });
+
+      // Ordenar unidades por Grupo e Loja
+      const sortedUnits = [...unidades].sort((a, b) => {
+        if ((a.grupo || '') !== (b.grupo || '')) {
+          return (a.grupo || '').localeCompare(b.grupo || '');
+        }
+        return (a.loja || '').localeCompare(b.loja || '');
+      });
+
+      let totalEsperadoGeral = 0;
+      let totalPreenchidoGeral = 0;
+      let totalLojas100 = 0;
+      let totalLojasPendentes = 0;
+      let totalRefeicoesMes = 0;
+
+      const unitStats = sortedUnits.map(u => {
+        let preenchidos = 0;
+        let somaRefeicoes = 0;
+        const diasStatus = [];
+
+        for (let day = 1; day <= daysInMonth; day++) {
+          const dayStr = String(day).padStart(2, '0');
+          const mesStr = String(this.matrixMes + 1).padStart(2, '0');
+          const dateISO = `${this.matrixAno}-${mesStr}-${dayStr}`;
+          const dateObj = new Date(this.matrixAno, this.matrixMes, day);
+          const dayOfWeek = dateObj.getDay(); // 0 Dom, 6 Sab
+          const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
+
+          const isPastOrToday = (maxExpectedDay > 0 && day <= maxExpectedDay);
+          const isFuture = (day > maxExpectedDay);
+
+          const reg = recordMap.get(`${u.id}_${dateISO}`);
+          let hasData = false;
+          let totalComensais = 0;
+
+          if (reg) {
+            if (reg.publicos && typeof reg.publicos === 'object') {
+              const vals = Object.values(reg.publicos);
+              const nums = vals.map(v => parseInt(v, 10)).filter(n => !isNaN(n));
+              if (nums.length > 0) {
+                totalComensais = nums.reduce((acc, curr) => acc + curr, 0);
+              }
+            }
+            if (totalComensais === 0 && typeof reg.totalComensais === 'number') {
+              totalComensais = reg.totalComensais;
+            }
+            hasData = (totalComensais > 0);
+          }
+
+          if (hasData) {
+            somaRefeicoes += totalComensais;
+          }
+
+          if (isPastOrToday) {
+            if (hasData) {
+              preenchidos++;
+            }
+          }
+
+          diasStatus.push({
+            day,
+            dateISO,
+            dayOfWeek,
+            isWeekend,
+            isFuture,
+            isPastOrToday,
+            hasData,
+            totalComensais,
+            reg
+          });
+        }
+
+        totalRefeicoesMes += somaRefeicoes;
+        const diasEsperados = maxExpectedDay;
+        const taxa = diasEsperados > 0 ? Math.round((preenchidos / diasEsperados) * 100) : 100;
+        const temPendencia = diasEsperados > 0 && preenchidos < diasEsperados;
+        const pendenciasCount = diasEsperados > 0 ? (diasEsperados - preenchidos) : 0;
+
+        totalEsperadoGeral += diasEsperados;
+        totalPreenchidoGeral += preenchidos;
+
+        if (!temPendencia && diasEsperados > 0) {
+          totalLojas100++;
+        } else if (temPendencia) {
+          totalLojasPendentes++;
+        }
+
+        return {
+          unit: u,
+          diasStatus,
+          preenchidos,
+          diasEsperados,
+          taxa,
+          temPendencia,
+          pendenciasCount,
+          somaRefeicoes
+        };
+      });
+
+      // Atualizar KPIs
+      const taxaGeral = totalEsperadoGeral > 0 ? Math.round((totalPreenchidoGeral / totalEsperadoGeral) * 100) : 100;
+      const kpiTaxa = this.container.querySelector('#matrix-kpi-taxa');
+      const kpiTaxaSub = this.container.querySelector('#matrix-kpi-taxa-sub');
+      const kpiLojas100 = this.container.querySelector('#matrix-kpi-lojas-completas');
+      const kpiLojasPendentes = this.container.querySelector('#matrix-kpi-lojas-pendentes');
+      const kpiTotalRef = this.container.querySelector('#matrix-kpi-total-refeicoes');
+      const countPend = this.container.querySelector('#matrix-count-pendentes');
+      const countComp = this.container.querySelector('#matrix-count-completas');
+
+      if (kpiTaxa) kpiTaxa.textContent = `${taxaGeral}%`;
+      if (kpiTaxaSub) kpiTaxaSub.textContent = `${totalPreenchidoGeral} de ${totalEsperadoGeral} envios esperados (até dia ${String(maxExpectedDay).padStart(2, '0')})`;
+      if (kpiLojas100) kpiLojas100.textContent = `${totalLojas100} / ${sortedUnits.length}`;
+      if (kpiLojasPendentes) kpiLojasPendentes.textContent = `${totalLojasPendentes}`;
+      if (kpiTotalRef) kpiTotalRef.textContent = totalRefeicoesMes.toLocaleString('pt-BR');
+      if (countPend) countPend.textContent = `${totalLojasPendentes}`;
+      if (countComp) countComp.textContent = `${totalLojas100}`;
+
+      // Filtrar unidades para exibição
+      let displayUnits = unitStats;
+      if (this.matrixFilter === 'pendentes') {
+        displayUnits = unitStats.filter(s => s.temPendencia);
+      } else if (this.matrixFilter === 'completas') {
+        displayUnits = unitStats.filter(s => !s.temPendencia);
+      }
+
+      // Construir Tabela Heatmap
+      const wrapper = this.container.querySelector('#matrix-table-wrapper');
+      if (!wrapper) return;
+
+      if (displayUnits.length === 0) {
+        wrapper.innerHTML = `
+          <div style="padding: 40px; text-align: center; color: var(--text-muted);">
+            Nenhuma unidade encontrada para o filtro selecionado.
+          </div>
+        `;
+        return;
+      }
+
+      const weekLetters = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
+      const weekNames = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+
+      let headerDaysHtml = '';
+      let headerWeekdaysHtml = '';
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dateObj = new Date(this.matrixAno, this.matrixMes, day);
+        const dow = dateObj.getDay();
+        const isWeekend = (dow === 0 || dow === 6);
+        const isToday = isCurrentMonth && (day === today.getDate());
+        const isCutoff = (day === maxExpectedDay && maxExpectedDay < daysInMonth);
+
+        const weekendClass = isWeekend ? 'cell-weekend-header' : '';
+        const cutoffClass = isCutoff ? 'matrix-cutoff-col' : '';
+        const todayStyle = isToday ? 'border-bottom: 2px solid var(--primary); font-weight: 800; color: var(--primary);' : '';
+
+        headerDaysHtml += `<th class="${weekendClass} ${cutoffClass}" style="${todayStyle}" data-col-day="${day}">${String(day).padStart(2, '0')}</th>`;
+        headerWeekdaysHtml += `<th class="${weekendClass} ${cutoffClass}" style="font-size: 0.65rem; color: #475569; padding: 2px 0;" data-col-day="${day}">${weekLetters[dow]}</th>`;
+      }
+
+      let rowsHtml = '';
+      displayUnits.forEach(item => {
+        const u = item.unit;
+        const nomeAbrev = formatLojaDisplayName(u.loja);
+
+        let badgeTaxa = '';
+        if (item.diasEsperados === 0) {
+          badgeTaxa = `<span class="badge" style="background: #f1f5f9; color: #64748b; font-size: 0.65rem;">-</span>`;
+        } else if (item.taxa === 100) {
+          badgeTaxa = `<span class="badge badge-success" style="font-size: 0.65rem; padding: 2px 4px;">100%</span>`;
+        } else {
+          badgeTaxa = `<span class="badge" style="background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; font-size: 0.65rem; padding: 2px 4px;">${item.taxa}%</span>`;
+        }
+
+        let cellsHtml = '';
+        item.diasStatus.forEach(d => {
+          let cellClass = '';
+          let cellContent = '';
+          const isCutoff = (d.day === maxExpectedDay && maxExpectedDay < daysInMonth);
+          const cutoffClass = isCutoff ? 'matrix-cutoff-col' : '';
+
+          if (d.isFuture) {
+            if (d.hasData) {
+              cellClass = 'cell-future cell-future-with-data';
+              cellContent = d.totalComensais > 999 ? '999+' : String(d.totalComensais);
+            } else {
+              cellClass = 'cell-future';
+              cellContent = '-';
+            }
+          } else if (d.hasData) {
+            cellClass = 'cell-filled';
+            cellContent = d.totalComensais > 999 ? '999+' : String(d.totalComensais);
+          } else {
+            cellClass = 'cell-missing';
+            cellContent = '-';
+          }
+
+          cellsHtml += `<td class="matrix-cell ${cellClass} ${cutoffClass}" data-col-day="${d.day}" data-unit-id="${u.id}" data-date-iso="${d.dateISO}">${cellContent}</td>`;
+        });
+
+        rowsHtml += `
+          <tr>
+            <td class="col-loja" title="${u.loja}">
+              <strong>${nomeAbrev}</strong>
+            </td>
+            <td class="col-status">
+              ${badgeTaxa}
+            </td>
+            ${cellsHtml}
+            <td class="col-total">
+              ${item.somaRefeicoes.toLocaleString('pt-BR')}
+            </td>
+          </tr>
+        `;
+      });
+
+      wrapper.innerHTML = `
+        <table class="matrix-table">
+          <thead>
+            <tr>
+              <th rowspan="2" class="col-loja" style="vertical-align: middle;">Loja / Unidade</th>
+              <th rowspan="2" class="col-status" style="vertical-align: middle;">Envios</th>
+              ${headerDaysHtml}
+              <th rowspan="2" class="col-total" style="vertical-align: middle;">Total</th>
+            </tr>
+            <tr>
+              ${headerWeekdaysHtml}
+            </tr>
+          </thead>
+          <tbody>
+            ${rowsHtml}
+          </tbody>
+        </table>
+      `;
+
+      // Mapeamento e Eventos de Crosshair (Coluna Ativa) e Tooltip Flutuante
+      const publicos = await getPublicos();
+      const tooltip = this.container.querySelector('#matrix-floating-tooltip');
+      const table = wrapper.querySelector('.matrix-table');
+
+      const diaDetalhesMap = new Map();
+      displayUnits.forEach(item => {
+        item.diasStatus.forEach(d => {
+          if (d.hasData && d.reg) {
+            diaDetalhesMap.set(`${item.unit.id}_${d.dateISO}`, {
+              loja: item.unit.loja,
+              dataDisplay: `${String(d.day).padStart(2, '0')}/${String(this.matrixMes + 1).padStart(2, '0')}/${this.matrixAno}`,
+              diaSemana: ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'][d.dayOfWeek],
+              total: d.totalComensais,
+              publicos: d.reg.publicos || {},
+              observacao: d.reg.observacao || ''
+            });
+          }
+        });
+      });
+
+      let currentColDay = null;
+
+      table.addEventListener('mouseover', (e) => {
+        const target = e.target.closest('[data-col-day]');
+        if (target) {
+          const colDay = target.dataset.colDay;
+          if (colDay !== currentColDay) {
+            if (currentColDay) {
+              table.querySelectorAll(`[data-col-day="${currentColDay}"]`).forEach(el => el.classList.remove('matrix-col-hover'));
+            }
+            currentColDay = colDay;
+            table.querySelectorAll(`[data-col-day="${colDay}"]`).forEach(el => el.classList.add('matrix-col-hover'));
+          }
+        } else {
+          if (currentColDay) {
+            table.querySelectorAll(`[data-col-day="${currentColDay}"]`).forEach(el => el.classList.remove('matrix-col-hover'));
+            currentColDay = null;
+          }
+        }
+
+        const cell = e.target.closest('.matrix-cell');
+        if (cell && tooltip) {
+          const unitId = cell.dataset.unitId;
+          const dateIso = cell.dataset.dateIso;
+          const info = diaDetalhesMap.get(`${unitId}_${dateIso}`);
+
+          if (info) {
+            let pubItemsHtml = '';
+            publicos.forEach(p => {
+              const val = info.publicos[p.id];
+              if (val !== undefined && val !== null && val !== '' && Number(val) > 0) {
+                pubItemsHtml += `
+                  <div class="matrix-tt-pub-item">
+                    <span>${p.nome}:</span>
+                    <strong>${val}</strong>
+                  </div>
+                `;
+              }
+            });
+
+            if (!pubItemsHtml) {
+              pubItemsHtml = `<div style="color: var(--text-muted); font-size: 0.72rem;">Sem divisão por público</div>`;
+            }
+
+            tooltip.innerHTML = `
+              <div class="matrix-tt-header">
+                <div class="matrix-tt-title">${info.loja}</div>
+                <div class="matrix-tt-date">${info.dataDisplay} • ${info.diaSemana}${info.diaSemana !== 'Domingo' && info.diaSemana !== 'Sábado' ? '-feira' : ''}</div>
+              </div>
+              <div class="matrix-tt-total">
+                <span>Total de Refeições:</span>
+                <strong>${info.total}</strong>
+              </div>
+              <div class="matrix-tt-publicos-list">
+                ${pubItemsHtml}
+              </div>
+              ${info.observacao ? `
+                <div class="matrix-tt-obs">
+                  <strong>Obs:</strong> ${info.observacao}
+                </div>
+              ` : ''}
+            `;
+
+            tooltip.classList.remove('hidden');
+          } else {
+            tooltip.classList.add('hidden');
+          }
+        } else if (tooltip) {
+          tooltip.classList.add('hidden');
+        }
+      });
+
+      table.addEventListener('mousemove', (e) => {
+        if (tooltip && !tooltip.classList.contains('hidden')) {
+          let x = e.clientX + 14;
+          let y = e.clientY + 14;
+          if (x + 340 > window.innerWidth) x = e.clientX - 335;
+          if (y + 240 > window.innerHeight) y = e.clientY - 210;
+          tooltip.style.left = `${x}px`;
+          tooltip.style.top = `${y}px`;
+        }
+      });
+
+      table.addEventListener('mouseout', (e) => {
+        const fromEl = e.target.closest('[data-col-day]');
+        const toEl = e.relatedTarget ? e.relatedTarget.closest('[data-col-day]') : null;
+
+        if (!toEl && currentColDay) {
+          table.querySelectorAll(`[data-col-day="${currentColDay}"]`).forEach(el => el.classList.remove('matrix-col-hover'));
+          currentColDay = null;
+        }
+
+        const cell = e.target.closest('.matrix-cell');
+        if (cell && tooltip) {
+          tooltip.classList.add('hidden');
+        }
+      });
+
+      table.addEventListener('mouseleave', () => {
+        if (currentColDay) {
+          table.querySelectorAll(`[data-col-day="${currentColDay}"]`).forEach(el => el.classList.remove('matrix-col-hover'));
+          currentColDay = null;
+        }
+        if (tooltip) {
+          tooltip.classList.add('hidden');
+        }
+      });
     }
   }
 
@@ -3623,17 +5849,9 @@
             </div>
           </div>
 
-          <div class="search-and-category-bar" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; background: var(--bg-surface); padding: 10px 14px; border-radius: var(--radius-md); border: 1px solid var(--border-color); box-shadow: var(--shadow-card);">
-            <div class="search-group" style="flex: 1; min-width: 220px;">
-              <input type="text" id="input-search-horti-produto" class="input-search" placeholder="Buscar produto (ex: Batata, Alface, Maçã)..." style="width: 100%; padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); font-size: 0.88rem; outline: none;">
-            </div>
-
-            <div class="category-toggle-pills" id="category-pills-group" style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
-              <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-title); text-transform: uppercase; margin-right: 2px;">Exibir:</span>
-              <button class="pill ${this.selectedCategories.has('Verduras') ? 'active' : ''}" data-category="Verduras">Verduras</button>
-              <button class="pill ${this.selectedCategories.has('Legumes') ? 'active' : ''}" data-category="Legumes">Legumes</button>
-              <button class="pill ${this.selectedCategories.has('Frutas') ? 'active' : ''}" data-category="Frutas">Frutas</button>
-              <button class="pill ${this.selectedCategories.has('Ovos') ? 'active' : ''}" data-category="Ovos">Ovos</button>
+          <div class="search-and-category-bar" style="margin-bottom: 14px; background: var(--bg-surface); padding: 10px 14px; border-radius: var(--radius-md); border: 1px solid var(--border-color); box-shadow: var(--shadow-card);">
+            <div class="search-group" style="width: 100%;">
+              <input type="text" id="input-search-horti-produto" class="input-search" placeholder="Buscar produto (ex: Batata, Tomate, Laranja)..." style="width: 100%; padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); font-size: 0.88rem; outline: none;">
             </div>
           </div>
 
@@ -3912,21 +6130,6 @@
         });
       }
 
-      const catPills = this.container.querySelectorAll('#category-pills-group .pill');
-      catPills.forEach(pill => {
-        pill.addEventListener('click', (e) => {
-          const cat = e.target.getAttribute('data-category');
-          if (this.selectedCategories.has(cat)) {
-            this.selectedCategories.delete(cat);
-            e.target.classList.remove('active');
-          } else {
-            this.selectedCategories.add(cat);
-            e.target.classList.add('active');
-          }
-          this.renderTabelaProdutos();
-        });
-      });
-
       const btnCopiar = this.container.querySelector('#btn-copiar-anterior');
       if (btnCopiar) {
         btnCopiar.addEventListener('click', async () => {
@@ -4138,27 +6341,14 @@
       let itensExibidosCount = 0;
 
       this.itensState.forEach((item, index) => {
-        if (!this.selectedCategories.has(item.categoria)) {
-          return;
-        }
-
         if (this.searchQuery) {
           const matchNome = matchesFuzzySearch(item.nomeProduto, this.searchQuery);
-          const matchCat = matchesFuzzySearch(item.categoria, this.searchQuery);
-          if (!matchNome && !matchCat) {
+          if (!matchNome) {
             return;
           }
         }
 
         itensExibidosCount++;
-
-        if (item.categoria !== categoriaAtual) {
-          categoriaAtual = item.categoria;
-          const trHeader = document.createElement('tr');
-          trHeader.className = 'tr-category-header';
-          trHeader.innerHTML = `<td colspan="7">Categoria: <strong>${categoriaAtual}</strong></td>`;
-          tbody.appendChild(trHeader);
-        }
 
         const pSac = parseFloat(item.precoSacolao) || 0;
         const pMart = parseFloat(item.precoMartMinas) || 0;
@@ -4382,29 +6572,29 @@
         tr.classList.remove('tr-filled');
       }
 
-      const tdSac = tr.children[1];
-      const tdMart = tr.children[2];
+      const tdSac = tr.querySelector('.col-sacolao');
+      const tdMart = tr.querySelector('.col-martminas');
 
-      tdSac.classList.remove('bg-green-highlight');
-      tdMart.classList.remove('bg-green-highlight');
+      if (tdSac) tdSac.classList.remove('bg-green-highlight');
+      if (tdMart) tdMart.classList.remove('bg-green-highlight');
 
       let vencedorAuto = '';
       if (pSac > 0 && pMart > 0) {
         if (pSac < pMart) {
-          tdSac.classList.add('bg-green-highlight');
+          if (tdSac) tdSac.classList.add('bg-green-highlight');
           vencedorAuto = 'Sacolão';
         } else if (pMart < pSac) {
-          tdMart.classList.add('bg-green-highlight');
+          if (tdMart) tdMart.classList.add('bg-green-highlight');
           vencedorAuto = 'Mart Minas';
         } else {
-          tdSac.classList.add('bg-green-highlight');
+          if (tdSac) tdSac.classList.add('bg-green-highlight');
           vencedorAuto = 'Sacolão';
         }
       } else if (pMart > 0) {
-        tdMart.classList.add('bg-green-highlight');
+        if (tdMart) tdMart.classList.add('bg-green-highlight');
         vencedorAuto = 'Mart Minas';
       } else if (pSac > 0) {
-        tdSac.classList.add('bg-green-highlight');
+        if (tdSac) tdSac.classList.add('bg-green-highlight');
         vencedorAuto = 'Sacolão';
       } else {
         vencedorAuto = '';

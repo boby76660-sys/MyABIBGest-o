@@ -29,7 +29,11 @@ export class ComensaisReportView {
     this.periodo = 'este_mes';
     this.dataInicio = '';
     this.dataFim = '';
-    this.activeTab = 'visual'; // 'visual' ou 'tabela'
+    this.activeTab = 'visual'; // 'visual', 'tabela' ou 'matriz'
+    this.matrixAno = new Date().getFullYear();
+    this.matrixMes = new Date().getMonth();
+    this.matrixFilter = 'todas';
+    this.matrixDiaLimite = null;
   }
 
   async render(container, currentProfile) {
@@ -103,10 +107,13 @@ export class ComensaisReportView {
       <!-- Abas de Alternância de Visualização -->
       <div class="report-view-tabs">
         <button id="tab-visual-view" class="report-tab-btn active">
-           Painel Gráfico (Donut & Curvas SVG)
+          Painel Gráfico (Donut & Curvas SVG)
         </button>
         <button id="tab-table-view" class="report-tab-btn">
-           Tabela Detalhada de Registros
+          Tabela Detalhada de Registros
+        </button>
+        <button id="tab-matriz-view" class="report-tab-btn">
+          Matriz de Preenchimento Mensal
         </button>
       </div>
 
@@ -206,6 +213,98 @@ export class ComensaisReportView {
         </table>
       </div>
 
+      <!-- MATRIZ DE PREENCHIMENTO MENSAL -->
+      <div id="container-matriz-view" class="matriz-dashboard-container hidden">
+        <div class="matrix-control-bar">
+          <div class="matrix-month-nav">
+            <button type="button" id="btn-matrix-prev-month" class="btn btn-secondary btn-sm" title="Mês anterior">◀ Mês Anterior</button>
+            <div class="matrix-month-picker-wrapper">
+              <select id="select-matrix-mes" class="select-field" style="width: auto; font-weight: 700;">
+                <option value="0">Janeiro</option>
+                <option value="1">Fevereiro</option>
+                <option value="2">Março</option>
+                <option value="3">Abril</option>
+                <option value="4">Maio</option>
+                <option value="5">Junho</option>
+                <option value="6">Julho</option>
+                <option value="7">Agosto</option>
+                <option value="8">Setembro</option>
+                <option value="9">Outubro</option>
+                <option value="10">Novembro</option>
+                <option value="11">Dezembro</option>
+              </select>
+              <select id="select-matrix-ano" class="select-field" style="width: auto; font-weight: 700;">
+                <option value="2024">2024</option>
+                <option value="2025">2025</option>
+                <option value="2026">2026</option>
+                <option value="2027">2027</option>
+                <option value="2028">2028</option>
+              </select>
+            </div>
+            <button type="button" id="btn-matrix-next-month" class="btn btn-secondary btn-sm" title="Próximo mês">Próximo Mês ▶</button>
+          </div>
+
+          <!-- Controle de Data Limite com Atalhos -->
+          <div class="matrix-cutoff-control">
+            <span class="matrix-cutoff-label">Conferir até:</span>
+            <select id="select-matrix-dia-limite" class="select-field" style="width: auto; font-weight: 700; padding: 2px 6px; font-size: 0.76rem;">
+              <!-- Gerado dinamicamente via JS -->
+            </select>
+            <div class="matrix-cutoff-shortcuts">
+              <button type="button" class="btn-shortcut" data-cutoff="last-week" title="Última semana (até o último sábado)">Última Semana</button>
+              <button type="button" class="btn-shortcut" data-cutoff="yesterday" title="Dia de ontem">Ontem</button>
+              <button type="button" class="btn-shortcut" data-cutoff="today" title="Dia de hoje">Hoje</button>
+              <button type="button" class="btn-shortcut" data-cutoff="full-month" title="Mês completo">Mês Completo</button>
+            </div>
+          </div>
+
+          <div class="matrix-pills">
+            <button type="button" class="pill active" data-matrix-filter="todas">Todas as 21 Lojas</button>
+            <button type="button" class="pill pill-pending" data-matrix-filter="pendentes">Apenas com Pendências (<span id="matrix-count-pendentes">0</span>)</button>
+            <button type="button" class="pill pill-success" data-matrix-filter="completas">100% em Dia (<span id="matrix-count-completas">0</span>)</button>
+          </div>
+        </div>
+
+        <div class="matrix-kpi-grid">
+          <div class="matrix-kpi-card">
+            <span class="matrix-kpi-label">Taxa Geral de Preenchimento</span>
+            <span class="matrix-kpi-val" id="matrix-kpi-taxa">0%</span>
+            <small id="matrix-kpi-taxa-sub" style="color: var(--text-muted);">0 de 0 envios esperados</small>
+          </div>
+          <div class="matrix-kpi-card">
+            <span class="matrix-kpi-label">Lojas 100% em Dia</span>
+            <span class="matrix-kpi-val" id="matrix-kpi-lojas-completas" style="color: #16a34a;">0 / 21</span>
+            <small style="color: var(--text-muted);">Sem pendências até a data</small>
+          </div>
+          <div class="matrix-kpi-card">
+            <span class="matrix-kpi-label">Lojas com Pendências</span>
+            <span class="matrix-kpi-val" id="matrix-kpi-lojas-pendentes" style="color: #dc2626;">0</span>
+            <small style="color: var(--text-muted);">Necessitam envio de fotos</small>
+          </div>
+          <div class="matrix-kpi-card">
+            <span class="matrix-kpi-label">Total de Refeições no Mês</span>
+            <span class="matrix-kpi-val" id="matrix-kpi-total-refeicoes" style="color: var(--primary);">0</span>
+            <small style="color: var(--text-muted);">Soma de todos os dias registrados</small>
+          </div>
+        </div>
+
+        <div class="matrix-legend">
+          <div class="matrix-legend-item"><span class="matrix-legend-box cell-filled"></span> Preenchido (Dados Salvos)</div>
+          <div class="matrix-legend-item"><span class="matrix-legend-box cell-missing"></span> Pendente (Não Enviado)</div>
+          <div class="matrix-legend-item"><span class="matrix-legend-box cell-future"></span> Dia Futuro</div>
+          <div class="matrix-legend-item"><span class="matrix-legend-box cell-weekend-header"></span> Fim de Semana (Sáb/Dom)</div>
+        </div>
+
+        <div class="matrix-table-card">
+          <div class="matrix-table-wrapper" id="matrix-table-wrapper">
+            <!-- Tabela Heatmap gerada via JS -->
+          </div>
+        </div>
+
+        <!-- Tooltip Flutuante no Cursor -->
+        <div id="matrix-floating-tooltip" class="matrix-floating-tooltip hidden"></div>
+      </div>
+
       <!-- Modal de Detalhes das Unidades -->
       <div id="modal-detalhes-unidades" class="modal hidden">
         <div class="modal-content modal-large">
@@ -271,25 +370,154 @@ export class ComensaisReportView {
     });
 
     // Alternância de Abas
-    const tabVisual = this.container.querySelector('#tab-visual-view');
-    const tabTable = this.container.querySelector('#tab-table-view');
-    const visualBox = this.container.querySelector('#container-visual-dashboard');
+    const tabVisual = this.container.querySelector('#tab-relatorio-visual') || this.container.querySelector('#tab-visual-view');
+    const tabTable = this.container.querySelector('#tab-relatorio-tabela') || this.container.querySelector('#tab-table-view');
+    const tabMatriz = this.container.querySelector('#tab-relatorio-matriz') || this.container.querySelector('#tab-matriz-view');
+    const visualBox = this.container.querySelector('#container-visual-view') || this.container.querySelector('#container-visual-dashboard');
     const tableBox = this.container.querySelector('#container-table-view');
+    const matrizBox = this.container.querySelector('#container-matriz-view');
+    const filtersCard = this.container.querySelector('#container-relatorio-filtros') || this.container.querySelector('.report-filters-card');
+    const kpiGrid = this.container.querySelector('#container-relatorio-kpis') || this.container.querySelector('.kpi-grid');
 
-    tabVisual.addEventListener('click', () => {
-      tabVisual.classList.add('active');
-      tabTable.classList.remove('active');
-      visualBox.classList.remove('hidden');
-      tableBox.classList.add('hidden');
-      this.activeTab = 'visual';
+    if (tabVisual) {
+      tabVisual.addEventListener('click', () => {
+        tabVisual.classList.add('active');
+        if (tabTable) tabTable.classList.remove('active');
+        if (tabMatriz) tabMatriz.classList.remove('active');
+        if (filtersCard) filtersCard.classList.remove('hidden');
+        if (kpiGrid) kpiGrid.classList.remove('hidden');
+        if (visualBox) visualBox.classList.remove('hidden');
+        if (tableBox) tableBox.classList.add('hidden');
+        if (matrizBox) matrizBox.classList.add('hidden');
+        this.activeTab = 'visual';
+      });
+    }
+
+    if (tabTable) {
+      tabTable.addEventListener('click', () => {
+        tabTable.classList.add('active');
+        if (tabVisual) tabVisual.classList.remove('active');
+        if (tabMatriz) tabMatriz.classList.remove('active');
+        if (filtersCard) filtersCard.classList.remove('hidden');
+        if (kpiGrid) kpiGrid.classList.remove('hidden');
+        if (tableBox) tableBox.classList.remove('hidden');
+        if (visualBox) visualBox.classList.add('hidden');
+        if (matrizBox) matrizBox.classList.add('hidden');
+        this.activeTab = 'tabela';
+      });
+    }
+
+    if (tabMatriz) {
+      tabMatriz.addEventListener('click', async () => {
+        tabMatriz.classList.add('active');
+        if (tabVisual) tabVisual.classList.remove('active');
+        if (tabTable) tabTable.classList.remove('active');
+        if (filtersCard) filtersCard.classList.add('hidden');
+        if (kpiGrid) kpiGrid.classList.add('hidden');
+        if (matrizBox) matrizBox.classList.remove('hidden');
+        if (visualBox) visualBox.classList.add('hidden');
+        if (tableBox) tableBox.classList.add('hidden');
+        this.activeTab = 'matriz';
+        await this.renderMatrizView();
+      });
+    }
+
+    // Controles da Matriz de Preenchimento Mensal
+    const btnMatrixPrev = this.container.querySelector('#btn-matrix-prev-month');
+    const btnMatrixNext = this.container.querySelector('#btn-matrix-next-month');
+    const selectMatrixMes = this.container.querySelector('#select-matrix-mes');
+    const selectMatrixAno = this.container.querySelector('#select-matrix-ano');
+
+    if (btnMatrixPrev) {
+      btnMatrixPrev.addEventListener('click', async () => {
+        this.matrixDiaLimite = null;
+        if (this.matrixMes === 0) {
+          this.matrixMes = 11;
+          this.matrixAno--;
+        } else {
+          this.matrixMes--;
+        }
+        await this.renderMatrizView();
+      });
+    }
+
+    if (btnMatrixNext) {
+      btnMatrixNext.addEventListener('click', async () => {
+        this.matrixDiaLimite = null;
+        if (this.matrixMes === 11) {
+          this.matrixMes = 0;
+          this.matrixAno++;
+        } else {
+          this.matrixMes++;
+        }
+        await this.renderMatrizView();
+      });
+    }
+
+    if (selectMatrixMes) {
+      selectMatrixMes.addEventListener('change', async (e) => {
+        this.matrixDiaLimite = null;
+        this.matrixMes = parseInt(e.target.value, 10);
+        await this.renderMatrizView();
+      });
+    }
+
+    if (selectMatrixAno) {
+      selectMatrixAno.addEventListener('change', async (e) => {
+        this.matrixDiaLimite = null;
+        this.matrixAno = parseInt(e.target.value, 10);
+        await this.renderMatrizView();
+      });
+    }
+
+    const selectDiaLimite = this.container.querySelector('#select-matrix-dia-limite');
+    if (selectDiaLimite) {
+      selectDiaLimite.addEventListener('change', async (e) => {
+        this.matrixDiaLimite = parseInt(e.target.value, 10);
+        await this.renderMatrizView();
+      });
+    }
+
+    const cutoffShortcuts = this.container.querySelectorAll('.matrix-cutoff-shortcuts .btn-shortcut');
+    cutoffShortcuts.forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const type = btn.dataset.cutoff;
+        const daysInMonth = new Date(this.matrixAno, this.matrixMes + 1, 0).getDate();
+        const today = new Date();
+        const isCurrentMonth = (today.getFullYear() === this.matrixAno && today.getMonth() === this.matrixMes);
+
+        if (type === 'full-month') {
+          this.matrixDiaLimite = daysInMonth;
+        } else if (type === 'today') {
+          this.matrixDiaLimite = isCurrentMonth ? today.getDate() : daysInMonth;
+        } else if (type === 'yesterday') {
+          this.matrixDiaLimite = isCurrentMonth ? Math.max(1, today.getDate() - 1) : daysInMonth;
+        } else if (type === 'last-week') {
+          if (isCurrentMonth) {
+            const dow = today.getDay(); // 0 Dom, 1 Seg, ..., 6 Sab
+            const diffToSaturday = (dow === 6) ? 7 : (dow + 1);
+            const satDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - diffToSaturday);
+            if (satDate.getMonth() === this.matrixMes && satDate.getFullYear() === this.matrixAno) {
+              this.matrixDiaLimite = satDate.getDate();
+            } else {
+              this.matrixDiaLimite = 1;
+            }
+          } else {
+            this.matrixDiaLimite = daysInMonth;
+          }
+        }
+        await this.renderMatrizView();
+      });
     });
 
-    tabTable.addEventListener('click', () => {
-      tabTable.classList.add('active');
-      tabVisual.classList.remove('active');
-      tableBox.classList.remove('hidden');
-      visualBox.classList.add('hidden');
-      this.activeTab = 'tabela';
+    const matrixPills = this.container.querySelectorAll('.matrix-pills .pill');
+    matrixPills.forEach(pill => {
+      pill.addEventListener('click', async () => {
+        matrixPills.forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        this.matrixFilter = pill.dataset.matrixFilter;
+        await this.renderMatrizView();
+      });
     });
 
     const selectPeriodo = this.container.querySelector('#select-periodo');
@@ -832,5 +1060,439 @@ export class ComensaisReportView {
     });
 
     modal.classList.remove('hidden');
+  }
+
+  async renderMatrizView() {
+    const todos = await getCollection('abib_gestao_comensais');
+    const unidades = await getUnidades();
+
+    // Sincronizar seletores de mês e ano
+    const selectMes = this.container.querySelector('#select-matrix-mes');
+    const selectAno = this.container.querySelector('#select-matrix-ano');
+    if (selectMes) selectMes.value = String(this.matrixMes);
+    if (selectAno) selectAno.value = String(this.matrixAno);
+
+    const daysInMonth = new Date(this.matrixAno, this.matrixMes + 1, 0).getDate();
+    const today = new Date();
+    const isCurrentMonth = (today.getFullYear() === this.matrixAno && today.getMonth() === this.matrixMes);
+    const isPastMonth = (new Date(this.matrixAno, this.matrixMes + 1, 0) < today && !isCurrentMonth);
+    const isFutureMonth = (new Date(this.matrixAno, this.matrixMes, 1) > today);
+
+    // Calcular dia limite padrão se não definido
+    if (this.matrixDiaLimite === null || this.matrixDiaLimite === undefined) {
+      if (isCurrentMonth) {
+        this.matrixDiaLimite = Math.max(1, today.getDate() - 1);
+      } else if (isPastMonth) {
+        this.matrixDiaLimite = daysInMonth;
+      } else {
+        this.matrixDiaLimite = 0;
+      }
+    }
+
+    let maxExpectedDay = Math.min(this.matrixDiaLimite, daysInMonth);
+
+    // Sincronizar seletor de dia limite
+    const selectDiaLimite = this.container.querySelector('#select-matrix-dia-limite');
+    if (selectDiaLimite) {
+      let optionsHtml = '';
+      for (let d = 1; d <= daysInMonth; d++) {
+        const dStr = String(d).padStart(2, '0');
+        const isFull = (d === daysInMonth);
+        optionsHtml += `<option value="${d}" ${d === maxExpectedDay ? 'selected' : ''}>Dia ${dStr}${isFull ? ' (Mês Todo)' : ''}</option>`;
+      }
+      selectDiaLimite.innerHTML = optionsHtml;
+    }
+
+    // Atualizar botões de atalho ativos
+    const shortcutButtons = this.container.querySelectorAll('.matrix-cutoff-shortcuts .btn-shortcut');
+    shortcutButtons.forEach(btn => {
+      const type = btn.dataset.cutoff;
+      let isBtnActive = false;
+      if (type === 'today' && isCurrentMonth && maxExpectedDay === today.getDate()) isBtnActive = true;
+      else if (type === 'yesterday' && isCurrentMonth && maxExpectedDay === Math.max(1, today.getDate() - 1)) isBtnActive = true;
+      else if (type === 'full-month' && maxExpectedDay === daysInMonth) isBtnActive = true;
+      else if (type === 'last-week' && isCurrentMonth) {
+        const dow = today.getDay();
+        const diffToSaturday = (dow === 6) ? 7 : (dow + 1);
+        const satDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - diffToSaturday);
+        let targetSat = satDate.getDate();
+        if (satDate.getMonth() !== this.matrixMes || satDate.getFullYear() !== this.matrixAno) {
+          targetSat = 1;
+        }
+        if (maxExpectedDay === targetSat) isBtnActive = true;
+      }
+      if (isBtnActive) btn.classList.add('active');
+      else btn.classList.remove('active');
+    });
+
+    // Mapa de registros por unidadeId + '_' + dataISO
+    const recordMap = new Map();
+    todos.forEach(r => {
+      if (r.unidadeId && r.data) {
+        recordMap.set(`${r.unidadeId}_${r.data}`, r);
+      }
+    });
+
+    // Ordenar unidades por Grupo e Loja
+    const sortedUnits = [...unidades].sort((a, b) => {
+      if ((a.grupo || '') !== (b.grupo || '')) {
+        return (a.grupo || '').localeCompare(b.grupo || '');
+      }
+      return (a.loja || '').localeCompare(b.loja || '');
+    });
+
+    let totalEsperadoGeral = 0;
+    let totalPreenchidoGeral = 0;
+    let totalLojas100 = 0;
+    let totalLojasPendentes = 0;
+    let totalRefeicoesMes = 0;
+
+    const unitStats = sortedUnits.map(u => {
+      let preenchidos = 0;
+      let somaRefeicoes = 0;
+      const diasStatus = [];
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dayStr = String(day).padStart(2, '0');
+        const mesStr = String(this.matrixMes + 1).padStart(2, '0');
+        const dateISO = `${this.matrixAno}-${mesStr}-${dayStr}`;
+        const dateObj = new Date(this.matrixAno, this.matrixMes, day);
+        const dayOfWeek = dateObj.getDay(); // 0 Dom, 6 Sab
+        const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
+
+        const isPastOrToday = (maxExpectedDay > 0 && day <= maxExpectedDay);
+        const isFuture = (day > maxExpectedDay);
+
+        const reg = recordMap.get(`${u.id}_${dateISO}`);
+        let hasData = false;
+        let totalComensais = 0;
+
+        if (reg) {
+          if (reg.publicos && typeof reg.publicos === 'object') {
+            const vals = Object.values(reg.publicos);
+            const nums = vals.map(v => parseInt(v, 10)).filter(n => !isNaN(n));
+            if (nums.length > 0) {
+              totalComensais = nums.reduce((acc, curr) => acc + curr, 0);
+            }
+          }
+          if (totalComensais === 0 && typeof reg.totalComensais === 'number') {
+            totalComensais = reg.totalComensais;
+          }
+          hasData = (totalComensais > 0);
+        }
+
+        if (hasData) {
+          somaRefeicoes += totalComensais;
+        }
+
+        if (isPastOrToday) {
+          if (hasData) {
+            preenchidos++;
+          }
+        }
+
+        diasStatus.push({
+          day,
+          dateISO,
+          dayOfWeek,
+          isWeekend,
+          isFuture,
+          isPastOrToday,
+          hasData,
+          totalComensais,
+          reg
+        });
+      }
+
+      totalRefeicoesMes += somaRefeicoes;
+      const diasEsperados = maxExpectedDay;
+      const taxa = diasEsperados > 0 ? Math.round((preenchidos / diasEsperados) * 100) : 100;
+      const temPendencia = diasEsperados > 0 && preenchidos < diasEsperados;
+      const pendenciasCount = diasEsperados > 0 ? (diasEsperados - preenchidos) : 0;
+
+      totalEsperadoGeral += diasEsperados;
+      totalPreenchidoGeral += preenchidos;
+
+      if (!temPendencia && diasEsperados > 0) {
+        totalLojas100++;
+      } else if (temPendencia) {
+        totalLojasPendentes++;
+      }
+
+      return {
+        unit: u,
+        diasStatus,
+        preenchidos,
+        diasEsperados,
+        taxa,
+        temPendencia,
+        pendenciasCount,
+        somaRefeicoes
+      };
+    });
+
+    // Atualizar KPIs
+    const taxaGeral = totalEsperadoGeral > 0 ? Math.round((totalPreenchidoGeral / totalEsperadoGeral) * 100) : 100;
+    const kpiTaxa = this.container.querySelector('#matrix-kpi-taxa');
+    const kpiTaxaSub = this.container.querySelector('#matrix-kpi-taxa-sub');
+    const kpiLojas100 = this.container.querySelector('#matrix-kpi-lojas-completas');
+    const kpiLojasPendentes = this.container.querySelector('#matrix-kpi-lojas-pendentes');
+    const kpiTotalRef = this.container.querySelector('#matrix-kpi-total-refeicoes');
+    const countPend = this.container.querySelector('#matrix-count-pendentes');
+    const countComp = this.container.querySelector('#matrix-count-completas');
+
+    if (kpiTaxa) kpiTaxa.textContent = `${taxaGeral}%`;
+    if (kpiTaxaSub) kpiTaxaSub.textContent = `${totalPreenchidoGeral} de ${totalEsperadoGeral} envios esperados (até dia ${String(maxExpectedDay).padStart(2, '0')})`;
+    if (kpiLojas100) kpiLojas100.textContent = `${totalLojas100} / ${sortedUnits.length}`;
+    if (kpiLojasPendentes) kpiLojasPendentes.textContent = `${totalLojasPendentes}`;
+    if (kpiTotalRef) kpiTotalRef.textContent = totalRefeicoesMes.toLocaleString('pt-BR');
+    if (countPend) countPend.textContent = `${totalLojasPendentes}`;
+    if (countComp) countComp.textContent = `${totalLojas100}`;
+
+    // Filtrar unidades para exibição
+    let displayUnits = unitStats;
+    if (this.matrixFilter === 'pendentes') {
+      displayUnits = unitStats.filter(s => s.temPendencia);
+    } else if (this.matrixFilter === 'completas') {
+      displayUnits = unitStats.filter(s => !s.temPendencia);
+    }
+
+    // Construir Tabela Heatmap
+    const wrapper = this.container.querySelector('#matrix-table-wrapper');
+    if (!wrapper) return;
+
+    if (displayUnits.length === 0) {
+      wrapper.innerHTML = `
+        <div style="padding: 40px; text-align: center; color: var(--text-muted);">
+          Nenhuma unidade encontrada para o filtro selecionado.
+        </div>
+      `;
+      return;
+    }
+
+    const weekLetters = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
+    const weekNames = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+
+    let headerDaysHtml = '';
+    let headerWeekdaysHtml = '';
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dateObj = new Date(this.matrixAno, this.matrixMes, day);
+      const dow = dateObj.getDay();
+      const isWeekend = (dow === 0 || dow === 6);
+      const isToday = isCurrentMonth && (day === today.getDate());
+      const isCutoff = (day === maxExpectedDay && maxExpectedDay < daysInMonth);
+
+      const weekendClass = isWeekend ? 'cell-weekend-header' : '';
+      const cutoffClass = isCutoff ? 'matrix-cutoff-col' : '';
+      const todayStyle = isToday ? 'border-bottom: 2px solid var(--primary); font-weight: 800; color: var(--primary);' : '';
+
+      headerDaysHtml += `<th class="${weekendClass} ${cutoffClass}" style="${todayStyle}" data-col-day="${day}">${String(day).padStart(2, '0')}</th>`;
+      headerWeekdaysHtml += `<th class="${weekendClass} ${cutoffClass}" style="font-size: 0.65rem; color: #475569; padding: 2px 0;" data-col-day="${day}">${weekLetters[dow]}</th>`;
+    }
+
+    let rowsHtml = '';
+    displayUnits.forEach(item => {
+      const u = item.unit;
+      const nomeAbrev = formatLojaDisplayName(u.loja);
+
+      let badgeTaxa = '';
+      if (item.diasEsperados === 0) {
+        badgeTaxa = `<span class="badge" style="background: #f1f5f9; color: #64748b; font-size: 0.65rem;">-</span>`;
+      } else if (item.taxa === 100) {
+        badgeTaxa = `<span class="badge badge-success" style="font-size: 0.65rem; padding: 2px 4px;">100%</span>`;
+      } else {
+        badgeTaxa = `<span class="badge" style="background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; font-size: 0.65rem; padding: 2px 4px;">${item.taxa}%</span>`;
+      }
+
+      let cellsHtml = '';
+      item.diasStatus.forEach(d => {
+        let cellClass = '';
+        let cellContent = '';
+        const isCutoff = (d.day === maxExpectedDay && maxExpectedDay < daysInMonth);
+        const cutoffClass = isCutoff ? 'matrix-cutoff-col' : '';
+
+        if (d.isFuture) {
+          if (d.hasData) {
+            cellClass = 'cell-future cell-future-with-data';
+            cellContent = d.totalComensais > 999 ? '999+' : String(d.totalComensais);
+          } else {
+            cellClass = 'cell-future';
+            cellContent = '-';
+          }
+        } else if (d.hasData) {
+          cellClass = 'cell-filled';
+          cellContent = d.totalComensais > 999 ? '999+' : String(d.totalComensais);
+        } else {
+          cellClass = 'cell-missing';
+          cellContent = '-';
+        }
+
+        cellsHtml += `<td class="matrix-cell ${cellClass} ${cutoffClass}" data-col-day="${d.day}" data-unit-id="${u.id}" data-date-iso="${d.dateISO}">${cellContent}</td>`;
+      });
+
+      rowsHtml += `
+        <tr>
+          <td class="col-loja" title="${u.loja}">
+            <strong>${nomeAbrev}</strong>
+          </td>
+          <td class="col-status">
+            ${badgeTaxa}
+          </td>
+          ${cellsHtml}
+          <td class="col-total">
+            ${item.somaRefeicoes.toLocaleString('pt-BR')}
+          </td>
+        </tr>
+      `;
+    });
+
+    wrapper.innerHTML = `
+      <table class="matrix-table">
+        <thead>
+          <tr>
+            <th rowspan="2" class="col-loja" style="vertical-align: middle;">Loja / Unidade</th>
+            <th rowspan="2" class="col-status" style="vertical-align: middle;">Envios</th>
+            ${headerDaysHtml}
+            <th rowspan="2" class="col-total" style="vertical-align: middle;">Total</th>
+          </tr>
+          <tr>
+            ${headerWeekdaysHtml}
+          </tr>
+        </thead>
+        <tbody>
+          ${rowsHtml}
+        </tbody>
+      </table>
+    `;
+
+    // Mapeamento e Eventos de Crosshair (Coluna Ativa) e Tooltip Flutuante
+    const publicos = await getPublicos();
+    const tooltip = this.container.querySelector('#matrix-floating-tooltip');
+    const table = wrapper.querySelector('.matrix-table');
+
+    const diaDetalhesMap = new Map();
+    displayUnits.forEach(item => {
+      item.diasStatus.forEach(d => {
+        if (d.hasData && d.reg) {
+          diaDetalhesMap.set(`${item.unit.id}_${d.dateISO}`, {
+            loja: item.unit.loja,
+            dataDisplay: `${String(d.day).padStart(2, '0')}/${String(this.matrixMes + 1).padStart(2, '0')}/${this.matrixAno}`,
+            diaSemana: ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'][d.dayOfWeek],
+            total: d.totalComensais,
+            publicos: d.reg.publicos || {},
+            observacao: d.reg.observacao || ''
+          });
+        }
+      });
+    });
+
+    let currentColDay = null;
+
+    table.addEventListener('mouseover', (e) => {
+      const target = e.target.closest('[data-col-day]');
+      if (target) {
+        const colDay = target.dataset.colDay;
+        if (colDay !== currentColDay) {
+          if (currentColDay) {
+            table.querySelectorAll(`[data-col-day="${currentColDay}"]`).forEach(el => el.classList.remove('matrix-col-hover'));
+          }
+          currentColDay = colDay;
+          table.querySelectorAll(`[data-col-day="${colDay}"]`).forEach(el => el.classList.add('matrix-col-hover'));
+        }
+      } else {
+        if (currentColDay) {
+          table.querySelectorAll(`[data-col-day="${currentColDay}"]`).forEach(el => el.classList.remove('matrix-col-hover'));
+          currentColDay = null;
+        }
+      }
+
+      const cell = e.target.closest('.matrix-cell');
+      if (cell && tooltip) {
+        const unitId = cell.dataset.unitId;
+        const dateIso = cell.dataset.dateIso;
+        const info = diaDetalhesMap.get(`${unitId}_${dateIso}`);
+
+        if (info) {
+          let pubItemsHtml = '';
+          publicos.forEach(p => {
+            const val = info.publicos[p.id];
+            if (val !== undefined && val !== null && val !== '' && Number(val) > 0) {
+              pubItemsHtml += `
+                <div class="matrix-tt-pub-item">
+                  <span>${p.nome}:</span>
+                  <strong>${val}</strong>
+                </div>
+              `;
+            }
+          });
+
+          if (!pubItemsHtml) {
+            pubItemsHtml = `<div style="color: var(--text-muted); font-size: 0.72rem;">Sem divisão por público</div>`;
+          }
+
+          tooltip.innerHTML = `
+            <div class="matrix-tt-header">
+              <div class="matrix-tt-title">${info.loja}</div>
+              <div class="matrix-tt-date">${info.dataDisplay} • ${info.diaSemana}${info.diaSemana !== 'Domingo' && info.diaSemana !== 'Sábado' ? '-feira' : ''}</div>
+            </div>
+            <div class="matrix-tt-total">
+              <span>Total de Refeições:</span>
+              <strong>${info.total}</strong>
+            </div>
+            <div class="matrix-tt-publicos-list">
+              ${pubItemsHtml}
+            </div>
+            ${info.observacao ? `
+              <div class="matrix-tt-obs">
+                <strong>Obs:</strong> ${info.observacao}
+              </div>
+            ` : ''}
+          `;
+
+          tooltip.classList.remove('hidden');
+        } else {
+          tooltip.classList.add('hidden');
+        }
+      } else if (tooltip) {
+        tooltip.classList.add('hidden');
+      }
+    });
+
+    table.addEventListener('mousemove', (e) => {
+      if (tooltip && !tooltip.classList.contains('hidden')) {
+        let x = e.clientX + 14;
+        let y = e.clientY + 14;
+        if (x + 340 > window.innerWidth) x = e.clientX - 335;
+        if (y + 240 > window.innerHeight) y = e.clientY - 210;
+        tooltip.style.left = `${x}px`;
+        tooltip.style.top = `${y}px`;
+      }
+    });
+
+    table.addEventListener('mouseout', (e) => {
+      const fromEl = e.target.closest('[data-col-day]');
+      const toEl = e.relatedTarget ? e.relatedTarget.closest('[data-col-day]') : null;
+
+      if (!toEl && currentColDay) {
+        table.querySelectorAll(`[data-col-day="${currentColDay}"]`).forEach(el => el.classList.remove('matrix-col-hover'));
+        currentColDay = null;
+      }
+
+      const cell = e.target.closest('.matrix-cell');
+      if (cell && tooltip) {
+        tooltip.classList.add('hidden');
+      }
+    });
+
+    table.addEventListener('mouseleave', () => {
+      if (currentColDay) {
+        table.querySelectorAll(`[data-col-day="${currentColDay}"]`).forEach(el => el.classList.remove('matrix-col-hover'));
+        currentColDay = null;
+      }
+      if (tooltip) {
+        tooltip.classList.add('hidden');
+      }
+    });
   }
 }

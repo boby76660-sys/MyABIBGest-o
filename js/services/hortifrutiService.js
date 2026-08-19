@@ -4,60 +4,29 @@
 
 import { getCollection, saveDoc, STORAGE_KEYS } from './adminService.js';
 
-// Preços de referência padrão (Seed para simulação de produtos)
+// Preços de referência padrão (21 Produtos Oficiais da Ficha de Pedidos/Cotações ABIB)
 export const PRODUTOS_HORTIFRUTI_SEED = [
-  // Verduras
-  { id: 'h_alface_crespa', nome: 'Alface Crespa', categoria: 'Verduras', unidadeMedida: 'un', ativo: true },
-  { id: 'h_alface_lisa', nome: 'Alface Lisa', categoria: 'Verduras', unidadeMedida: 'un', ativo: true },
-  { id: 'h_alface_roxa', nome: 'Alface Roxa / Hidropônica', categoria: 'Verduras', unidadeMedida: 'un', ativo: true },
-  { id: 'h_acelga', nome: 'Acelga', categoria: 'Verduras', unidadeMedida: 'un', ativo: true },
-  { id: 'h_agriao', nome: 'Agrião', categoria: 'Verduras', unidadeMedida: 'un', ativo: true },
-  { id: 'h_almeirao', nome: 'Almeirão / Chicória', categoria: 'Verduras', unidadeMedida: 'un', ativo: true },
-  { id: 'h_brocolis_ninja', nome: 'Brócolis Ninja', categoria: 'Verduras', unidadeMedida: 'un', ativo: true },
-  { id: 'h_cebolinha', nome: 'Cebolinha Verde', categoria: 'Verduras', unidadeMedida: 'un', ativo: true },
-  { id: 'h_cheiro_verde', nome: 'Cheiro Verde / Coentro', categoria: 'Verduras', unidadeMedida: 'un', ativo: true },
-  { id: 'h_couve', nome: 'Couve Manteiga', categoria: 'Verduras', unidadeMedida: 'un', ativo: true },
-  { id: 'h_espinafre', nome: 'Espinafre', categoria: 'Verduras', unidadeMedida: 'un', ativo: true },
-  { id: 'h_manjericao', nome: 'Manjericão', categoria: 'Verduras', unidadeMedida: 'un', ativo: true },
-  { id: 'h_repolho_verde', nome: 'Repolho Verde', categoria: 'Verduras', unidadeMedida: 'kg', ativo: true },
-  { id: 'h_repolho_roxo', nome: 'Repolho Roxo', categoria: 'Verduras', unidadeMedida: 'kg', ativo: true },
-  { id: 'h_salsa', nome: 'Salsinha', categoria: 'Verduras', unidadeMedida: 'un', ativo: true },
-
-  // Legumes
-  { id: 'h_abobora_cabotiar', nome: 'Abóbora Cabotiá / Japonesa', categoria: 'Legumes', unidadeMedida: 'kg', ativo: true },
-  { id: 'h_abobora_menina', nome: 'Abóbora Menina / Moranga', categoria: 'Legumes', unidadeMedida: 'kg', ativo: true },
-  { id: 'h_abobrinha_italiana', nome: 'Abobrinha Italiana', categoria: 'Legumes', unidadeMedida: 'kg', ativo: true },
-  { id: 'h_alho', nome: 'Alho Granel', categoria: 'Legumes', unidadeMedida: 'kg', ativo: true },
-  { id: 'h_batata_inglesa', nome: 'Batata Inglesa', categoria: 'Legumes', unidadeMedida: 'kg', ativo: true },
-  { id: 'h_batata_doce', nome: 'Batata Doce Roxa', categoria: 'Legumes', unidadeMedida: 'kg', ativo: true },
-  { id: 'h_berinjela', nome: 'Berinjela', categoria: 'Legumes', unidadeMedida: 'kg', ativo: true },
-  { id: 'h_beterraba', nome: 'Beterraba', categoria: 'Legumes', unidadeMedida: 'kg', ativo: true },
-  { id: 'h_cenoura', nome: 'Cenoura', categoria: 'Legumes', unidadeMedida: 'kg', ativo: true },
-  { id: 'h_chuchu', nome: 'Chuchu', categoria: 'Legumes', unidadeMedida: 'kg', ativo: true },
-  { id: 'h_cebola', nome: 'Cebola Amarela', categoria: 'Legumes', unidadeMedida: 'kg', ativo: true },
-  { id: 'h_cebola_roxa', nome: 'Cebola Roxa', categoria: 'Legumes', unidadeMedida: 'kg', ativo: true },
-  { id: 'h_pepino_comum', nome: 'Pepino Comum / Japonês', categoria: 'Legumes', unidadeMedida: 'kg', ativo: true },
-  { id: 'h_pimentao_verde', nome: 'Pimentão Verde', categoria: 'Legumes', unidadeMedida: 'kg', ativo: true },
-  { id: 'h_pimentao_vermelho', nome: 'Pimentão Vermelho', categoria: 'Legumes', unidadeMedida: 'kg', ativo: true },
-  { id: 'h_quiabo', nome: 'Quiabo', categoria: 'Legumes', unidadeMedida: 'kg', ativo: true },
-  { id: 'h_tomate_longa_vida', nome: 'Tomate Longa Vida / Salada', categoria: 'Legumes', unidadeMedida: 'kg', ativo: true },
-
-  // Frutas
-  { id: 'h_abacaxi', nome: 'Abacaxi Pérola', categoria: 'Frutas', unidadeMedida: 'un', ativo: true },
-  { id: 'h_banana_prata', nome: 'Banana Prata', categoria: 'Frutas', unidadeMedida: 'kg', ativo: true },
-  { id: 'h_banana_nanica', nome: 'Banana Nanica / Caturra', categoria: 'Frutas', unidadeMedida: 'kg', ativo: true },
-  { id: 'h_laranja_pera', nome: 'Laranja Pêra', categoria: 'Frutas', unidadeMedida: 'kg', ativo: true },
-  { id: 'h_limao_tahiti', nome: 'Limão Tahiti', categoria: 'Frutas', unidadeMedida: 'kg', ativo: true },
-  { id: 'h_maca_fuji', nome: 'Maçã Fuji / Gala', categoria: 'Frutas', unidadeMedida: 'kg', ativo: true },
-  { id: 'h_mamao_formosa', nome: 'Mamão Formosa', categoria: 'Frutas', unidadeMedida: 'kg', ativo: true },
-  { id: 'h_manga_palmer', nome: 'Manga Palmer / Tommy', categoria: 'Frutas', unidadeMedida: 'kg', ativo: true },
-  { id: 'h_maracuja', nome: 'Maracujá Azedo', categoria: 'Frutas', unidadeMedida: 'kg', ativo: true },
-  { id: 'h_melancia', nome: 'Melancia', categoria: 'Frutas', unidadeMedida: 'kg', ativo: true },
-  { id: 'h_melon', nome: 'Melão Amarelo', categoria: 'Frutas', unidadeMedida: 'kg', ativo: true },
-
-  // Ovos
-  { id: 'h_ovo_branco_cx', nome: 'Ovo Branco Tipo Grande (Caixa c/ 30 dúzias)', categoria: 'Ovos', unidadeMedida: 'cx', ativo: true },
-  { id: 'h_ovo_vermelho_cx', nome: 'Ovo Vermelho Tipo Grande (Caixa c/ 30 dúzias)', categoria: 'Ovos', unidadeMedida: 'cx', ativo: true }
+  { id: "hprod_abacaxi", nome: "Abacaxi", unidadeMedida: "un", categoria: "Frutas", ordem: 1, ativo: true },
+  { id: "hprod_abobrinha", nome: "Abobrinha", unidadeMedida: "kg", categoria: "Legumes", ordem: 2, ativo: true },
+  { id: "hprod_batata_doce", nome: "Batata Doce", unidadeMedida: "kg", categoria: "Legumes", ordem: 3, ativo: true },
+  { id: "hprod_batata_inglesa", nome: "Batata Inglesa", unidadeMedida: "kg", categoria: "Legumes", ordem: 4, ativo: true },
+  { id: "hprod_beterraba", nome: "Beterraba", unidadeMedida: "kg", categoria: "Legumes", ordem: 5, ativo: true },
+  { id: "hprod_brocolis", nome: "Brócolis", unidadeMedida: "un", categoria: "Verduras", ordem: 6, ativo: true },
+  { id: "hprod_cebola", nome: "Cebola", unidadeMedida: "kg", categoria: "Legumes", ordem: 7, ativo: true },
+  { id: "hprod_cenoura", nome: "Cenoura", unidadeMedida: "kg", categoria: "Legumes", ordem: 8, ativo: true },
+  { id: "hprod_chuchu", nome: "Chuchu", unidadeMedida: "kg", categoria: "Legumes", ordem: 9, ativo: true },
+  { id: "hprod_inhame", nome: "Inhame", unidadeMedida: "kg", categoria: "Legumes", ordem: 10, ativo: true },
+  { id: "hprod_laranja", nome: "Laranja", unidadeMedida: "kg", categoria: "Frutas", ordem: 11, ativo: true },
+  { id: "hprod_mamao_formoso", nome: "Mamão Formoso", unidadeMedida: "kg", categoria: "Frutas", ordem: 12, ativo: true },
+  { id: "hprod_mandioca", nome: "Mandioca", unidadeMedida: "kg", categoria: "Legumes", ordem: 13, ativo: true },
+  { id: "hprod_melao", nome: "Melão", unidadeMedida: "kg", categoria: "Frutas", ordem: 14, ativo: true },
+  { id: "hprod_moranga", nome: "Moranga / Abóbora", unidadeMedida: "kg", categoria: "Legumes", ordem: 15, ativo: true },
+  { id: "hprod_ovo", nome: "Ovo", unidadeMedida: "pente", categoria: "Ovos", ordem: 16, ativo: true },
+  { id: "hprod_pepino", nome: "Pepino", unidadeMedida: "kg", categoria: "Legumes", ordem: 17, ativo: true },
+  { id: "hprod_pimentao_verde", nome: "Pimentão Verde", unidadeMedida: "kg", categoria: "Legumes", ordem: 18, ativo: true },
+  { id: "hprod_quiabo", nome: "Quiabo", unidadeMedida: "kg", categoria: "Legumes", ordem: 19, ativo: true },
+  { id: "hprod_repolho", nome: "Repolho", unidadeMedida: "kg", categoria: "Verduras", ordem: 20, ativo: true },
+  { id: "hprod_tomate", nome: "Tomate", unidadeMedida: "kg", categoria: "Legumes", ordem: 21, ativo: true }
 ];
 
 // Busca todos os produtos de hortifrúti cadastrados

@@ -1,9 +1,9 @@
 /**
  * Comensais Service - Negócio de Registro de Refeições Diárias
- * Salva lançamentos, calcula status /🟢, gera texto WhatsApp, calcula discrepâncias e exporta relatórios.
+ * Salva lançamentos, calcula status, gera texto WhatsApp, calcula discrepâncias e exporta relatórios.
  */
 
-import { getCollection, saveDoc } from './storageService.js';
+import { getCollection, saveDoc, saveCollection } from './storageService.js';
 import { getUnidades, getPublicos } from './adminService.js';
 
 // Salvar lançamento de comensais para uma unidade em determinada data
@@ -17,13 +17,46 @@ export async function saveComensaisRegistro(registroData) {
   });
 }
 
+// Salvar lote de múltiplos registros para uma unidade (ex: extração IA de vários dias)
+export async function saveComensaisLote(unidadeId, registrosArray) {
+  const todos = await getCollection('abib_gestao_comensais');
+  const nowISO = new Date().toISOString();
+
+  registrosArray.forEach(reg => {
+    const dataISO = reg.data || reg.dataISO;
+    if (!dataISO) return;
+
+    const id = `reg_${dataISO}_${unidadeId}`;
+    const idx = todos.findIndex(r => r.id === id || (r.data === dataISO && r.unidadeId === unidadeId));
+    
+    const docData = {
+      id,
+      unidadeId,
+      data: dataISO,
+      publicos: reg.publicos || {},
+      observacao: reg.observacao || '',
+      atualizadoEm: nowISO
+    };
+
+    if (idx >= 0) {
+      todos[idx] = { ...todos[idx], ...docData };
+    } else {
+      docData.criadoEm = nowISO;
+      todos.push(docData);
+    }
+  });
+
+  await saveCollection('abib_gestao_comensais', todos);
+  return todos;
+}
+
 // Buscar todos os registros de uma data específica
 export async function getRegistrosPorData(dataISO) {
   const todos = await getCollection('abib_gestao_comensais');
   return todos.filter(r => r.data === dataISO);
 }
 
-// Obter status de preenchimento (Pendente / 🟢 Concluído) para cada unidade no dia
+// Obter status de preenchimento (Pendente / Concluído) para cada unidade no dia
 export async function getStatusUnidadesNoDia(dataISO) {
   const unidades = await getUnidades();
   const registros = await getRegistrosPorData(dataISO);

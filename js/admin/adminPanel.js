@@ -296,7 +296,7 @@ export class AdminPanel {
                 <td><strong>${u.loja}</strong></td>
                 <td>${u.unidade || '-'}</td>
                 <td><code>${u.cnpj || '-'}</code></td>
-                <td>${u.ativo !== false ? '🟢 Ativo' : 'Inativo'}</td>
+                <td>${u.ativo !== false ? 'Ativo' : 'Inativo'}</td>
                 <td>
                   <button class="btn btn-sm btn-secondary btn-edit-unidade" data-id="${u.id}">Editar</button>
                 </td>
@@ -420,7 +420,7 @@ export class AdminPanel {
               <tr>
                 <td>${p.ordem || '-'}</td>
                 <td><strong>${p.nome}</strong></td>
-                <td>${p.ativo !== false ? '🟢 Ativo' : 'Inativo'}</td>
+                <td>${p.ativo !== false ? 'Ativo' : 'Inativo'}</td>
                 <td>
                   <button class="btn btn-sm btn-secondary btn-edit-publico" data-id="${p.id}">Editar</button>
                 </td>
@@ -462,7 +462,31 @@ export class AdminPanel {
 
     body.innerHTML = `
       <div class="tab-header">
-        <h3>Configuração de Senhas & Banco Cloud (Firebase)</h3>
+        <h3>Configurações de Senhas, IA & Banco Cloud (Firebase)</h3>
+      </div>
+
+      <!-- Card OpenRouter & IA -->
+      <div class="card" style="background: #ffffff; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 18px; margin-bottom: 24px; box-shadow: var(--shadow-sm);">
+        <h4 style="font-size: 1rem; font-weight: 800; color: var(--text-title); margin-bottom: 6px;">
+          Inteligência Artificial & Leitura de Fotos (OpenRouter API)
+        </h4>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 14px;">
+          Configuração da API utilizada no OCR e leitura automática das folhas físicas de comensais.
+        </p>
+
+        <form id="form-openrouter-config" style="display: flex; flex-direction: column; gap: 12px;">
+          <div class="form-group">
+            <label style="font-weight: 700;">Chave API do OpenRouter (API Key):</label>
+            <input type="password" id="cfg-openRouterApiKey" class="input-field" value="${config.openRouterApiKey || ''}" placeholder="sk-or-v1-...">
+            <small style="color: var(--text-muted); display: block; margin-top: 4px;">Obtenha em: openrouter.ai/keys</small>
+          </div>
+          <div class="form-group">
+            <label style="font-weight: 700;">Modelo de IA (Model ID):</label>
+            <input type="text" id="cfg-openRouterModel" class="input-field" value="${config.openRouterModel || 'google/gemini-2.5-flash'}" placeholder="google/gemini-2.5-flash">
+            <small style="color: var(--text-muted); display: block; margin-top: 4px;">Exemplos: google/gemini-2.5-flash, google/gemini-2.0-flash-001, openai/gpt-4o-mini</small>
+          </div>
+          <button type="submit" class="btn btn-primary" style="align-self: flex-start;">Salvar Configurações da IA</button>
+        </form>
       </div>
 
       <div class="card" style="background: #ffffff; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 18px; margin-bottom: 24px; box-shadow: var(--shadow-sm);">
@@ -519,6 +543,14 @@ export class AdminPanel {
         <button type="submit" class="btn btn-secondary">Salvar Configuração Firebase</button>
       </form>
     `;
+
+    body.querySelector('#form-openrouter-config')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const openRouterApiKey = body.querySelector('#cfg-openRouterApiKey').value.trim();
+      const openRouterModel = body.querySelector('#cfg-openRouterModel').value.trim() || 'google/gemini-2.5-flash';
+      await updateAdminConfig({ openRouterApiKey, openRouterModel });
+      alert("Configurações do OpenRouter salvas com sucesso!");
+    });
 
     body.querySelector('#btn-gen-pass-comensais')?.addEventListener('click', () => {
       const randNum = Math.floor(1000 + Math.random() * 9000);

@@ -4,7 +4,7 @@
  */
 
 import { getRealtimeDB, checkIsFirebaseActive } from '../firebaseClient.js';
-import { UNIDADES_SEED, PUBLICOS_SEED, PERFIS_SEED, MODULOS_SEED, PRODUTOS_HORTIFRUTI_SEED, DEFAULT_ADMIN_PASSWORD } from '../config.js';
+import { UNIDADES_SEED, PUBLICOS_SEED, PERFIS_SEED, MODULOS_SEED, PRODUTOS_HORTIFRUTI_SEED, DEFAULT_ADMIN_PASSWORD, DEFAULT_OPENROUTER_CONFIG } from '../config.js';
 
 export const STORAGE_KEYS = {
   UNIDADES: 'abib_gestao_unidades',
@@ -47,6 +47,8 @@ export function seedInitialData() {
       adminPassword: DEFAULT_ADMIN_PASSWORD,
       passwordComensais: DEFAULT_COMENSAIS_PASSWORD,
       passwordHortifruti: DEFAULT_HORTIFRUTI_PASSWORD,
+      openRouterApiKey: DEFAULT_OPENROUTER_CONFIG.apiKey || '',
+      openRouterModel: DEFAULT_OPENROUTER_CONFIG.model || 'google/gemini-2.5-flash',
       divisaoPorRefeicao: false,
       sensibilidadeAlertaPct: 30,
       firebaseConfig: null
@@ -75,7 +77,8 @@ export function seedInitialData() {
   if (!localStorage.getItem(STORAGE_KEYS.COMENSAIS)) {
     localStorage.setItem(STORAGE_KEYS.COMENSAIS, JSON.stringify([]));
   }
-  if (!localStorage.getItem(STORAGE_KEYS.HORTIFRUTI_PRODUTOS)) {
+  const storedHorti = localStorage.getItem(STORAGE_KEYS.HORTIFRUTI_PRODUTOS);
+  if (!storedHorti || (storedHorti && JSON.parse(storedHorti).length !== PRODUTOS_HORTIFRUTI_SEED.length)) {
     localStorage.setItem(STORAGE_KEYS.HORTIFRUTI_PRODUTOS, JSON.stringify(PRODUTOS_HORTIFRUTI_SEED));
   }
   if (!localStorage.getItem(STORAGE_KEYS.HORTIFRUTI_PEDIDOS)) {

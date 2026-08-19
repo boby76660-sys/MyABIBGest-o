@@ -129,20 +129,10 @@ export class HortifrutiModule extends BaseModule {
           </div>
         </div>
 
-        <!-- Barra de Pesquisa e Filtros de Categoria -->
-        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin: 16px 0;">
-          <div class="search-group" style="flex: 1; min-width: 260px;">
-            <input type="text" id="input-search-horti" class="input-search" placeholder="Buscar produto (ex: Batata, Alface, Maçã)...">
-          </div>
-
-          <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-            <span style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">EXIBIR:</span>
-            <div class="filter-pills" id="cat-pills-group" style="display: flex; gap: 6px;">
-              <button class="pill ${this.selectedCategories.has('Verduras') ? 'active' : ''}" data-cat="Verduras">Verduras</button>
-              <button class="pill ${this.selectedCategories.has('Legumes') ? 'active' : ''}" data-cat="Legumes">Legumes</button>
-              <button class="pill ${this.selectedCategories.has('Frutas') ? 'active' : ''}" data-cat="Frutas">Frutas</button>
-              <button class="pill ${this.selectedCategories.has('Ovos') ? 'active' : ''}" data-cat="Ovos">Ovos</button>
-            </div>
+        <!-- Barra de Pesquisa -->
+        <div style="margin: 16px 0;">
+          <div class="search-group" style="width: 100%;">
+            <input type="text" id="input-search-horti" class="input-search" placeholder="Buscar produto (ex: Batata, Tomate, Laranja)...">
           </div>
         </div>
 
@@ -424,21 +414,6 @@ export class HortifrutiModule extends BaseModule {
       });
     }
 
-    const catPills = this.container.querySelectorAll('#cat-pills-group .pill');
-    catPills.forEach(p => {
-      p.addEventListener('click', () => {
-        const cat = p.getAttribute('data-cat');
-        if (this.selectedCategories.has(cat)) {
-          this.selectedCategories.delete(cat);
-          p.classList.remove('active');
-        } else {
-          this.selectedCategories.add(cat);
-          p.classList.add('active');
-        }
-        this.filterAndRenderRows();
-      });
-    });
-
     const btnCopiarAnt = this.container.querySelector('#btn-copiar-anterior');
     if (btnCopiarAnt) {
       btnCopiarAnt.addEventListener('click', async () => {
@@ -636,9 +611,7 @@ export class HortifrutiModule extends BaseModule {
     tbody.innerHTML = '';
 
     const filtrados = this.itensState.filter(item => {
-      const matchSearch = matchesFuzzySearch(item.nome, this.searchQuery);
-      const matchCat = this.selectedCategories.size === 0 || this.selectedCategories.has(item.categoria);
-      return matchSearch && matchCat;
+      return matchesFuzzySearch(item.nome, this.searchQuery);
     });
 
     if (filtrados.length === 0) {
@@ -646,17 +619,8 @@ export class HortifrutiModule extends BaseModule {
       return;
     }
 
-    let currentCat = '';
     filtrados.forEach((item) => {
       const globalIdx = this.itensState.findIndex(x => x.produtoId === item.produtoId);
-
-      if (item.categoria !== currentCat) {
-        currentCat = item.categoria;
-        const trCat = document.createElement('tr');
-        trCat.className = 'tr-categoria-header';
-        trCat.innerHTML = `<td colspan="7"><strong>Categoria: ${currentCat}</strong></td>`;
-        tbody.appendChild(trCat);
-      }
 
       const pSac = parseFloat(item.precoSacolao) || 0;
       const pMart = parseFloat(item.precoMartMinas) || 0;
@@ -798,6 +762,48 @@ export class HortifrutiModule extends BaseModule {
     const pSac = parseFloat(item.precoSacolao) || 0;
     const pMart = parseFloat(item.precoMartMinas) || 0;
     const qtd = parseFloat(item.quantidade) || 0;
+    const est = parseFloat(item.estoque) || 0;
+
+    const isFilled = (pSac > 0 || pMart > 0 || qtd > 0 || est > 0);
+    if (isFilled) {
+      tr.classList.add('tr-filled');
+    } else {
+      tr.classList.remove('tr-filled');
+    }
+
+    const tdSac = tr.querySelector('.col-sacolao');
+    const tdMart = tr.querySelector('.col-martminas');
+
+    if (tdSac) tdSac.classList.remove('bg-green-highlight');
+    if (tdMart) tdMart.classList.remove('bg-green-highlight');
+
+    let vencedorAuto = '';
+    if (pSac > 0 && pMart > 0) {
+      if (pSac < pMart) {
+        if (tdSac) tdSac.classList.add('bg-green-highlight');
+        vencedorAuto = 'Sacolão';
+      } else if (pMart < pSac) {
+        if (tdMart) tdMart.classList.add('bg-green-highlight');
+        vencedorAuto = 'Mart Minas';
+      } else {
+        if (tdSac) tdSac.classList.add('bg-green-highlight');
+        vencedorAuto = 'Sacolão';
+      }
+    } else if (pMart > 0) {
+      if (tdMart) tdMart.classList.add('bg-green-highlight');
+      vencedorAuto = 'Mart Minas';
+    } else if (pSac > 0) {
+      if (tdSac) tdSac.classList.add('bg-green-highlight');
+      vencedorAuto = 'Sacolão';
+    }
+
+    if (!item.isManual) {
+      item.fornecedorEscolhido = vencedorAuto;
+      const selectVencedor = tr.querySelector('.select-vencedor-override');
+      if (selectVencedor) {
+        selectVencedor.value = vencedorAuto;
+      }
+    }
 
     const precoFinal = item.fornecedorEscolhido === 'Mart Minas' ? pMart : (item.fornecedorEscolhido === 'Sacolão' ? pSac : 0);
     const subtotal = Math.round((qtd * precoFinal) * 100) / 100;
