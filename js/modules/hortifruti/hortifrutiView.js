@@ -43,6 +43,9 @@ export class HortifrutiModule extends BaseModule {
     this.currentUnidadeId = UNIDADES_SEED[0].id;
     this.activeTab = 'cotacao'; // 'cotacao' ou 'relatorio'
     this.lockedUnit = null;
+    this.isLocalSaving = false;
+    this.sessionId = 'sess_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+    this.lastLocalSaveTimestamp = 0;
     
     this.produtosCache = [];
     this.itensState = [];
@@ -504,17 +507,19 @@ export class HortifrutiModule extends BaseModule {
         });
       }
 
-      // Listener de Tempo Real protegendo campos ativos
+      // Listener de Tempo Real Não-Destrutivo (Sincronização instantânea entre abas/dispositivos)
       if (this.realtimeHandler) {
         window.removeEventListener('abib_realtime_update', this.realtimeHandler);
       }
       this.realtimeHandler = async (e) => {
         if (e.detail && (e.detail.key === 'abib_gestao_hortifruti_pedidos' || e.detail.key === 'abib_gestao_unidades')) {
-          const activeEl = document.activeElement;
-          if (activeEl && this.container.contains(activeEl) && ['INPUT', 'TEXTAREA', 'SELECT'].includes(activeEl.tagName)) {
-            return;
+          if (this.isLocalSaving) return;
+          if (this.activeTab === 'cotacao') {
+            const updated = await getPedidoSemanal(this.currentUnidadeId, this.currentMesAno, this.currentSemana);
+            this.applyRealtimeUpdateToDOM(updated);
+          } else if (this.activeTab === 'relatorio') {
+            await this.renderRelatorio();
           }
-          await this.loadCotacaoData();
         }
       };
       window.addEventListener('abib_realtime_update', this.realtimeHandler);
@@ -526,11 +531,17 @@ export class HortifrutiModule extends BaseModule {
       }
       this.visibilityHandler = async () => {
         if (document.visibilityState === 'visible') {
-          const activeEl = document.activeElement;
-          if (activeEl && ['INPUT', 'TEXTAREA', 'SELECT'].includes(activeEl.tagName)) {
-            activeEl.blur();
+          if (this.isLocalSaving) return;
+          const rawPedidos = localStorage.getItem('abib_gestao_hortifruti_pedidos');
+          if (rawPedidos) {
+            try { updateMemoryCache('abib_gestao_hortifruti_pedidos', JSON.parse(rawPedidos)); } catch (err) {}
           }
-          await this.loadCotacaoData();
+          if (this.activeTab === 'cotacao') {
+            const updated = await getPedidoSemanal(this.currentUnidadeId, this.currentMesAno, this.currentSemana);
+            this.applyRealtimeUpdateToDOM(updated);
+          } else if (this.activeTab === 'relatorio') {
+            await this.renderRelatorio();
+          }
         }
       };
       document.addEventListener('visibilitychange', this.visibilityHandler);
@@ -578,7 +589,13 @@ export class HortifrutiModule extends BaseModule {
     modal.classList.remove('hidden');
   }
 
-  async loadCotacaoData() {
+  async loadCotacaoData(showLoading = false) {
+    if (showLoading) {
+      const tbody = this.container.querySelector('#horti-tbody-produtos');
+      if (tbody) {
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center pad-20">Carregando produtos...</td></tr>`;
+      }
+    }
     this.currentPedido = await getPedidoSemanal(this.currentUnidadeId, this.currentMesAno, this.currentSemana);
     const mapaItensGravados = new Map();
     if (this.currentPedido && this.currentPedido.itens) {
@@ -605,6 +622,70 @@ export class HortifrutiModule extends BaseModule {
     this.updateResumoCards();
   }
 
+  applyRealtimeUpdateToDOM(updatedPedido) {
+    if (!updatedPedido || !updatedPedido.itens) return;
+
+    // Se o documento recebido foi gerado por esta própria aba/sessão, ignora (nossos dados locais já são os mais novos)
+    if (updatedPedido.lastUpdatedBy && updatedPedido.lastUpdatedBy === this.sessionId) {
+      return;
+    }
+
+    // Se o documento recebido for mais antigo do que o último salvamento local desta aba, ignora
+    if (this.currentPedido && this.currentPedido.atualizadoEm && updatedPedido.atualizadoEm) {
+      const remoteTime = new Date(updatedPedido.atualizadoEm).getTime();
+      const localTime = new Date(this.currentPedido.atualizadoEm).getTime();
+      if (remoteTime < localTime) {
+        return;
+      }
+    }
+
+    this.currentPedido = updatedPedido;
+    const mapaItens = new Map();
+    updatedPedido.itens.forEach(it => mapaItens.set(it.produtoId, it));
+
+    const tbody = this.container.querySelector('#horti-tbody-produtos');
+    if (!tbody) return;
+
+    this.itensState.forEach((item, idx) => {
+      const remote = mapaItens.get(item.produtoId);
+      if (remote) {
+        item.estoque = remote.estoque !== undefined && remote.estoque !== null ? remote.estoque : '';
+        item.precoSacolao = remote.precoSacolao !== undefined && remote.precoSacolao !== null && remote.precoSacolao !== 0 ? remote.precoSacolao : '';
+        item.precoMartMinas = remote.precoMartMinas !== undefined && remote.precoMartMinas !== null && remote.precoMartMinas !== 0 ? remote.precoMartMinas : '';
+        item.quantidade = remote.quantidade !== undefined && remote.quantidade !== null && remote.quantidade !== 0 ? remote.quantidade : '';
+        item.fornecedorEscolhido = remote.fornecedorEscolhido || null;
+        item.isManual = !!remote.isManual;
+
+        const tr = tbody.querySelector(`tr [data-index="${idx}"]`)?.closest('tr');
+        if (tr) {
+          const inpEst = tr.querySelector('[data-field="estoque"]');
+          const inpSac = tr.querySelector('[data-field="precoSacolao"]');
+          const inpMart = tr.querySelector('[data-field="precoMartMinas"]');
+          const inpQtd = tr.querySelector('[data-field="quantidade"]');
+          const selVenc = tr.querySelector('.select-vencedor-override');
+
+          const activeEl = document.activeElement;
+          if (inpEst && activeEl !== inpEst) inpEst.value = item.estoque;
+          if (inpSac && activeEl !== inpSac) inpSac.value = item.precoSacolao ? (parseFloat(item.precoSacolao) || 0).toFixed(2) : '';
+          if (inpMart && activeEl !== inpMart) inpMart.value = item.precoMartMinas ? (parseFloat(item.precoMartMinas) || 0).toFixed(2) : '';
+          if (inpQtd && activeEl !== inpQtd) inpQtd.value = item.quantidade;
+          if (selVenc && activeEl !== selVenc) selVenc.value = item.fornecedorEscolhido || '';
+
+          this.updateRowCalculations(tr, idx);
+        }
+      }
+    });
+
+    const calculados = calcularTotaisPedido(this.itensState, this.produtosCache);
+    const cardSac = this.container.querySelector('#card-total-sacolao');
+    const cardMart = this.container.querySelector('#card-total-martminas');
+    const cardEco = this.container.querySelector('#card-total-economia');
+
+    if (cardSac) cardSac.textContent = `R$ ${calculados.totalSacolao.toFixed(2).replace('.', ',')}`;
+    if (cardMart) cardMart.textContent = `R$ ${calculados.totalMartMinas.toFixed(2).replace('.', ',')}`;
+    if (cardEco) cardEco.textContent = `R$ ${calculados.economiaEstimada.toFixed(2).replace('.', ',')}`;
+  }
+
   filterAndRenderRows() {
     const tbody = this.container.querySelector('#horti-tbody-produtos');
     if (!tbody) return;
@@ -628,15 +709,33 @@ export class HortifrutiModule extends BaseModule {
       const est = parseFloat(item.estoque) || 0;
 
       let vencAuto = '';
+      let sacHighlight = '';
+      let martHighlight = '';
       if (pSac > 0 && pMart > 0) {
-        vencAuto = pSac <= pMart ? 'Sacolão' : 'Mart Minas';
-      } else if (pMart > 0) vencAuto = 'Mart Minas';
-      else if (pSac > 0) vencAuto = 'Sacolão';
+        if (pSac < pMart) {
+          vencAuto = 'Sacolão';
+          sacHighlight = 'bg-green-highlight';
+        } else if (pMart < pSac) {
+          vencAuto = 'Mart Minas';
+          martHighlight = 'bg-green-highlight';
+        } else {
+          // Preços empatados: nenhum é o melhor preço!
+          vencAuto = '';
+        }
+      } else if (pMart > 0) {
+        vencAuto = 'Mart Minas';
+        martHighlight = 'bg-green-highlight';
+      } else if (pSac > 0) {
+        vencAuto = 'Sacolão';
+        sacHighlight = 'bg-green-highlight';
+      }
 
       if (!item.isManual) item.fornecedorEscolhido = vencAuto;
 
       const precoFinal = item.fornecedorEscolhido === 'Mart Minas' ? pMart : (item.fornecedorEscolhido === 'Sacolão' ? pSac : 0);
       const subtotal = Math.round((qtd * precoFinal) * 100) / 100;
+      const valSac = (item.precoSacolao !== '' && item.precoSacolao !== null && item.precoSacolao !== undefined) ? (parseFloat(item.precoSacolao) || 0).toFixed(2) : '';
+      const valMart = (item.precoMartMinas !== '' && item.precoMartMinas !== null && item.precoMartMinas !== undefined) ? (parseFloat(item.precoMartMinas) || 0).toFixed(2) : '';
       const isFilled = (pSac > 0 || pMart > 0 || qtd > 0 || est > 0);
 
       const tr = document.createElement('tr');
@@ -659,13 +758,19 @@ export class HortifrutiModule extends BaseModule {
           <label class="mobile-label">Estoque</label>
           <input type="number" step="0.1" min="0" class="input-horti-num" data-index="${globalIdx}" data-field="estoque" value="${item.estoque}" placeholder="0">
         </td>
-        <td class="col-sacolao text-center ${pSac > 0 && item.fornecedorEscolhido === 'Sacolão' ? 'bg-green-highlight' : ''}">
+        <td class="col-sacolao text-center ${sacHighlight}">
           <label class="mobile-label">Preço Sacolão</label>
-          <input type="number" step="0.01" min="0" class="input-horti-num" data-index="${globalIdx}" data-field="precoSacolao" value="${item.precoSacolao}" placeholder="0,00">
+          <div class="input-money-wrapper">
+            <span class="currency-symbol">R$</span>
+            <input type="number" step="0.01" min="0" class="input-horti-num input-table-number" data-index="${globalIdx}" data-field="precoSacolao" value="${valSac}" placeholder="0,00">
+          </div>
         </td>
-        <td class="col-martminas text-center ${pMart > 0 && item.fornecedorEscolhido === 'Mart Minas' ? 'bg-green-highlight' : ''}">
+        <td class="col-martminas text-center ${martHighlight}">
           <label class="mobile-label">Preço Mart Minas</label>
-          <input type="number" step="0.01" min="0" class="input-horti-num" data-index="${globalIdx}" data-field="precoMartMinas" value="${item.precoMartMinas}" placeholder="0,00">
+          <div class="input-money-wrapper">
+            <span class="currency-symbol">R$</span>
+            <input type="number" step="0.01" min="0" class="input-horti-num input-table-number" data-index="${globalIdx}" data-field="precoMartMinas" value="${valMart}" placeholder="0,00">
+          </div>
         </td>
         <td class="col-qtd text-center">
           <label class="mobile-label">Quantidade</label>
@@ -688,47 +793,62 @@ export class HortifrutiModule extends BaseModule {
       tbody.appendChild(tr);
     });
 
-    this.bindTableInputs();
+    this.bindTableEvents();
   }
 
-  bindTableInputs() {
+  bindTableEvents() {
     const tbody = this.container.querySelector('#horti-tbody-produtos');
     if (!tbody) return;
     const inputs = tbody.querySelectorAll('input, select');
 
     inputs.forEach(inp => {
-      const handler = (e) => {
+      inp.addEventListener('input', (e) => {
         const idx = parseInt(e.target.getAttribute('data-index'));
         const field = e.target.getAttribute('data-field');
-        const item = this.itensState[idx];
-
-        if (e.target.classList.contains('select-vencedor-override')) {
-          item.isManual = true;
-          item.fornecedorEscolhido = e.target.value;
-        } else if (field) {
-          item[field] = e.target.value !== undefined && e.target.value !== null ? e.target.value.trim() : '';
+        if (field && !isNaN(idx) && this.itensState[idx]) {
+          this.itensState[idx][field] = e.target.value;
         }
+      });
 
+      if (inp.tagName === 'SELECT') {
+        inp.addEventListener('change', async (e) => {
+          const idx = parseInt(e.target.getAttribute('data-index'));
+          if (!isNaN(idx) && this.itensState[idx]) {
+            this.itensState[idx].isManual = true;
+            this.itensState[idx].fornecedorEscolhido = e.target.value;
+            this.updateRowCalculations(e.target.closest('tr'), idx);
+            this.updateResumoCards();
+            await this.salvarNoBanco();
+          }
+        });
+      }
+
+      inp.addEventListener('focus', (e) => {
+        if (e.target.tagName === 'INPUT') {
+          e.target.select();
+        }
+      });
+
+      inp.addEventListener('blur', async (e) => {
+        const field = e.target.getAttribute('data-field');
+        const idx = parseInt(e.target.getAttribute('data-index'));
+        if (field && !isNaN(idx) && this.itensState[idx]) {
+          const rawVal = e.target.value.trim();
+          if (field === 'precoSacolao' || field === 'precoMartMinas') {
+            if (rawVal !== '') {
+              const formatted = (parseFloat(rawVal) || 0).toFixed(2);
+              e.target.value = formatted;
+              this.itensState[idx][field] = formatted;
+            } else {
+              this.itensState[idx][field] = '';
+            }
+          } else {
+            this.itensState[idx][field] = rawVal;
+          }
+        }
         this.updateRowCalculations(e.target.closest('tr'), idx);
         this.updateResumoCards();
-      };
-
-      inp.addEventListener('input', handler);
-      inp.addEventListener('change', handler);
-
-      inp.addEventListener('blur', async () => {
-        if (this.autoSaveTimer) {
-          clearTimeout(this.autoSaveTimer);
-          this.autoSaveTimer = null;
-        }
-        const rawDoc = {
-          unidadeId: this.currentUnidadeId,
-          mesAno: this.currentMesAno,
-          semana: this.currentSemana,
-          nutricionistaId: this.currentProfile ? this.currentProfile.id : 'nutri_geral',
-          itens: this.itensState
-        };
-        await savePedidoSemanal(rawDoc);
+        await this.salvarNoBanco();
       });
     });
 
@@ -786,8 +906,8 @@ export class HortifrutiModule extends BaseModule {
         if (tdMart) tdMart.classList.add('bg-green-highlight');
         vencedorAuto = 'Mart Minas';
       } else {
-        if (tdSac) tdSac.classList.add('bg-green-highlight');
-        vencedorAuto = 'Sacolão';
+        // Empate: nenhum recebe destaque verde!
+        vencedorAuto = '';
       }
     } else if (pMart > 0) {
       if (tdMart) tdMart.classList.add('bg-green-highlight');
@@ -823,22 +943,30 @@ export class HortifrutiModule extends BaseModule {
     if (cardSac) cardSac.textContent = `R$ ${calculados.totalSacolao.toFixed(2).replace('.', ',')}`;
     if (cardMart) cardMart.textContent = `R$ ${calculados.totalMartMinas.toFixed(2).replace('.', ',')}`;
     if (cardEco) cardEco.textContent = `R$ ${calculados.economiaEstimada.toFixed(2).replace('.', ',')}`;
-
-    this.autoSaveCotacao();
   }
 
-  autoSaveCotacao() {
-    if (this.autoSaveTimer) clearTimeout(this.autoSaveTimer);
-    this.autoSaveTimer = setTimeout(async () => {
+  async salvarNoBanco() {
+    this.isLocalSaving = true;
+    this.lastLocalSaveTimestamp = Date.now();
+    const saveTime = new Date().toISOString();
+    try {
       const rawDoc = {
         unidadeId: this.currentUnidadeId,
         mesAno: this.currentMesAno,
         semana: this.currentSemana,
         nutricionistaId: this.currentProfile ? this.currentProfile.id : 'nutri_geral',
-        itens: this.itensState
+        itens: this.itensState,
+        lastUpdatedBy: this.sessionId,
+        atualizadoEm: saveTime
       };
-      await savePedidoSemanal(rawDoc);
-    }, 300);
+      this.currentPedido = await savePedidoSemanal(rawDoc);
+    } catch (err) {
+      console.warn("Erro ao salvar cotação:", err);
+    } finally {
+      setTimeout(() => {
+        this.isLocalSaving = false;
+      }, 1000);
+    }
   }
 
   async handleCopiarSemanaAnterior() {

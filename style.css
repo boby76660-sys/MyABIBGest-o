@@ -1940,11 +1940,34 @@ body.modal-open {
   background-color: rgba(16, 185, 129, 0.09);
 }
 
-/* Destaque de Menor Preço (Fundo Verde Leve) */
+/* Destaque de Menor Preço (Fornecedor Vencedor) */
 .bg-green-highlight {
-  background-color: rgba(16, 185, 129, 0.15) !important;
+  background-color: #ecfdf5 !important;
   border-radius: var(--radius-sm);
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
+}
+
+.bg-green-highlight .mobile-label {
+  color: #047857 !important;
+  font-weight: 800 !important;
+}
+
+.bg-green-highlight .input-money-wrapper {
+  background-color: #dcfce7 !important;
+  border: 1.5px solid #10b981 !important;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.22) !important;
+}
+
+.bg-green-highlight .input-table-number,
+.bg-green-highlight .input-horti-num,
+.bg-green-highlight input {
+  color: #065f46 !important;
+  font-weight: 800 !important;
+}
+
+.bg-green-highlight .currency-symbol {
+  color: #059669 !important;
+  font-weight: 800 !important;
 }
 
 .input-money-wrapper {

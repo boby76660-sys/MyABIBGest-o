@@ -5596,7 +5596,8 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
       mesAno: pedidoRaw.mesAno,
       semana: parseInt(pedidoRaw.semana),
       dataCriacao: pedidoRaw.dataCriacao || new Date().toISOString(),
-      atualizadoEm: new Date().toISOString(),
+      atualizadoEm: pedidoRaw.atualizadoEm || new Date().toISOString(),
+      lastUpdatedBy: pedidoRaw.lastUpdatedBy || '',
       itens: calculados.itensCalculados,
       totalSacolao: calculados.totalSacolao,
       totalMartMinas: calculados.totalMartMinas,
@@ -5773,6 +5774,9 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
       this.currentSemana = Math.min(4, Math.max(1, Math.ceil(now.getDate() / 7)));
       this.currentUnidadeId = UNIDADES_SEED[0].id;
       this.activeTab = 'cotacao';
+      this.isLocalSaving = false;
+      this.sessionId = 'sess_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+      this.lastLocalSaveTimestamp = 0;
       this.produtosCache = [];
       this.itensState = [];
       this.currentPedido = null;
@@ -6229,18 +6233,19 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
         });
       }
 
-      // Listener de Atualização em Tempo Real para Hortifrúti (Realtime Sync)
+      // Listener de Atualização em Tempo Real para Hortifrúti (Realtime Sync Instantâneo)
       if (this.realtimeHandler) {
         window.removeEventListener('abib_realtime_update', this.realtimeHandler);
       }
       this.realtimeHandler = async (e) => {
         if (e.detail && (e.detail.key === STORAGE_KEYS.HORTIFRUTI_PEDIDOS || e.detail.key === STORAGE_KEYS.UNIDADES)) {
-          const activeEl = document.activeElement;
-          if (activeEl && this.container.contains(activeEl) && ['INPUT', 'TEXTAREA', 'SELECT'].includes(activeEl.tagName)) {
-            this.hasPendingRealtimeUpdate = true;
-            return;
+          if (this.isLocalSaving) return;
+          if (this.activeTab === 'cotacao') {
+            const updated = await getPedidoSemanal(this.currentUnidadeId, this.currentMesAno, this.currentSemana);
+            this.applyRealtimeUpdateToDOM(updated);
+          } else if (this.activeTab === 'relatorio') {
+            await this.renderRelatorio();
           }
-          await this.loadCotacaoData();
         }
       };
       window.addEventListener('abib_realtime_update', this.realtimeHandler);
@@ -6252,15 +6257,17 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
       }
       this.visibilityHandler = async () => {
         if (document.visibilityState === 'visible') {
-          const activeEl = document.activeElement;
-          if (activeEl && ['INPUT', 'TEXTAREA', 'SELECT'].includes(activeEl.tagName)) {
-            activeEl.blur();
-          }
+          if (this.isLocalSaving) return;
           const rawPedidos = localStorage.getItem(STORAGE_KEYS.HORTIFRUTI_PEDIDOS);
           if (rawPedidos) {
             try { updateMemoryCache(STORAGE_KEYS.HORTIFRUTI_PEDIDOS, JSON.parse(rawPedidos)); } catch (err) {}
           }
-          await this.loadCotacaoData();
+          if (this.activeTab === 'cotacao') {
+            const updated = await getPedidoSemanal(this.currentUnidadeId, this.currentMesAno, this.currentSemana);
+            this.applyRealtimeUpdateToDOM(updated);
+          } else if (this.activeTab === 'relatorio') {
+            await this.renderRelatorio();
+          }
         }
       };
       document.addEventListener('visibilitychange', this.visibilityHandler);
@@ -6308,9 +6315,13 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
       modal.classList.remove('hidden');
     }
 
-    async loadCotacaoData() {
-      const tbody = this.container.querySelector('#horti-tbody-produtos');
-      tbody.innerHTML = `<tr><td colspan="6" class="text-center pad-20">Carregando pedido...</td></tr>`;
+    async loadCotacaoData(showLoading = false) {
+      if (showLoading) {
+        const tbody = this.container.querySelector('#horti-tbody-produtos');
+        if (tbody) {
+          tbody.innerHTML = `<tr><td colspan="7" class="text-center pad-20">Carregando pedido...</td></tr>`;
+        }
+      }
 
       this.currentPedido = await getPedidoSemanal(this.currentUnidadeId, this.currentMesAno, this.currentSemana);
 
@@ -6332,6 +6343,70 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
 
       this.renderTabelaProdutos();
       this.updateResumoCards();
+    }
+
+    applyRealtimeUpdateToDOM(updatedPedido) {
+      if (!updatedPedido || !updatedPedido.itens) return;
+
+      // Se o documento recebido foi gerado por esta própria aba/sessão, ignora (nossos dados locais já são os mais novos)
+      if (updatedPedido.lastUpdatedBy && updatedPedido.lastUpdatedBy === this.sessionId) {
+        return;
+      }
+
+      // Se o documento recebido for mais antigo do que o último salvamento local desta aba, ignora
+      if (this.currentPedido && this.currentPedido.atualizadoEm && updatedPedido.atualizadoEm) {
+        const remoteTime = new Date(updatedPedido.atualizadoEm).getTime();
+        const localTime = new Date(this.currentPedido.atualizadoEm).getTime();
+        if (remoteTime < localTime) {
+          return;
+        }
+      }
+
+      this.currentPedido = updatedPedido;
+      const mapaItens = new Map();
+      updatedPedido.itens.forEach(it => mapaItens.set(it.produtoId, it));
+
+      const tbody = this.container.querySelector('#horti-tbody-produtos');
+      if (!tbody) return;
+
+      this.itensState.forEach((item, idx) => {
+        const remote = mapaItens.get(item.produtoId);
+        if (remote) {
+          item.estoque = remote.estoque !== undefined && remote.estoque !== null ? remote.estoque : '';
+          item.precoSacolao = remote.precoSacolao !== undefined && remote.precoSacolao !== null && remote.precoSacolao !== 0 ? remote.precoSacolao : '';
+          item.precoMartMinas = remote.precoMartMinas !== undefined && remote.precoMartMinas !== null && remote.precoMartMinas !== 0 ? remote.precoMartMinas : '';
+          item.quantidade = remote.quantidade !== undefined && remote.quantidade !== null && remote.quantidade !== 0 ? remote.quantidade : '';
+          item.fornecedorEscolhido = remote.fornecedorEscolhido || null;
+          item.isManual = !!remote.isManual;
+
+          const tr = tbody.querySelector(`tr [data-index="${idx}"]`)?.closest('tr');
+          if (tr) {
+            const inpEst = tr.querySelector('[data-field="estoque"]');
+            const inpSac = tr.querySelector('[data-field="precoSacolao"]');
+            const inpMart = tr.querySelector('[data-field="precoMartMinas"]');
+            const inpQtd = tr.querySelector('[data-field="quantidade"]');
+            const selVenc = tr.querySelector('.select-vencedor-override');
+
+            const activeEl = document.activeElement;
+            if (inpEst && activeEl !== inpEst) inpEst.value = item.estoque;
+            if (inpSac && activeEl !== inpSac) inpSac.value = item.precoSacolao ? (parseFloat(item.precoSacolao) || 0).toFixed(2) : '';
+            if (inpMart && activeEl !== inpMart) inpMart.value = item.precoMartMinas ? (parseFloat(item.precoMartMinas) || 0).toFixed(2) : '';
+            if (inpQtd && activeEl !== inpQtd) inpQtd.value = item.quantidade;
+            if (selVenc && activeEl !== selVenc) selVenc.value = item.fornecedorEscolhido || '';
+
+            this.updateRowCalculations(tr, idx);
+          }
+        }
+      });
+
+      const calculados = calcularTotaisPedido(this.itensState, this.produtosCache);
+      const cardSac = this.container.querySelector('#card-total-sacolao');
+      const cardMart = this.container.querySelector('#card-total-martminas');
+      const cardEco = this.container.querySelector('#card-total-economia');
+
+      if (cardSac) cardSac.textContent = `R$ ${calculados.totalSacolao.toFixed(2).replace('.', ',')}`;
+      if (cardMart) cardMart.textContent = `R$ ${calculados.totalMartMinas.toFixed(2).replace('.', ',')}`;
+      if (cardEco) cardEco.textContent = `R$ ${calculados.economiaEstimada.toFixed(2).replace('.', ',')}`;
     }
 
     renderTabelaProdutos() {
@@ -6367,8 +6442,8 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
             martHighlight = 'bg-green-highlight';
             vencedorAuto = 'Mart Minas';
           } else {
-            sacHighlight = 'bg-green-highlight';
-            vencedorAuto = 'Sacolão';
+            // Empate de preços: nenhum recebe destaque de melhor preço!
+            vencedorAuto = '';
           }
         } else if (pMart > 0) {
           martHighlight = 'bg-green-highlight';
@@ -6383,6 +6458,13 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
         if (!item.isManual) {
           item.fornecedorEscolhido = vencedorAuto;
         }
+
+        const valSac = (item.precoSacolao !== '' && item.precoSacolao !== null && item.precoSacolao !== undefined)
+          ? (parseFloat(item.precoSacolao) || 0).toFixed(2)
+          : '';
+        const valMart = (item.precoMartMinas !== '' && item.precoMartMinas !== null && item.precoMartMinas !== undefined)
+          ? (parseFloat(item.precoMartMinas) || 0).toFixed(2)
+          : '';
 
         const fornecedorEscolhido = item.fornecedorEscolhido || vencedorAuto;
         const isDiferenteDoAuto = item.isManual && item.fornecedorEscolhido !== vencedorAuto;
@@ -6420,7 +6502,7 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
             <div class="input-money-wrapper">
               <span class="currency-symbol">R$</span>
               <input type="number" step="0.01" min="0" data-index="${index}" data-field="precoSacolao" 
-                     class="input-table-number input-sacolao" value="${item.precoSacolao}" placeholder="0,00">
+                     class="input-table-number input-sacolao" value="${valSac}" placeholder="0,00">
             </div>
           </td>
 
@@ -6429,7 +6511,7 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
             <div class="input-money-wrapper">
               <span class="currency-symbol">R$</span>
               <input type="number" step="0.01" min="0" data-index="${index}" data-field="precoMartMinas" 
-                     class="input-table-number input-martminas" value="${item.precoMartMinas}" placeholder="0,00">
+                     class="input-table-number input-martminas" value="${valMart}" placeholder="0,00">
             </div>
           </td>
 
@@ -6471,24 +6553,26 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
       const inputs = tbody.querySelectorAll('input, select');
 
       inputs.forEach(inp => {
-        const handler = (e) => {
+        inp.addEventListener('input', (e) => {
           const idx = parseInt(e.target.getAttribute('data-index'));
           const field = e.target.getAttribute('data-field');
-          const item = this.itensState[idx];
-
-          if (field === 'fornecedorEscolhido') {
-            item.isManual = true;
-            item.fornecedorEscolhido = e.target.value;
-          } else {
-            item[field] = e.target.value;
+          if (field && !isNaN(idx) && this.itensState[idx]) {
+            this.itensState[idx][field] = e.target.value;
           }
+        });
 
-          this.updateRowCalculations(e.target.closest('tr'), idx);
-          this.updateResumoCards();
-        };
-
-        inp.addEventListener('input', handler);
-        inp.addEventListener('change', handler);
+        if (inp.tagName === 'SELECT') {
+          inp.addEventListener('change', async (e) => {
+            const idx = parseInt(e.target.getAttribute('data-index'));
+            if (!isNaN(idx) && this.itensState[idx]) {
+              this.itensState[idx].isManual = true;
+              this.itensState[idx].fornecedorEscolhido = e.target.value;
+              this.updateRowCalculations(e.target.closest('tr'), idx);
+              this.updateResumoCards();
+              await this.salvarNoBanco();
+            }
+          });
+        }
 
         // Auto-seleciona texto ao focar (digitação rápida)
         inp.addEventListener('focus', (e) => {
@@ -6497,40 +6581,29 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
           }
         });
 
-        // Formatação com 2 casas decimais no blur (ao perder o foco) e Salvamento Imediato no Banco
         inp.addEventListener('blur', async (e) => {
           const field = e.target.getAttribute('data-field');
           const idx = parseInt(e.target.getAttribute('data-index'));
           if (field && !isNaN(idx) && this.itensState[idx]) {
             const rawVal = e.target.value.trim();
-            if (rawVal === '' || rawVal === '0') {
+            if (field === 'precoSacolao' || field === 'precoMartMinas') {
+              if (rawVal !== '') {
+                const formatted = (parseFloat(rawVal) || 0).toFixed(2);
+                e.target.value = formatted;
+                this.itensState[idx][field] = formatted;
+              } else {
+                this.itensState[idx][field] = '';
+              }
+            } else if (rawVal === '' || rawVal === '0') {
               this.itensState[idx][field] = '';
               e.target.value = '';
             } else {
-              const numVal = parseFloat(rawVal);
-              if (!isNaN(numVal) && numVal > 0) {
-                if (field === 'precoSacolao' || field === 'precoMartMinas') {
-                  const formatted = numVal.toFixed(2);
-                  e.target.value = formatted;
-                  this.itensState[idx][field] = formatted;
-                } else {
-                  this.itensState[idx][field] = numVal;
-                }
-              }
+              this.itensState[idx][field] = parseFloat(rawVal) || 0;
             }
           }
-          if (this.autoSaveTimer) {
-            clearTimeout(this.autoSaveTimer);
-            this.autoSaveTimer = null;
-          }
-          const rawDoc = {
-            unidadeId: this.currentUnidadeId,
-            mesAno: this.currentMesAno,
-            semana: this.currentSemana,
-            nutricionistaId: this.currentProfile ? this.currentProfile.id : 'nutri_geral',
-            itens: this.itensState
-          };
-          await savePedidoSemanal(rawDoc);
+          this.updateRowCalculations(e.target.closest('tr'), idx);
+          this.updateResumoCards();
+          await this.salvarNoBanco();
         });
       });
 
@@ -6587,8 +6660,8 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
           if (tdMart) tdMart.classList.add('bg-green-highlight');
           vencedorAuto = 'Mart Minas';
         } else {
-          if (tdSac) tdSac.classList.add('bg-green-highlight');
-          vencedorAuto = 'Sacolão';
+          // Empate: nenhum recebe destaque verde!
+          vencedorAuto = '';
         }
       } else if (pMart > 0) {
         if (tdMart) tdMart.classList.add('bg-green-highlight');
@@ -6632,22 +6705,30 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
       if (cardSac) cardSac.textContent = `R$ ${calculados.totalSacolao.toFixed(2).replace('.', ',')}`;
       if (cardMart) cardMart.textContent = `R$ ${calculados.totalMartMinas.toFixed(2).replace('.', ',')}`;
       if (cardEco) cardEco.textContent = `R$ ${calculados.economiaEstimada.toFixed(2).replace('.', ',')}`;
-
-      this.autoSaveCotacao();
     }
 
-    autoSaveCotacao() {
-      if (this.autoSaveTimer) clearTimeout(this.autoSaveTimer);
-      this.autoSaveTimer = setTimeout(async () => {
+    async salvarNoBanco() {
+      this.isLocalSaving = true;
+      this.lastLocalSaveTimestamp = Date.now();
+      const saveTime = new Date().toISOString();
+      try {
         const rawDoc = {
           unidadeId: this.currentUnidadeId,
           mesAno: this.currentMesAno,
           semana: this.currentSemana,
           nutricionistaId: this.currentProfile ? this.currentProfile.id : 'nutri_geral',
-          itens: this.itensState
+          itens: this.itensState,
+          lastUpdatedBy: this.sessionId,
+          atualizadoEm: saveTime
         };
-        await savePedidoSemanal(rawDoc);
-      }, 300);
+        this.currentPedido = await savePedidoSemanal(rawDoc);
+      } catch (err) {
+        console.warn("Erro ao salvar cotação:", err);
+      } finally {
+        setTimeout(() => {
+          this.isLocalSaving = false;
+        }, 1000);
+      }
     }
 
     async handleCopiarSemanaAnterior() {
