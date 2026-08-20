@@ -4,7 +4,7 @@
  */
 
 import { getCollection, saveCollection, saveDoc, getConfig, saveConfig } from './storageService.js';
-import { DEFAULT_ADMIN_PASSWORD } from '../config.js';
+import { DEFAULT_ADMIN_PASSWORD, DEFAULT_COMENSAIS_PASSWORD, DEFAULT_HORTIFRUTI_PASSWORD } from '../config.js';
 
 // Gerador de Token Aleatório Fixo para Unidades (100% Imprevisível)
 export function generateUnitToken(lojaName) {

@@ -2,9 +2,9 @@
  * Configurações Gerais e Dados Iniciais (Seeds) do Sistema de Gestão ABIB
  */
 
-export const DEFAULT_ADMIN_PASSWORD = "Gestao@5170";
-export const DEFAULT_COMENSAIS_PASSWORD = "Comensais@3928";
-export const DEFAULT_HORTIFRUTI_PASSWORD = "Hortifruti@6481";
+export const DEFAULT_ADMIN_PASSWORD = "Gestao@3003";
+export const DEFAULT_COMENSAIS_PASSWORD = "Comensais@0712";
+export const DEFAULT_HORTIFRUTI_PASSWORD = "Horti@6481";
 
 // Configurações do Firebase Realtime Database
 export const DEFAULT_FIREBASE_CONFIG = {
@@ -18,7 +18,7 @@ export const DEFAULT_FIREBASE_CONFIG = {
 // Configurações Padrão de IA OCR (OpenRouter)
 export const DEFAULT_OPENROUTER_CONFIG = {
   apiKey: "",
-  model: "google/gemini-2.5-flash"
+  model: "google/gemini-3.7-flash"
 };
 
 // Dados Padrão de Públicos / Categorias de Comensais

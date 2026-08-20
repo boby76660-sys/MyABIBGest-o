@@ -48,7 +48,7 @@ export function seedInitialData() {
       passwordComensais: DEFAULT_COMENSAIS_PASSWORD,
       passwordHortifruti: DEFAULT_HORTIFRUTI_PASSWORD,
       openRouterApiKey: DEFAULT_OPENROUTER_CONFIG.apiKey || '',
-      openRouterModel: DEFAULT_OPENROUTER_CONFIG.model || 'google/gemini-2.5-flash',
+      openRouterModel: DEFAULT_OPENROUTER_CONFIG.model || 'google/gemini-3.7-flash',
       divisaoPorRefeicao: false,
       sensibilidadeAlertaPct: 30,
       firebaseConfig: null
@@ -57,16 +57,20 @@ export function seedInitialData() {
     try {
       const cfg = JSON.parse(localStorage.getItem(STORAGE_KEYS.CONFIG));
       let changed = false;
-      if (!cfg.adminPassword || cfg.adminPassword === 'admin123') {
+      if (!cfg.adminPassword || cfg.adminPassword === 'admin123' || cfg.adminPassword === 'Gestao@5170') {
         cfg.adminPassword = DEFAULT_ADMIN_PASSWORD;
         changed = true;
       }
-      if (!cfg.passwordComensais || cfg.passwordComensais === 'comensais123') {
+      if (!cfg.passwordComensais || cfg.passwordComensais === 'comensais123' || cfg.passwordComensais === 'Comensais@3928') {
         cfg.passwordComensais = DEFAULT_COMENSAIS_PASSWORD;
         changed = true;
       }
-      if (!cfg.passwordHortifruti || cfg.passwordHortifruti === 'hortifruti123') {
+      if (!cfg.passwordHortifruti || cfg.passwordHortifruti === 'hortifruti123' || cfg.passwordHortifruti === 'Hortifruti@6481') {
         cfg.passwordHortifruti = DEFAULT_HORTIFRUTI_PASSWORD;
+        changed = true;
+      }
+      if (!cfg.openRouterModel) {
+        cfg.openRouterModel = 'google/gemini-3.7-flash';
         changed = true;
       }
       if (changed) {
@@ -149,8 +153,26 @@ export async function saveDoc(key, item) {
 // Obter configurações globais
 export async function getConfig() {
   seedInitialData();
-  const config = localStorage.getItem(STORAGE_KEYS.CONFIG);
-  return config ? JSON.parse(config) : {};
+  
+  if (checkIsFirebaseActive()) {
+    try {
+      const db = getRealtimeDB();
+      const snap = await db.ref('configuracoes').once('value');
+      const val = snap.val();
+      if (val && typeof val === 'object' && !Array.isArray(val)) {
+        localStorage.setItem(STORAGE_KEYS.CONFIG, JSON.stringify(val));
+        return val;
+      }
+    } catch (e) {}
+  }
+
+  const raw = localStorage.getItem(STORAGE_KEYS.CONFIG);
+  try {
+    const config = raw ? JSON.parse(raw) : {};
+    return (config && typeof config === 'object' && !Array.isArray(config)) ? config : {};
+  } catch (e) {
+    return {};
+  }
 }
 
 // Salvar configurações globais
@@ -163,6 +185,7 @@ export async function saveConfig(newConfig) {
     try {
       const db = getRealtimeDB();
       await db.ref('configuracoes').set(updated);
+      await db.ref(STORAGE_KEYS.CONFIG).set(updated);
     } catch (e) {
       console.warn("Erro ao salvar config no Realtime DB:", e);
     }

@@ -254,7 +254,9 @@
   }
 
   // --- 1. CONFIGURAÇÃO E DADOS INICIAIS (SEEDS) ---
-  const DEFAULT_ADMIN_PASSWORD = "Gestao@5170";
+  const DEFAULT_ADMIN_PASSWORD = "Gestao@3003";
+  const DEFAULT_COMENSAIS_PASSWORD = "Comensais@0712";
+  const DEFAULT_HORTIFRUTI_PASSWORD = "Horti@6481";
 
   const DEFAULT_FIREBASE_CONFIG = {
     apiKey: "AIzaSyCLrj5WzSgu-wGU5bBAMeom-P3vH8hZHHQ",
@@ -384,6 +386,23 @@
   function subscribeRealtimeSync() {
     if (!checkIsFirebaseActive()) return;
 
+    // Listener exclusivo para configurações em nuvem (objeto único)
+    if (!collectionListeners.has('configuracoes')) {
+      collectionListeners.add('configuracoes');
+      try {
+        getRealtimeDB().ref('configuracoes').on('value', snapshot => {
+          const val = snapshot.val();
+          if (val && typeof val === 'object' && !Array.isArray(val)) {
+            updateMemoryCache(STORAGE_KEYS.CONFIG, val);
+            try {
+              localStorage.setItem(STORAGE_KEYS.CONFIG, JSON.stringify(val));
+            } catch (e) {}
+            window.dispatchEvent(new CustomEvent('abib_realtime_update', { detail: { key: STORAGE_KEYS.CONFIG, docs: val } }));
+          }
+        });
+      } catch (e) {}
+    }
+
     Object.values(STORAGE_KEYS).forEach(key => {
       if (collectionListeners.has(key)) return;
       collectionListeners.add(key);
@@ -392,9 +411,18 @@
         getRealtimeDB().ref(key).on('value', snapshot => {
           const val = snapshot.val();
           if (val !== null && val !== undefined) {
-            const docs = Array.isArray(val) ? val.filter(Boolean) : Object.values(val);
-            updateMemoryCache(key, docs);
-            window.dispatchEvent(new CustomEvent('abib_realtime_update', { detail: { key, docs } }));
+            if (key === STORAGE_KEYS.CONFIG) {
+              if (typeof val === 'object' && !Array.isArray(val)) {
+                updateMemoryCache(key, val);
+                try {
+                  localStorage.setItem(key, JSON.stringify(val));
+                } catch (e) {}
+              }
+            } else {
+              const docs = Array.isArray(val) ? val.filter(Boolean) : Object.values(val);
+              updateMemoryCache(key, docs);
+              window.dispatchEvent(new CustomEvent('abib_realtime_update', { detail: { key, docs } }));
+            }
           }
         });
       } catch (e) {
@@ -509,7 +537,7 @@
         passwordComensais: DEFAULT_COMENSAIS_PASSWORD,
         passwordHortifruti: DEFAULT_HORTIFRUTI_PASSWORD,
         openRouterApiKey: '',
-        openRouterModel: 'google/gemini-2.5-flash',
+        openRouterModel: 'google/gemini-3.7-flash',
         divisaoPorRefeicao: false,
         sensibilidadeAlertaPct: 30,
         permitirTrocaPerfil: false,
@@ -519,20 +547,20 @@
       try {
         const cfg = JSON.parse(localStorage.getItem(STORAGE_KEYS.CONFIG));
         let changed = false;
-        if (!cfg.adminPassword || cfg.adminPassword === 'admin123') {
+        if (!cfg.adminPassword || cfg.adminPassword === 'admin123' || cfg.adminPassword === 'Gestao@5170') {
           cfg.adminPassword = DEFAULT_ADMIN_PASSWORD;
           changed = true;
         }
-        if (!cfg.passwordComensais || cfg.passwordComensais === 'comensais123') {
+        if (!cfg.passwordComensais || cfg.passwordComensais === 'comensais123' || cfg.passwordComensais === 'Comensais@3928') {
           cfg.passwordComensais = DEFAULT_COMENSAIS_PASSWORD;
           changed = true;
         }
-        if (!cfg.passwordHortifruti || cfg.passwordHortifruti === 'hortifruti123') {
+        if (!cfg.passwordHortifruti || cfg.passwordHortifruti === 'hortifruti123' || cfg.passwordHortifruti === 'Hortifruti@6481') {
           cfg.passwordHortifruti = DEFAULT_HORTIFRUTI_PASSWORD;
           changed = true;
         }
         if (!cfg.openRouterModel) {
-          cfg.openRouterModel = 'google/gemini-2.5-flash';
+          cfg.openRouterModel = 'google/gemini-3.7-flash';
           changed = true;
         }
         if (changed) {
@@ -600,18 +628,33 @@
 
   async function getConfig() {
     seedInitialData();
-    const config = getMemoryCache(STORAGE_KEYS.CONFIG);
-    return config || {};
+    let config = getMemoryCache(STORAGE_KEYS.CONFIG);
+    if (!config || Array.isArray(config)) {
+      const raw = localStorage.getItem(STORAGE_KEYS.CONFIG);
+      try {
+        config = raw ? JSON.parse(raw) : {};
+      } catch (e) {
+        config = {};
+      }
+      if (config && typeof config === 'object' && !Array.isArray(config)) {
+        updateMemoryCache(STORAGE_KEYS.CONFIG, config);
+      }
+    }
+    return (config && typeof config === 'object' && !Array.isArray(config)) ? config : {};
   }
 
   async function saveConfig(newConfig) {
     const current = await getConfig();
     const updated = { ...current, ...newConfig };
     updateMemoryCache(STORAGE_KEYS.CONFIG, updated);
+    try {
+      localStorage.setItem(STORAGE_KEYS.CONFIG, JSON.stringify(updated));
+    } catch (e) {}
 
     if (checkIsFirebaseActive()) {
       try {
         getRealtimeDB().ref('configuracoes').set(updated);
+        getRealtimeDB().ref(STORAGE_KEYS.CONFIG).set(updated);
       } catch (e) {}
     }
     return updated;
@@ -727,26 +770,26 @@
 
   async function validateMasterPIN(inputPassword) {
     const config = await getConfig();
-    const masterPass = config.adminPassword || 'Gestao@5170';
-    return inputPassword && inputPassword.trim() === masterPass.trim();
+    const masterPass = (config.adminPassword || DEFAULT_ADMIN_PASSWORD || '').trim();
+    return Boolean(inputPassword && masterPass && inputPassword.trim() === masterPass);
   }
 
   async function validateModulePIN(inputPassword, targetModule = null) {
     if (!inputPassword) return { valid: false, isMaster: false };
     const cleanPass = inputPassword.trim();
     const config = await getConfig();
-    const masterPass = (config.adminPassword || 'Gestao@5170').trim();
+    const masterPass = (config.adminPassword || DEFAULT_ADMIN_PASSWORD || '').trim();
 
-    if (cleanPass === masterPass) {
+    if (masterPass && cleanPass === masterPass) {
       return { valid: true, isMaster: true };
     }
 
     if (targetModule === 'comensais') {
-      const passCom = (config.passwordComensais || 'Comensais@3928').trim();
-      if (cleanPass === passCom) return { valid: true, isMaster: false };
+      const passCom = (config.passwordComensais || DEFAULT_COMENSAIS_PASSWORD || '').trim();
+      if (passCom && cleanPass === passCom) return { valid: true, isMaster: false };
     } else if (targetModule === 'hortifruti') {
-      const passHorti = (config.passwordHortifruti || 'Hortifruti@6481').trim();
-      if (cleanPass === passHorti) return { valid: true, isMaster: false };
+      const passHorti = (config.passwordHortifruti || DEFAULT_HORTIFRUTI_PASSWORD || '').trim();
+      if (passHorti && cleanPass === passHorti) return { valid: true, isMaster: false };
     }
 
     return { valid: false, isMaster: false };
@@ -4771,9 +4814,9 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
         e.preventDefault();
         const pass = this.container.querySelector('#input-admin-password').value;
         const config = await getConfig();
-        const masterPass = config.adminPassword || 'Gestao@5170';
+        const masterPass = config.adminPassword || DEFAULT_ADMIN_PASSWORD;
 
-        if (pass === masterPass) {
+        if (pass && masterPass && pass.trim() === masterPass.trim()) {
           this.isAuthenticated = true;
           this.renderPanelContent();
         } else {
@@ -5322,12 +5365,12 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
           <form id="form-passwords-config" style="display: flex; flex-direction: column; gap: 12px;">
             <div>
               <label style="font-size: 0.8rem; font-weight: 600;">Senha Máster Geral (Gerência / Diretoria):</label>
-              <input type="text" id="cfg-adminPassword" class="input-field" value="${config.adminPassword || 'Gestao@5170'}">
+              <input type="text" id="cfg-adminPassword" class="input-field" value="${config.adminPassword || DEFAULT_ADMIN_PASSWORD}">
             </div>
             <div>
               <label style="font-size: 0.8rem; font-weight: 600;">Senha Exclusiva: Módulo Comensais Diários:</label>
               <div style="display: flex; gap: 8px; align-items: center; margin-top: 2px;">
-                <input type="text" id="cfg-passwordComensais" class="input-field" style="flex: 1;" value="${config.passwordComensais || 'Comensais@3928'}">
+                <input type="text" id="cfg-passwordComensais" class="input-field" style="flex: 1;" value="${config.passwordComensais || DEFAULT_COMENSAIS_PASSWORD}">
                 <button type="button" id="btn-gen-pass-comensais" class="btn btn-sm btn-secondary" style="white-space: nowrap;">
                   Gerar Nova Sequência
                 </button>
@@ -5336,7 +5379,7 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
             <div>
               <label style="font-size: 0.8rem; font-weight: 600;">Senha Exclusiva: Módulo Hortifrúti Semanal:</label>
               <div style="display: flex; gap: 8px; align-items: center; margin-top: 2px;">
-                <input type="text" id="cfg-passwordHortifruti" class="input-field" style="flex: 1;" value="${config.passwordHortifruti || 'Hortifruti@6481'}">
+                <input type="text" id="cfg-passwordHortifruti" class="input-field" style="flex: 1;" value="${config.passwordHortifruti || DEFAULT_HORTIFRUTI_PASSWORD}">
                 <button type="button" id="btn-gen-pass-hortifruti" class="btn btn-sm btn-secondary" style="white-space: nowrap;">
                   Gerar Nova Sequência
                 </button>

@@ -5,7 +5,7 @@
 
 import { getUnidades, saveUnidade, regenerateUnitToken, getPublicos, savePublico, getPerfis, savePerfil, deletePerfil, getAdminConfig, updateAdminConfig, exportFullBackup } from '../services/adminService.js';
 import { initFirebase } from '../firebaseClient.js';
-import { DEFAULT_ADMIN_PASSWORD } from '../config.js';
+import { DEFAULT_ADMIN_PASSWORD, DEFAULT_COMENSAIS_PASSWORD, DEFAULT_HORTIFRUTI_PASSWORD } from '../config.js';
 
 export class AdminPanel {
   constructor(appController) {
@@ -500,12 +500,12 @@ export class AdminPanel {
         <form id="form-passwords-config" style="display: flex; flex-direction: column; gap: 12px;">
           <div class="form-group">
             <label style="font-weight: 700;">Senha Máster Geral (Gerência / Diretoria):</label>
-            <input type="text" id="cfg-adminPassword" class="input-field" value="${config.adminPassword || 'Gestao@5170'}">
+            <input type="text" id="cfg-adminPassword" class="input-field" value="${config.adminPassword || DEFAULT_ADMIN_PASSWORD}">
           </div>
           <div class="form-group">
             <label style="font-weight: 700;">Senha Exclusiva: Módulo Comensais Diários:</label>
             <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-              <input type="text" id="cfg-passwordComensais" class="input-field" style="flex: 1; min-width: 200px;" value="${config.passwordComensais || 'Comensais@3928'}">
+              <input type="text" id="cfg-passwordComensais" class="input-field" style="flex: 1; min-width: 200px;" value="${config.passwordComensais || DEFAULT_COMENSAIS_PASSWORD}">
               <button type="button" id="btn-gen-pass-comensais" class="btn btn-sm btn-secondary" style="white-space: nowrap;">
                 Gerar Nova Sequência
               </button>
@@ -514,7 +514,7 @@ export class AdminPanel {
           <div class="form-group">
             <label style="font-weight: 700;">Senha Exclusiva: Módulo Hortifrúti Semanal:</label>
             <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-              <input type="text" id="cfg-passwordHortifruti" class="input-field" style="flex: 1; min-width: 200px;" value="${config.passwordHortifruti || 'Hortifruti@6481'}">
+              <input type="text" id="cfg-passwordHortifruti" class="input-field" style="flex: 1; min-width: 200px;" value="${config.passwordHortifruti || DEFAULT_HORTIFRUTI_PASSWORD}">
               <button type="button" id="btn-gen-pass-hortifruti" class="btn btn-sm btn-secondary" style="white-space: nowrap;">
                 Gerar Nova Sequência
               </button>
