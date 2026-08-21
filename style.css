@@ -3596,6 +3596,119 @@ select.select-vencedor-override,
   width: 100%;
 }
 
+/* --- MODAL DE DETALHES DAS UNIDADES (CARDS RESPONSIVOS NO MOBILE - ZERO SCROLL) --- */
+#table-detalhes-unidades-modal {
+  width: 100%;
+}
+
+.unit-badge-tipo {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: #64748b;
+}
+
+@media (max-width: 768px) {
+  #modal-detalhes-unidades .table-responsive-card {
+    overflow-x: visible !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+
+  #table-detalhes-unidades-modal thead {
+    display: none !important;
+  }
+
+  #table-detalhes-unidades-modal,
+  #table-detalhes-unidades-modal tbody {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }
+
+  #table-detalhes-unidades-modal tr.unit-detail-row {
+    display: grid !important;
+    grid-template-columns: auto auto 1fr !important;
+    grid-template-areas:
+      "cod grupo loja"
+      "tipo cnpj cnpj" !important;
+    gap: 4px 8px !important;
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 10px !important;
+    padding: 10px 12px !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    align-items: center !important;
+  }
+
+  #table-detalhes-unidades-modal tr.unit-detail-row td {
+    border: none !important;
+    padding: 0 !important;
+    background: transparent !important;
+  }
+
+  #table-detalhes-unidades-modal .unit-col-cod {
+    grid-area: cod;
+    font-size: 0.74rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    background: #f1f5f9;
+    padding: 2px 6px !important;
+    border-radius: 4px;
+    display: inline-block;
+  }
+
+  #table-detalhes-unidades-modal .unit-col-grupo {
+    grid-area: grupo;
+  }
+
+  #table-detalhes-unidades-modal .unit-col-grupo .badge-tag {
+    font-size: 0.72rem;
+    padding: 2px 6px;
+  }
+
+  #table-detalhes-unidades-modal .unit-col-loja {
+    grid-area: loja;
+    font-size: 0.90rem;
+    font-weight: 800;
+    color: var(--text-title);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  #table-detalhes-unidades-modal .unit-col-tipo {
+    grid-area: tipo;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  #table-detalhes-unidades-modal .unit-col-cnpj {
+    grid-area: cnpj;
+    text-align: right !important;
+  }
+
+  #table-detalhes-unidades-modal .unit-col-cnpj code {
+    font-size: 0.72rem;
+    padding: 2px 6px;
+    background: #f1f5f9;
+    border-radius: 4px;
+    color: #334155;
+    letter-spacing: -0.2px;
+    font-weight: 600;
+  }
+}
+
 @media (max-width: 768px) {
   #container-table-view {
     padding: 0;

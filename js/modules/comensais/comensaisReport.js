@@ -1121,22 +1121,22 @@ export class ComensaisReportView {
     const permissoes = (this.currentProfile && this.currentProfile.permissoesCamposUnidade) || ["codigo", "grupo", "loja", "unidade", "cnpj"];
 
     let headerHTML = '';
-    if (permissoes.includes('codigo')) headerHTML += '<th>Cód</th>';
-    if (permissoes.includes('grupo')) headerHTML += '<th>Grupo</th>';
-    if (permissoes.includes('loja')) headerHTML += '<th>Loja / Unidade</th>';
-    if (permissoes.includes('unidade')) headerHTML += '<th>Tipo Unidade</th>';
-    if (permissoes.includes('cnpj')) headerHTML += '<th>CNPJ</th>';
+    if (permissoes.includes('codigo')) headerHTML += '<th class="unit-th-cod">Cód</th>';
+    if (permissoes.includes('grupo')) headerHTML += '<th class="unit-th-grupo">Grupo</th>';
+    if (permissoes.includes('loja')) headerHTML += '<th class="unit-th-loja">Loja / Unidade</th>';
+    if (permissoes.includes('unidade')) headerHTML += '<th class="unit-th-tipo">Tipo Unidade</th>';
+    if (permissoes.includes('cnpj')) headerHTML += '<th class="unit-th-cnpj">CNPJ</th>';
 
     theadRow.innerHTML = headerHTML;
     tbody.innerHTML = '';
 
     unidades.forEach(u => {
-      let rowHTML = '<tr>';
-      if (permissoes.includes('codigo')) rowHTML += `<td>${u.codigo || '-'}</td>`;
-      if (permissoes.includes('grupo')) rowHTML += `<td><span class="badge-tag">${u.grupo || '-'}</span></td>`;
-      if (permissoes.includes('loja')) rowHTML += `<td><strong>${u.loja}</strong></td>`;
-      if (permissoes.includes('unidade')) rowHTML += `<td>${u.unidade || '-'}</td>`;
-      if (permissoes.includes('cnpj')) rowHTML += `<td><code>${u.cnpj || '-'}</code></td>`;
+      let rowHTML = '<tr class="unit-detail-row">';
+      if (permissoes.includes('codigo')) rowHTML += `<td class="unit-col-cod">#${u.codigo || '-'}</td>`;
+      if (permissoes.includes('grupo')) rowHTML += `<td class="unit-col-grupo"><span class="badge-tag">${u.grupo || '-'}</span></td>`;
+      if (permissoes.includes('loja')) rowHTML += `<td class="unit-col-loja"><strong>${u.loja}</strong></td>`;
+      if (permissoes.includes('unidade')) rowHTML += `<td class="unit-col-tipo"><span class="unit-badge-tipo">${u.unidade || '-'}</span></td>`;
+      if (permissoes.includes('cnpj')) rowHTML += `<td class="unit-col-cnpj"><code>${u.cnpj || '-'}</code></td>`;
       rowHTML += '</tr>';
       tbody.innerHTML += rowHTML;
     });
