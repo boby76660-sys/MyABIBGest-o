@@ -1,17 +1,11 @@
-/**
- * Firebase Client Wrapper - Realtime Database
- * Gerencia a inicialização do SDK Firebase Realtime Database
- */
+import { DEFAULT_FIREBASE_CONFIG } from './config.js';
 
 let rtdb = null;
 let isFirebaseActive = false;
 
 export function initFirebase(config) {
-  if (!config || !config.apiKey || (!config.databaseURL && !config.projectId)) {
-    console.warn("Firebase Realtime Database não configurado. Utilizando modo LocalStorage offline.");
-    isFirebaseActive = false;
-    rtdb = null;
-    return false;
+  if (!config || !config.apiKey || (!config.databaseURL && !config.projectId) || (config.databaseURL && config.databaseURL.includes('myabib-gestao'))) {
+    config = DEFAULT_FIREBASE_CONFIG;
   }
 
   try {

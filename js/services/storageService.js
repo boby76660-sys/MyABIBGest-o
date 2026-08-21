@@ -151,7 +151,7 @@ export async function saveDoc(key, item) {
 }
 
 // Obter configurações globais
-export async function getConfig() {
+export async function getConfig(forceRemote = false) {
   seedInitialData();
   
   if (checkIsFirebaseActive()) {
@@ -167,10 +167,22 @@ export async function getConfig() {
         localStorage.setItem(STORAGE_KEYS.CONFIG, JSON.stringify(val));
         return val;
       }
-    } catch (e) {
-      console.warn("[StorageService] Falha ao ler config do Realtime DB:", e);
-    }
+    } catch (e) {}
   }
+
+  // Fallback REST direto na nuvem para garantir sincronia mesmo antes de conectar o SDK
+  try {
+    const dbUrl = (DEFAULT_FIREBASE_CONFIG && DEFAULT_FIREBASE_CONFIG.databaseURL) || 'https://myabib-v6-default-rtdb.firebaseio.com/';
+    const cleanUrl = dbUrl.replace(/\/$/, '');
+    const res = await fetch(`${cleanUrl}/configuracoes.json`);
+    if (res.ok) {
+      const val = await res.json();
+      if (val && typeof val === 'object' && !Array.isArray(val)) {
+        localStorage.setItem(STORAGE_KEYS.CONFIG, JSON.stringify(val));
+        return val;
+      }
+    }
+  } catch (e) {}
 
   const raw = localStorage.getItem(STORAGE_KEYS.CONFIG);
   try {
@@ -194,10 +206,18 @@ export async function saveConfig(newConfig) {
         db.ref('configuracoes').set(updated),
         db.ref(STORAGE_KEYS.CONFIG).set(updated)
       ]);
-      console.log("[StorageService] Configurações salvas no Realtime Database.");
-    } catch (e) {
-      console.error("[StorageService] Erro ao sincronizar config no Realtime DB (verifique as Regras de Segurança no Firebase Console):", e);
-    }
+    } catch (e) {}
   }
+
+  // Salvar via REST direto para garantir gravação instantânea na nuvem
+  try {
+    const dbUrl = (DEFAULT_FIREBASE_CONFIG && DEFAULT_FIREBASE_CONFIG.databaseURL) || 'https://myabib-v6-default-rtdb.firebaseio.com/';
+    const cleanUrl = dbUrl.replace(/\/$/, '');
+    await Promise.all([
+      fetch(`${cleanUrl}/configuracoes.json`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(updated) }),
+      fetch(`${cleanUrl}/${STORAGE_KEYS.CONFIG}.json`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(updated) })
+    ]);
+  } catch (e) {}
+
   return updated;
 }
