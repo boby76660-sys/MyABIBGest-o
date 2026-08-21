@@ -121,9 +121,11 @@ export class ComensaisReportView {
         <button id="tab-table-view" class="report-tab-btn">
           Tabela de Registros
         </button>
-        <button id="tab-matriz-view" class="report-tab-btn">
-          Matriz de Preenchimento
-        </button>
+        ${!this.isLockedMode() ? `
+          <button id="tab-matriz-view" class="report-tab-btn">
+            Matriz de Preenchimento
+          </button>
+        ` : ''}
       </div>
 
       <!-- KPIs Consolidados Visuais -->
@@ -1036,38 +1038,74 @@ export class ComensaisReportView {
     const ordenadosDecrescente = [...filtrados].reverse();
 
     if (ordenadosDecrescente.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="6" class="text-center">Nenhum registro encontrado no período selecionado.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="6" class="text-center" style="padding: 30px; color: var(--text-muted);">Nenhum registro encontrado no período selecionado.</td></tr>`;
       return;
     }
+
+    const publicoColors = {
+      'pub_ticket': '#10b981',
+      'pub_garra': '#3b82f6',
+      'pub_promotores_cartao': '#f59e0b',
+      'pub_promotores_pix': '#ec4899',
+      'pub_assinaturas': '#8b5cf6'
+    };
+
+    const isLocked = this.isLockedMode();
 
     ordenadosDecrescente.forEach(r => {
       const u = unidadesMap.get(r.unidadeId) || { loja: 'Desconhecida' };
       let totalDoc = 0;
-      const partes = [];
+      const chipsHTML = [];
 
-      publicos.forEach(p => {
+      publicos.forEach((p, idx) => {
         const val = (r.publicos && r.publicos[p.id]) || 0;
         if (val > 0) {
-          totalDoc += parseInt(val, 10);
-          partes.push(`<strong>${p.nome}:</strong> ${val}`);
+          const numVal = parseInt(val, 10);
+          totalDoc += numVal;
+          const color = publicoColors[p.id] || ['#10b981', '#3b82f6', '#f59e0b', '#ec4899', '#8b5cf6', '#6366f1'][idx % 6];
+          chipsHTML.push(`
+            <span class="publico-chip">
+              <span class="chip-dot" style="background-color: ${color};"></span>
+              <span class="chip-name">${p.nome}:</span>
+              <strong class="chip-val">${numVal.toLocaleString('pt-BR')}</strong>
+            </span>
+          `);
         }
       });
 
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td>${new Date(r.data + 'T00:00:00').toLocaleDateString('pt-BR')}</td>
-        <td><strong>${u.loja}</strong></td>
-        <td>${partes.length > 0 ? partes.join(' | ') : '<em>Sem dados</em>'}</td>
-        <td><strong class="text-primary">${totalDoc}</strong></td>
-        <td>${r.observacao || '-'}</td>
+        <td style="white-space: nowrap;">
+          <strong>${new Date(r.data + 'T00:00:00').toLocaleDateString('pt-BR')}</strong>
+        </td>
+        <td style="white-space: nowrap;">
+          <strong style="color: var(--text-title); font-size: 0.9rem;">${u.loja}</strong>
+        </td>
         <td>
-          <button class="btn btn-sm btn-secondary btn-editar-reg" data-id="${r.id}">Editar</button>
+          <div class="publico-chips-container">
+            ${chipsHTML.length > 0 ? chipsHTML.join('') : '<em style="color: var(--text-muted); font-size: 0.8rem;">Sem registros</em>'}
+          </div>
+        </td>
+        <td style="text-align: center; white-space: nowrap;">
+          <span class="badge-total-comensais">${totalDoc.toLocaleString('pt-BR')}</span>
+        </td>
+        <td>
+          <span style="font-size: 0.8rem; color: ${r.observacao ? 'var(--text-main)' : 'var(--text-muted)'};">
+            ${r.observacao || '-'}
+          </span>
+        </td>
+        <td style="text-align: center; white-space: nowrap;">
+          ${!isLocked ? `
+            <button class="btn btn-sm btn-secondary btn-editar-reg" data-id="${r.id}" title="Editar registro">Editar</button>
+          ` : '<span style="color: var(--text-muted); font-size: 0.75rem;">-</span>'}
         </td>
       `;
 
-      tr.querySelector('.btn-editar-reg').addEventListener('click', () => {
-        window.app.switchView('comensais');
-      });
+      if (!isLocked) {
+        tr.querySelector('.btn-editar-reg')?.addEventListener('click', () => {
+          window.app.switchView('comensais');
+        });
+      }
 
       tbody.appendChild(tr);
     });
