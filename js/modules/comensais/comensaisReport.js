@@ -116,13 +116,13 @@ export class ComensaisReportView {
       <!-- Abas de Alternância de Visualização -->
       <div class="report-view-tabs">
         <button id="tab-visual-view" class="report-tab-btn active">
-          Painel Gráfico (Donut & Curvas SVG)
+          Resumo Geral
         </button>
         <button id="tab-table-view" class="report-tab-btn">
-          Tabela Detalhada de Registros
+          Tabela de Registros
         </button>
         <button id="tab-matriz-view" class="report-tab-btn">
-          Matriz de Preenchimento Mensal
+          Matriz de Preenchimento
         </button>
       </div>
 
@@ -151,8 +151,11 @@ export class ComensaisReportView {
         <!-- 1. Gráfico de Evolução em Onda / Área SVG -->
         <div class="chart-card chart-card-full">
           <div class="chart-card-header">
-            <h3>Curva de Evolução Diária <span class="chart-badge" id="badge-total-dias">0 dias</span></h3>
-            <small style="color: var(--text-muted);">Volume acumulado por data no período</small>
+            <div class="chart-card-header-titles">
+              <h3>Curva de Evolução Diária <span class="chart-badge" id="badge-total-dias">0 dias</span></h3>
+              <small style="color: var(--text-muted);">Volume acumulado por data no período</small>
+            </div>
+            <span class="chart-scroll-hint">Deslize &rarr;</span>
           </div>
           <div class="svg-wave-container" id="chart-daily-wave">
             <!-- Gráfico de Área SVG gerado via JS -->
@@ -749,8 +752,10 @@ export class ComensaisReportView {
     }
 
     const entries = Array.from(dailyMap.entries());
-    const svgWidth = 800;
-    const svgHeight = 220;
+    const minWidthPerPoint = 56;
+    const computedWidth = Math.max(800, entries.length * minWidthPerPoint);
+    const svgWidth = computedWidth;
+    const svgHeight = 240;
     const paddingX = 45;
     const paddingY = 45;
 
@@ -785,7 +790,7 @@ export class ComensaisReportView {
     const dArea = `${dLine} L ${points[points.length - 1].x},${svgHeight - paddingY + 10} L ${points[0].x},${svgHeight - paddingY + 10} Z`;
 
     let svgHTML = `
-      <svg class="svg-wave-chart" viewBox="0 0 ${svgWidth} ${svgHeight}">
+      <svg class="svg-wave-chart" style="width: ${svgWidth}px; min-width: 100%;" viewBox="0 0 ${svgWidth} ${svgHeight}">
         <defs>
           <linearGradient id="waveGradient" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stop-color="#10b981" stop-opacity="0.4" />
@@ -801,7 +806,7 @@ export class ComensaisReportView {
 
         ${points.map(pt => `
           <g class="wave-group">
-            <circle cx="${pt.x}" cy="${pt.y}" r="5" class="wave-point">
+            <circle cx="${pt.x}" cy="${pt.y}" r="5.5" class="wave-point">
               <title>${pt.dataFmt}: ${pt.total} comensais</title>
             </circle>
             <text x="${pt.x}" y="${pt.y - 12}" class="wave-value-text">${pt.total}</text>
@@ -812,6 +817,11 @@ export class ComensaisReportView {
     `;
 
     container.innerHTML = svgHTML;
+    setTimeout(() => {
+      if (container.scrollWidth > container.clientWidth) {
+        container.scrollLeft = container.scrollWidth;
+      }
+    }, 50);
   }
 
   // GRÁFICO DONUT SVG
@@ -853,9 +863,11 @@ export class ComensaisReportView {
 
       legendHTML.push(`
         <div class="donut-legend-pill">
-          <span class="legend-dot" style="background: ${color};"></span>
-          <span>${p.nome}:</span>
-          <strong style="color: var(--text-title);">${total.toLocaleString('pt-BR')} (${(pct * 100).toFixed(1)}%)</strong>
+          <div class="donut-legend-left">
+            <span class="legend-dot" style="background: ${color};"></span>
+            <span>${p.nome}:</span>
+          </div>
+          <strong class="donut-legend-val">${total.toLocaleString('pt-BR')} (${(pct * 100).toFixed(1)}%)</strong>
         </div>
       `);
     });
