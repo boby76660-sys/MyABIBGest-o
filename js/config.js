@@ -8,11 +8,11 @@ export const DEFAULT_HORTIFRUTI_PASSWORD = "Horti@6481";
 
 // Configurações do Firebase Realtime Database
 export const DEFAULT_FIREBASE_CONFIG = {
-  apiKey: "AIzaSyCLrj5WzSgu-wGU5bBAMeom-P3vH8hZHHQ",
-  databaseURL: "https://myabib-gestao-default-rtdb.firebaseio.com/",
-  projectId: "myabib-gestao",
-  authDomain: "myabib-gestao.firebaseapp.com",
-  storageBucket: "myabib-gestao.appspot.com"
+  apiKey: "AIzaSyCqwneS6nVKojloKFAAfBVRsZGiLDDaFc4",
+  databaseURL: "https://myabib-v6-default-rtdb.firebaseio.com/",
+  projectId: "myabib-v6",
+  authDomain: "myabib-v6.firebaseapp.com",
+  storageBucket: "myabib-v6.appspot.com"
 };
 
 // Configurações Padrão de IA OCR (OpenRouter)

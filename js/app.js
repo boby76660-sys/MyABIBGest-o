@@ -3,6 +3,7 @@
  */
 
 import { initFirebase } from './firebaseClient.js';
+import { DEFAULT_FIREBASE_CONFIG } from './config.js';
 import { getAdminConfig, getUnidadeByToken, validateMasterPIN, validateModulePIN, getUnidades, regenerateUnitToken } from './services/adminService.js';
 import { getActiveProfile, renderProfileSelectorModal } from './admin/profileManager.js';
 import { ModuleRegistry } from './modules/moduleRegistry.js';
@@ -45,6 +46,8 @@ class AppController {
     const config = await getAdminConfig();
     if (config.firebaseConfig) {
       initFirebase(config.firebaseConfig);
+    } else {
+      initFirebase(DEFAULT_FIREBASE_CONFIG);
     }
 
     // 1. VERIFICAR SE EXISTE TOKEN DE UNIDADE OU MÓDULO EXCLUSIVO NA URL

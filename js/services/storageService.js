@@ -157,13 +157,19 @@ export async function getConfig() {
   if (checkIsFirebaseActive()) {
     try {
       const db = getRealtimeDB();
-      const snap = await db.ref('configuracoes').once('value');
-      const val = snap.val();
+      let snap = await db.ref('configuracoes').once('value');
+      let val = snap.val();
+      if (!val || typeof val !== 'object' || Array.isArray(val)) {
+        snap = await db.ref(STORAGE_KEYS.CONFIG).once('value');
+        val = snap.val();
+      }
       if (val && typeof val === 'object' && !Array.isArray(val)) {
         localStorage.setItem(STORAGE_KEYS.CONFIG, JSON.stringify(val));
         return val;
       }
-    } catch (e) {}
+    } catch (e) {
+      console.warn("[StorageService] Falha ao ler config do Realtime DB:", e);
+    }
   }
 
   const raw = localStorage.getItem(STORAGE_KEYS.CONFIG);
@@ -184,10 +190,13 @@ export async function saveConfig(newConfig) {
   if (checkIsFirebaseActive()) {
     try {
       const db = getRealtimeDB();
-      await db.ref('configuracoes').set(updated);
-      await db.ref(STORAGE_KEYS.CONFIG).set(updated);
+      await Promise.all([
+        db.ref('configuracoes').set(updated),
+        db.ref(STORAGE_KEYS.CONFIG).set(updated)
+      ]);
+      console.log("[StorageService] Configurações salvas no Realtime Database.");
     } catch (e) {
-      console.warn("Erro ao salvar config no Realtime DB:", e);
+      console.error("[StorageService] Erro ao sincronizar config no Realtime DB (verifique as Regras de Segurança no Firebase Console):", e);
     }
   }
   return updated;

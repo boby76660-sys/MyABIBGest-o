@@ -259,11 +259,11 @@
   const DEFAULT_HORTIFRUTI_PASSWORD = "Horti@6481";
 
   const DEFAULT_FIREBASE_CONFIG = {
-    apiKey: "AIzaSyCLrj5WzSgu-wGU5bBAMeom-P3vH8hZHHQ",
-    databaseURL: "https://myabib-gestao-default-rtdb.firebaseio.com/",
-    projectId: "myabib-gestao",
-    authDomain: "myabib-gestao.firebaseapp.com",
-    storageBucket: "myabib-gestao.appspot.com"
+    apiKey: "AIzaSyCqwneS6nVKojloKFAAfBVRsZGiLDDaFc4",
+    databaseURL: "https://myabib-v6-default-rtdb.firebaseio.com/",
+    projectId: "myabib-v6",
+    authDomain: "myabib-v6.firebaseapp.com",
+    storageBucket: "myabib-v6.appspot.com"
   };
 
   const PUBLICOS_SEED = [
@@ -626,10 +626,32 @@
     return item;
   }
 
-  async function getConfig() {
+  async function getConfig(forceRemote = false) {
     seedInitialData();
     let config = getMemoryCache(STORAGE_KEYS.CONFIG);
-    if (!config || Array.isArray(config)) {
+
+    if (forceRemote || !config || Array.isArray(config)) {
+      if (checkIsFirebaseActive()) {
+        try {
+          const db = getRealtimeDB();
+          let snap = await db.ref('configuracoes').once('value');
+          let val = snap.val();
+          if (!val || typeof val !== 'object' || Array.isArray(val)) {
+            snap = await db.ref(STORAGE_KEYS.CONFIG).once('value');
+            val = snap.val();
+          }
+          if (val && typeof val === 'object' && !Array.isArray(val)) {
+            updateMemoryCache(STORAGE_KEYS.CONFIG, val);
+            try {
+              localStorage.setItem(STORAGE_KEYS.CONFIG, JSON.stringify(val));
+            } catch (e) {}
+            return val;
+          }
+        } catch (e) {
+          console.warn("[StorageService] Falha ao consultar config no Realtime DB:", e);
+        }
+      }
+
       const raw = localStorage.getItem(STORAGE_KEYS.CONFIG);
       try {
         config = raw ? JSON.parse(raw) : {};
@@ -653,9 +675,15 @@
 
     if (checkIsFirebaseActive()) {
       try {
-        getRealtimeDB().ref('configuracoes').set(updated);
-        getRealtimeDB().ref(STORAGE_KEYS.CONFIG).set(updated);
-      } catch (e) {}
+        const db = getRealtimeDB();
+        await Promise.all([
+          db.ref('configuracoes').set(updated),
+          db.ref(STORAGE_KEYS.CONFIG).set(updated)
+        ]);
+        console.log("[StorageService] Configurações salvas no Realtime Database.");
+      } catch (e) {
+        console.error("[StorageService] Erro ao sincronizar config no Realtime DB (verifique as Regras de Segurança no Firebase Console):", e);
+      }
     }
     return updated;
   }
@@ -769,7 +797,7 @@
   }
 
   async function validateMasterPIN(inputPassword) {
-    const config = await getConfig();
+    const config = await getConfig(true);
     const masterPass = (config.adminPassword || DEFAULT_ADMIN_PASSWORD || '').trim();
     return Boolean(inputPassword && masterPass && inputPassword.trim() === masterPass);
   }
@@ -777,14 +805,14 @@
   async function validateModulePIN(inputPassword, targetModule = null) {
     if (!inputPassword) return { valid: false, isMaster: false };
     const cleanPass = inputPassword.trim();
-    const config = await getConfig();
+    const config = await getConfig(true);
     const masterPass = (config.adminPassword || DEFAULT_ADMIN_PASSWORD || '').trim();
 
     if (masterPass && cleanPass === masterPass) {
       return { valid: true, isMaster: true };
     }
 
-    if (targetModule === 'comensais') {
+    if (targetModule === 'comensais' || targetModule === 'comensais-relatorios') {
       const passCom = (config.passwordComensais || DEFAULT_COMENSAIS_PASSWORD || '').trim();
       if (passCom && cleanPass === passCom) return { valid: true, isMaster: false };
     } else if (targetModule === 'hortifruti') {
