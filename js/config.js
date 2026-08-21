@@ -61,25 +61,25 @@ export const PERFIS_SEED = [
   {
     id: "p_nutri_geral",
     nome: "Nutricionista Geral",
-    descricao: "Responsável pelo lançamento de comensais, cotação semanal de hortifrúti e acompanhamento geral.",
+    descricao: "Responsável pelo lançamento de comensais, pedidos/cotações semanais e acompanhamento geral.",
     icone: "",
-    modulos: ["comensais", "hortifruti"],
+    modulos: ["comensais", "pedidos", "hortifruti"],
     permissoesCamposUnidade: ["loja"]
   },
   {
     id: "p_nutri_gestora",
     nome: "Nutricionista Gestora",
-    descricao: "Acompanhamento regional das unidades sob sua gestão (compras, cotações e suporte).",
+    descricao: "Acompanhamento regional das unidades sob sua gestão (pedidos, cotações e suporte).",
     icone: "",
-    modulos: ["comensais", "hortifruti"],
+    modulos: ["comensais", "pedidos", "hortifruti"],
     permissoesCamposUnidade: ["loja", "grupo", "unidade"]
   },
   {
     id: "p_diretoria",
     nome: "Gestão & Diretoria",
-    descricao: "Acesso a relatórios consolidados, auditoria fiscal de NFs, cotações de hortifrúti e unidades.",
+    descricao: "Acesso a relatórios consolidados, auditoria fiscal de NFs, cotações de compras e unidades.",
     icone: "",
-    modulos: ["comensais", "hortifruti"],
+    modulos: ["comensais", "pedidos", "hortifruti"],
     permissoesCamposUnidade: ["codigo", "grupo", "loja", "unidade", "cnpj"]
   }
 ];
@@ -96,40 +96,63 @@ export const MODULOS_SEED = [
     ordem: 1
   },
   {
-    id: "hortifruti",
-    chave: "hortifruti",
-    nome: "Hortifrúti Semanal",
-    descricao: "Cotação Sacolão x Mart Minas, apoio a pedidos e auditoria mensal de NFs.",
+    id: "pedidos",
+    chave: "pedidos",
+    nome: "Pedidos (Hortifrúti & Açougue)",
+    descricao: "Cotações semanais, apoio a pedidos e auditoria de compras (Hortifrúti e Açougue).",
     icone: "",
     ativo: true,
     ordem: 2
   }
 ];
 
-// Produtos Padrão de Hortifrúti (Extraídos da Ficha Padrão de Pedidos/Cotações ABIB)
-export const PRODUTOS_HORTIFRUTI_SEED = [
-  { id: "hprod_abacaxi", nome: "Abacaxi", unidadeMedida: "un", categoria: "Frutas", ordem: 1, ativo: true },
-  { id: "hprod_abobrinha", nome: "Abobrinha", unidadeMedida: "kg", categoria: "Legumes", ordem: 2, ativo: true },
-  { id: "hprod_batata_doce", nome: "Batata Doce", unidadeMedida: "kg", categoria: "Legumes", ordem: 3, ativo: true },
-  { id: "hprod_batata_inglesa", nome: "Batata Inglesa", unidadeMedida: "kg", categoria: "Legumes", ordem: 4, ativo: true },
-  { id: "hprod_beterraba", nome: "Beterraba", unidadeMedida: "kg", categoria: "Legumes", ordem: 5, ativo: true },
-  { id: "hprod_brocolis", nome: "Brócolis", unidadeMedida: "un", categoria: "Verduras", ordem: 6, ativo: true },
-  { id: "hprod_cebola", nome: "Cebola", unidadeMedida: "kg", categoria: "Legumes", ordem: 7, ativo: true },
-  { id: "hprod_cenoura", nome: "Cenoura", unidadeMedida: "kg", categoria: "Legumes", ordem: 8, ativo: true },
-  { id: "hprod_chuchu", nome: "Chuchu", unidadeMedida: "kg", categoria: "Legumes", ordem: 9, ativo: true },
-  { id: "hprod_inhame", nome: "Inhame", unidadeMedida: "kg", categoria: "Legumes", ordem: 10, ativo: true },
-  { id: "hprod_laranja", nome: "Laranja", unidadeMedida: "kg", categoria: "Frutas", ordem: 11, ativo: true },
-  { id: "hprod_mamao_formoso", nome: "Mamão Formoso", unidadeMedida: "kg", categoria: "Frutas", ordem: 12, ativo: true },
-  { id: "hprod_mandioca", nome: "Mandioca", unidadeMedida: "kg", categoria: "Legumes", ordem: 13, ativo: true },
-  { id: "hprod_melao", nome: "Melão", unidadeMedida: "kg", categoria: "Frutas", ordem: 14, ativo: true },
-  { id: "hprod_moranga", nome: "Moranga / Abóbora", unidadeMedida: "kg", categoria: "Legumes", ordem: 15, ativo: true },
-  { id: "hprod_ovo", nome: "Ovo", unidadeMedida: "pente", categoria: "Ovos", ordem: 16, ativo: true },
-  { id: "hprod_pepino", nome: "Pepino", unidadeMedida: "kg", categoria: "Legumes", ordem: 17, ativo: true },
-  { id: "hprod_pimentao_verde", nome: "Pimentão Verde", unidadeMedida: "kg", categoria: "Legumes", ordem: 18, ativo: true },
-  { id: "hprod_quiabo", nome: "Quiabo", unidadeMedida: "kg", categoria: "Legumes", ordem: 19, ativo: true },
-  { id: "hprod_repolho", nome: "Repolho", unidadeMedida: "kg", categoria: "Verduras", ordem: 20, ativo: true },
-  { id: "hprod_tomate", nome: "Tomate", unidadeMedida: "kg", categoria: "Legumes", ordem: 21, ativo: true }
+// Catálogo Padrão de Produtos de Pedidos (21 Hortifrúti + 18 Açougue)
+export const PRODUTOS_PEDIDOS_SEED = [
+  // --- HORTIFRUTI (21 Produtos) ---
+  { id: "hprod_abacaxi", nome: "Abacaxi", unidadeMedida: "un", categoria: "Hortifruti", ordem: 1, ativo: true },
+  { id: "hprod_abobrinha", nome: "Abobrinha", unidadeMedida: "kg", categoria: "Hortifruti", ordem: 2, ativo: true },
+  { id: "hprod_batata_doce", nome: "Batata Doce", unidadeMedida: "kg", categoria: "Hortifruti", ordem: 3, ativo: true },
+  { id: "hprod_batata_inglesa", nome: "Batata Inglesa", unidadeMedida: "kg", categoria: "Hortifruti", ordem: 4, ativo: true },
+  { id: "hprod_beterraba", nome: "Beterraba", unidadeMedida: "kg", categoria: "Hortifruti", ordem: 5, ativo: true },
+  { id: "hprod_brocolis", nome: "Brócolis", unidadeMedida: "un", categoria: "Hortifruti", ordem: 6, ativo: true },
+  { id: "hprod_cebola", nome: "Cebola", unidadeMedida: "kg", categoria: "Hortifruti", ordem: 7, ativo: true },
+  { id: "hprod_cenoura", nome: "Cenoura", unidadeMedida: "kg", categoria: "Hortifruti", ordem: 8, ativo: true },
+  { id: "hprod_chuchu", nome: "Chuchu", unidadeMedida: "kg", categoria: "Hortifruti", ordem: 9, ativo: true },
+  { id: "hprod_inhame", nome: "Inhame", unidadeMedida: "kg", categoria: "Hortifruti", ordem: 10, ativo: true },
+  { id: "hprod_laranja", nome: "Laranja", unidadeMedida: "kg", categoria: "Hortifruti", ordem: 11, ativo: true },
+  { id: "hprod_mamao_formoso", nome: "Mamão Formoso", unidadeMedida: "kg", categoria: "Hortifruti", ordem: 12, ativo: true },
+  { id: "hprod_mandioca", nome: "Mandioca", unidadeMedida: "kg", categoria: "Hortifruti", ordem: 13, ativo: true },
+  { id: "hprod_melao", nome: "Melão", unidadeMedida: "kg", categoria: "Hortifruti", ordem: 14, ativo: true },
+  { id: "hprod_moranga", nome: "Moranga / Abóbora", unidadeMedida: "kg", categoria: "Hortifruti", ordem: 15, ativo: true },
+  { id: "hprod_ovo", nome: "Ovo", unidadeMedida: "pente", categoria: "Hortifruti", ordem: 16, ativo: true },
+  { id: "hprod_pepino", nome: "Pepino", unidadeMedida: "kg", categoria: "Hortifruti", ordem: 17, ativo: true },
+  { id: "hprod_pimentao_verde", nome: "Pimentão Verde", unidadeMedida: "kg", categoria: "Hortifruti", ordem: 18, ativo: true },
+  { id: "hprod_quiabo", nome: "Quiabo", unidadeMedida: "kg", categoria: "Hortifruti", ordem: 19, ativo: true },
+  { id: "hprod_repolho", nome: "Repolho", unidadeMedida: "kg", categoria: "Hortifruti", ordem: 20, ativo: true },
+  { id: "hprod_tomate", nome: "Tomate", unidadeMedida: "kg", categoria: "Hortifruti", ordem: 21, ativo: true },
+
+  // --- AÇOUGUE / CARNES (18 Produtos) ---
+  { id: "acougue_bacon_cubos", nome: "Bacon Cubos 200g", unidadeMedida: "pct", categoria: "Açougue", ordem: 22, ativo: true },
+  { id: "acougue_carne_boi", nome: "Carne de Boi", unidadeMedida: "kg", categoria: "Açougue", ordem: 23, ativo: true },
+  { id: "acougue_carne_sol", nome: "Carne de Sol", unidadeMedida: "kg", categoria: "Açougue", ordem: 24, ativo: true },
+  { id: "acougue_carne_moida", nome: "Carne Moída", unidadeMedida: "kg", categoria: "Açougue", ordem: 25, ativo: true },
+  { id: "acougue_costelinha", nome: "Costelinha", unidadeMedida: "kg", categoria: "Açougue", ordem: 26, ativo: true },
+  { id: "acougue_coxa_sobrecoxa", nome: "Coxa e Sobrecoxa", unidadeMedida: "kg", categoria: "Açougue", ordem: 27, ativo: true },
+  { id: "acougue_coxinha_asa", nome: "Coxinha da Asa", unidadeMedida: "kg", categoria: "Açougue", ordem: 28, ativo: true },
+  { id: "acougue_file_peito_frango", nome: "Filé de Peito de Frango", unidadeMedida: "kg", categoria: "Açougue", ordem: 29, ativo: true },
+  { id: "acougue_file_peixe", nome: "Filé de Peixe", unidadeMedida: "kg", categoria: "Açougue", ordem: 30, ativo: true },
+  { id: "acougue_ingredientes_feijoada", nome: "Ingredientes Feijoada", unidadeMedida: "pct", categoria: "Açougue", ordem: 31, ativo: true },
+  { id: "acougue_isca_bovina", nome: "Isca Bovina", unidadeMedida: "kg", categoria: "Açougue", ordem: 32, ativo: true },
+  { id: "acougue_lanche_peca", nome: "Lanche Peça", unidadeMedida: "peça", categoria: "Açougue", ordem: 33, ativo: true },
+  { id: "acougue_linguica_toscana", nome: "Linguiça Toscana 2,5kg", unidadeMedida: "pct", categoria: "Açougue", ordem: 34, ativo: true },
+  { id: "acougue_lombo", nome: "Lombo", unidadeMedida: "kg", categoria: "Açougue", ordem: 35, ativo: true },
+  { id: "acougue_pernil_peca", nome: "Pernil (Peça)", unidadeMedida: "peça", categoria: "Açougue", ordem: 36, ativo: true },
+  { id: "acougue_pernil_bife", nome: "Pernil (Bife)", unidadeMedida: "kg", categoria: "Açougue", ordem: 37, ativo: true },
+  { id: "acougue_pernil_isca", nome: "Pernil (Isca)", unidadeMedida: "kg", categoria: "Açougue", ordem: 38, ativo: true },
+  { id: "acougue_salsicha", nome: "Salsicha", unidadeMedida: "kg", categoria: "Açougue", ordem: 39, ativo: true }
 ];
+
+export const PRODUTOS_HORTIFRUTI_SEED = PRODUTOS_PEDIDOS_SEED;
 
 // Feedback visual não-intrusivo (Toast Notification)
 export function showToast(message, type = 'success') {

@@ -304,31 +304,31 @@
       nome: "Perfil Padrão",
       descricao: "Acesso completo a todas as funções e módulos do sistema.",
       icone: "",
-      modulos: ["comensais", "hortifruti"],
+      modulos: ["comensais", "pedidos", "hortifruti"],
       permissoesCamposUnidade: ["codigo", "grupo", "loja", "unidade", "cnpj"]
     },
     {
       id: "p_nutri_geral",
       nome: "Nutricionista Geral",
-      descricao: "Responsável pelo lançamento diário de comensais, cotação de hortifrúti e acompanhamento geral das 21 unidades.",
+      descricao: "Responsável pelo lançamento de comensais, pedidos/cotações semanais e acompanhamento geral.",
       icone: "",
-      modulos: ["comensais", "hortifruti"],
+      modulos: ["comensais", "pedidos", "hortifruti"],
       permissoesCamposUnidade: ["loja"]
     },
     {
       id: "p_nutri_gestora",
       nome: "Nutricionista Gestora",
-      descricao: "Acompanhamento regional das unidades sob sua gestão (compras, cotações e suporte).",
+      descricao: "Acompanhamento regional das unidades sob sua gestão (pedidos, cotações e suporte).",
       icone: "",
-      modulos: ["comensais", "hortifruti"],
+      modulos: ["comensais", "pedidos", "hortifruti"],
       permissoesCamposUnidade: ["loja", "grupo", "unidade"]
     },
     {
       id: "p_diretoria",
       nome: "Gestão & Diretoria",
-      descricao: "Acesso a relatórios consolidados, auditoria de NFs, cotações de hortifrúti e detalhamento de unidades.",
+      descricao: "Acesso a relatórios consolidados, auditoria fiscal de NFs, cotações de compras e unidades.",
       icone: "",
-      modulos: ["comensais", "hortifruti"],
+      modulos: ["comensais", "pedidos", "hortifruti"],
       permissoesCamposUnidade: ["codigo", "grupo", "loja", "unidade", "cnpj"]
     }
   ];
@@ -338,45 +338,68 @@
       id: "comensais",
       chave: "comensais",
       nome: "Comensais Diários",
-      descricao: "Registro diário de refeições vendidas por unidade e público.",
+      descricao: "Registro rápido diário de refeições vendidas por unidade e público.",
       icone: "",
       ativo: true,
       ordem: 1
     },
     {
-      id: "hortifruti",
-      chave: "hortifruti",
-      nome: "Hortifrúti Semanal",
-      descricao: "Cotação Sacolão x Mart Minas, apoio a pedidos e auditoria mensal de NFs.",
+      id: "pedidos",
+      chave: "pedidos",
+      nome: "Pedidos (Hortifrúti & Açougue)",
+      descricao: "Cotações semanais, apoio a pedidos e auditoria de compras (Hortifrúti e Açougue).",
       icone: "",
       ativo: true,
       ordem: 2
     }
   ];
 
-  const PRODUTOS_HORTIFRUTI_SEED = [
-    { id: "hprod_abacaxi", nome: "Abacaxi", unidadeMedida: "un", categoria: "Frutas", ordem: 1, ativo: true },
-    { id: "hprod_abobrinha", nome: "Abobrinha", unidadeMedida: "kg", categoria: "Legumes", ordem: 2, ativo: true },
-    { id: "hprod_batata_doce", nome: "Batata Doce", unidadeMedida: "kg", categoria: "Legumes", ordem: 3, ativo: true },
-    { id: "hprod_batata_inglesa", nome: "Batata Inglesa", unidadeMedida: "kg", categoria: "Legumes", ordem: 4, ativo: true },
-    { id: "hprod_beterraba", nome: "Beterraba", unidadeMedida: "kg", categoria: "Legumes", ordem: 5, ativo: true },
-    { id: "hprod_brocolis", nome: "Brócolis", unidadeMedida: "un", categoria: "Verduras", ordem: 6, ativo: true },
-    { id: "hprod_cebola", nome: "Cebola", unidadeMedida: "kg", categoria: "Legumes", ordem: 7, ativo: true },
-    { id: "hprod_cenoura", nome: "Cenoura", unidadeMedida: "kg", categoria: "Legumes", ordem: 8, ativo: true },
-    { id: "hprod_chuchu", nome: "Chuchu", unidadeMedida: "kg", categoria: "Legumes", ordem: 9, ativo: true },
-    { id: "hprod_inhame", nome: "Inhame", unidadeMedida: "kg", categoria: "Legumes", ordem: 10, ativo: true },
-    { id: "hprod_laranja", nome: "Laranja", unidadeMedida: "kg", categoria: "Frutas", ordem: 11, ativo: true },
-    { id: "hprod_mamao_formoso", nome: "Mamão Formoso", unidadeMedida: "kg", categoria: "Frutas", ordem: 12, ativo: true },
-    { id: "hprod_mandioca", nome: "Mandioca", unidadeMedida: "kg", categoria: "Legumes", ordem: 13, ativo: true },
-    { id: "hprod_melao", nome: "Melão", unidadeMedida: "kg", categoria: "Frutas", ordem: 14, ativo: true },
-    { id: "hprod_moranga", nome: "Moranga / Abóbora", unidadeMedida: "kg", categoria: "Legumes", ordem: 15, ativo: true },
-    { id: "hprod_ovo", nome: "Ovo", unidadeMedida: "pente", categoria: "Ovos", ordem: 16, ativo: true },
-    { id: "hprod_pepino", nome: "Pepino", unidadeMedida: "kg", categoria: "Legumes", ordem: 17, ativo: true },
-    { id: "hprod_pimentao_verde", nome: "Pimentão Verde", unidadeMedida: "kg", categoria: "Legumes", ordem: 18, ativo: true },
-    { id: "hprod_quiabo", nome: "Quiabo", unidadeMedida: "kg", categoria: "Legumes", ordem: 19, ativo: true },
-    { id: "hprod_repolho", nome: "Repolho", unidadeMedida: "kg", categoria: "Verduras", ordem: 20, ativo: true },
-    { id: "hprod_tomate", nome: "Tomate", unidadeMedida: "kg", categoria: "Legumes", ordem: 21, ativo: true }
+  const PRODUTOS_PEDIDOS_SEED = [
+    // --- HORTIFRUTI (21 Produtos) ---
+    { id: "hprod_abacaxi", nome: "Abacaxi", unidadeMedida: "un", categoria: "Hortifruti", ordem: 1, ativo: true },
+    { id: "hprod_abobrinha", nome: "Abobrinha", unidadeMedida: "kg", categoria: "Hortifruti", ordem: 2, ativo: true },
+    { id: "hprod_batata_doce", nome: "Batata Doce", unidadeMedida: "kg", categoria: "Hortifruti", ordem: 3, ativo: true },
+    { id: "hprod_batata_inglesa", nome: "Batata Inglesa", unidadeMedida: "kg", categoria: "Hortifruti", ordem: 4, ativo: true },
+    { id: "hprod_beterraba", nome: "Beterraba", unidadeMedida: "kg", categoria: "Hortifruti", ordem: 5, ativo: true },
+    { id: "hprod_brocolis", nome: "Brócolis", unidadeMedida: "un", categoria: "Hortifruti", ordem: 6, ativo: true },
+    { id: "hprod_cebola", nome: "Cebola", unidadeMedida: "kg", categoria: "Hortifruti", ordem: 7, ativo: true },
+    { id: "hprod_cenoura", nome: "Cenoura", unidadeMedida: "kg", categoria: "Hortifruti", ordem: 8, ativo: true },
+    { id: "hprod_chuchu", nome: "Chuchu", unidadeMedida: "kg", categoria: "Hortifruti", ordem: 9, ativo: true },
+    { id: "hprod_inhame", nome: "Inhame", unidadeMedida: "kg", categoria: "Hortifruti", ordem: 10, ativo: true },
+    { id: "hprod_laranja", nome: "Laranja", unidadeMedida: "kg", categoria: "Hortifruti", ordem: 11, ativo: true },
+    { id: "hprod_mamao_formoso", nome: "Mamão Formoso", unidadeMedida: "kg", categoria: "Hortifruti", ordem: 12, ativo: true },
+    { id: "hprod_mandioca", nome: "Mandioca", unidadeMedida: "kg", categoria: "Hortifruti", ordem: 13, ativo: true },
+    { id: "hprod_melao", nome: "Melão", unidadeMedida: "kg", categoria: "Hortifruti", ordem: 14, ativo: true },
+    { id: "hprod_moranga", nome: "Moranga / Abóbora", unidadeMedida: "kg", categoria: "Hortifruti", ordem: 15, ativo: true },
+    { id: "hprod_ovo", nome: "Ovo", unidadeMedida: "pente", categoria: "Hortifruti", ordem: 16, ativo: true },
+    { id: "hprod_pepino", nome: "Pepino", unidadeMedida: "kg", categoria: "Hortifruti", ordem: 17, ativo: true },
+    { id: "hprod_pimentao_verde", nome: "Pimentão Verde", unidadeMedida: "kg", categoria: "Hortifruti", ordem: 18, ativo: true },
+    { id: "hprod_quiabo", nome: "Quiabo", unidadeMedida: "kg", categoria: "Hortifruti", ordem: 19, ativo: true },
+    { id: "hprod_repolho", nome: "Repolho", unidadeMedida: "kg", categoria: "Hortifruti", ordem: 20, ativo: true },
+    { id: "hprod_tomate", nome: "Tomate", unidadeMedida: "kg", categoria: "Hortifruti", ordem: 21, ativo: true },
+
+    // --- AÇOUGUE / CARNES (18 Produtos) ---
+    { id: "acougue_bacon_cubos", nome: "Bacon Cubos 200g", unidadeMedida: "pct", categoria: "Açougue", ordem: 22, ativo: true },
+    { id: "acougue_carne_boi", nome: "Carne de Boi", unidadeMedida: "kg", categoria: "Açougue", ordem: 23, ativo: true },
+    { id: "acougue_carne_sol", nome: "Carne de Sol", unidadeMedida: "kg", categoria: "Açougue", ordem: 24, ativo: true },
+    { id: "acougue_carne_moida", nome: "Carne Moída", unidadeMedida: "kg", categoria: "Açougue", ordem: 25, ativo: true },
+    { id: "acougue_costelinha", nome: "Costelinha", unidadeMedida: "kg", categoria: "Açougue", ordem: 26, ativo: true },
+    { id: "acougue_coxa_sobrecoxa", nome: "Coxa e Sobrecoxa", unidadeMedida: "kg", categoria: "Açougue", ordem: 27, ativo: true },
+    { id: "acougue_coxinha_asa", nome: "Coxinha da Asa", unidadeMedida: "kg", categoria: "Açougue", ordem: 28, ativo: true },
+    { id: "acougue_file_peito_frango", nome: "Filé de Peito de Frango", unidadeMedida: "kg", categoria: "Açougue", ordem: 29, ativo: true },
+    { id: "acougue_file_peixe", nome: "Filé de Peixe", unidadeMedida: "kg", categoria: "Açougue", ordem: 30, ativo: true },
+    { id: "acougue_ingredientes_feijoada", nome: "Ingredientes Feijoada", unidadeMedida: "pct", categoria: "Açougue", ordem: 31, ativo: true },
+    { id: "acougue_isca_bovina", nome: "Isca Bovina", unidadeMedida: "kg", categoria: "Açougue", ordem: 32, ativo: true },
+    { id: "acougue_lanche_peca", nome: "Lanche Peça", unidadeMedida: "peça", categoria: "Açougue", ordem: 33, ativo: true },
+    { id: "acougue_linguica_toscana", nome: "Linguiça Toscana 2,5kg", unidadeMedida: "pct", categoria: "Açougue", ordem: 34, ativo: true },
+    { id: "acougue_lombo", nome: "Lombo", unidadeMedida: "kg", categoria: "Açougue", ordem: 35, ativo: true },
+    { id: "acougue_pernil_peca", nome: "Pernil (Peça)", unidadeMedida: "peça", categoria: "Açougue", ordem: 36, ativo: true },
+    { id: "acougue_pernil_bife", nome: "Pernil (Bife)", unidadeMedida: "kg", categoria: "Açougue", ordem: 37, ativo: true },
+    { id: "acougue_pernil_isca", nome: "Pernil (Isca)", unidadeMedida: "kg", categoria: "Açougue", ordem: 38, ativo: true },
+    { id: "acougue_salsicha", nome: "Salsicha", unidadeMedida: "kg", categoria: "Açougue", ordem: 39, ativo: true }
   ];
+
+  const PRODUTOS_HORTIFRUTI_SEED = PRODUTOS_PEDIDOS_SEED;
 
   // --- 2. FIREBASE CLIENT E LISTENER TEMPO REAL ---
   let rtdb = null;
@@ -521,8 +544,8 @@
     } else {
       try {
         const parsed = JSON.parse(storedModulos);
-        const hasHortiMod = parsed.some(m => m.id === 'hortifruti');
-        if (!hasHortiMod) {
+        const hasPedidos = parsed.some(m => m.id === 'pedidos' || (m.nome && m.nome.includes('Pedidos')));
+        if (!hasPedidos) {
           updateMemoryCache(STORAGE_KEYS.MODULOS, MODULOS_SEED);
         }
       } catch (e) {
@@ -570,8 +593,18 @@
       updateMemoryCache(STORAGE_KEYS.COMENSAIS, []);
     }
     const storedHorti = localStorage.getItem(STORAGE_KEYS.HORTIFRUTI_PRODUTOS);
-    if (!storedHorti || storedHorti === 'undefined' || storedHorti === 'null' || (storedHorti && JSON.parse(storedHorti).length !== PRODUTOS_HORTIFRUTI_SEED.length)) {
-      updateMemoryCache(STORAGE_KEYS.HORTIFRUTI_PRODUTOS, PRODUTOS_HORTIFRUTI_SEED);
+    if (!storedHorti || storedHorti === 'undefined' || storedHorti === 'null') {
+      updateMemoryCache(STORAGE_KEYS.HORTIFRUTI_PRODUTOS, PRODUTOS_PEDIDOS_SEED);
+    } else {
+      try {
+        const parsed = JSON.parse(storedHorti);
+        const hasAcougue = parsed.some(p => p.categoria === 'Açougue');
+        if (!hasAcougue) {
+          updateMemoryCache(STORAGE_KEYS.HORTIFRUTI_PRODUTOS, PRODUTOS_PEDIDOS_SEED);
+        }
+      } catch (e) {
+        updateMemoryCache(STORAGE_KEYS.HORTIFRUTI_PRODUTOS, PRODUTOS_PEDIDOS_SEED);
+      }
     }
     if (!localStorage.getItem(STORAGE_KEYS.HORTIFRUTI_PEDIDOS)) {
       updateMemoryCache(STORAGE_KEYS.HORTIFRUTI_PEDIDOS, []);
@@ -5647,7 +5680,16 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
   // --- 10. HORTIFRÚTI SERVICE & VIEW ---
   async function getProdutosHortifruti() {
     const produtos = await getCollection(STORAGE_KEYS.HORTIFRUTI_PRODUTOS);
-    return (produtos || [])
+    if (!produtos || !produtos.length) {
+      return PRODUTOS_PEDIDOS_SEED;
+    }
+    const map = new Map(produtos.map(p => [p.id, p]));
+    PRODUTOS_PEDIDOS_SEED.forEach(pSeed => {
+      if (!map.has(pSeed.id)) {
+        map.set(pSeed.id, pSeed);
+      }
+    });
+    return Array.from(map.values())
       .filter(p => p.ativo !== false)
       .sort((a, b) => (a.ordem || 99) - (b.ordem || 99));
   }
@@ -5912,33 +5954,67 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
 
   function generateWhatsAppTextSacolao(pedido, lojaNome) {
     const itensSacolao = (pedido.itens || []).filter(i => i.quantidade > 0 && i.fornecedorEscolhido === 'Sacolão');
-    let txt = `*PEDIDO HORTIFRÚTI - SACOLÃO LOCAL*\nUnidade: ${lojaNome}\nReferência: Semana ${pedido.semana} (${pedido.mesAno})\n------------------------------------\n\n`;
+    let txt = `*PEDIDO DE COMPRAS - FORNECEDOR LOCAL*\nUnidade: *${lojaNome}*\nReferencia: Mes ${pedido.mesAno} (Semana ${pedido.semana})\n------------------------------------\n\n`;
 
     if (itensSacolao.length === 0) {
-      txt += `Nenhum item direcionado para o Sacolão nesta semana.\n`;
+      txt += `Nenhum item direcionado para este fornecedor nesta semana.\n`;
     } else {
-      itensSacolao.forEach((item, idx) => {
-        txt += `${idx + 1}. *${item.nomeProduto}*: ${item.quantidade} ${item.unidadeMedida} x R$ ${item.precoSacolao.toFixed(2)} = *R$ ${item.subtotal.toFixed(2)}*\n`;
-      });
-      txt += `\n------------------------------------\nTOTAL SACOLÃO: R$ ${pedido.totalSacolao.toFixed(2)}\n`;
+      const hortiItens = itensSacolao.filter(i => i.categoria === 'Hortifruti');
+      const acougueItens = itensSacolao.filter(i => i.categoria === 'Açougue');
+
+      if (hortiItens.length > 0) {
+        txt += `*[HORTIFRUTI]*\n`;
+        hortiItens.forEach((item, idx) => {
+          txt += `${idx + 1}. *${item.nomeProduto || item.nome}*: ${item.quantidade} ${item.unidadeMedida} x R$ ${(parseFloat(item.precoSacolao) || 0).toFixed(2)} = *R$ ${(parseFloat(item.subtotal) || 0).toFixed(2)}*\n`;
+        });
+        txt += `\n`;
+      }
+
+      if (acougueItens.length > 0) {
+        txt += `*[ACOUGUE / CARNES]*\n`;
+        acougueItens.forEach((item, idx) => {
+          txt += `${idx + 1}. *${item.nomeProduto || item.nome}*: ${item.quantidade} ${item.unidadeMedida} x R$ ${(parseFloat(item.precoSacolao) || 0).toFixed(2)} = *R$ ${(parseFloat(item.subtotal) || 0).toFixed(2)}*\n`;
+        });
+        txt += `\n`;
+      }
+
+      txt += `------------------------------------\nTOTAL FORNECEDOR LOCAL: R$ ${(parseFloat(pedido.totalSacolao) || 0).toFixed(2)}\n`;
     }
 
+    txt += `\n_ABIB Refeicoes Coletivas_`;
     return txt;
   }
 
   function generateWhatsAppTextMartMinas(pedido, lojaNome) {
     const itensMart = (pedido.itens || []).filter(i => i.quantidade > 0 && i.fornecedorEscolhido === 'Mart Minas');
-    let txt = `*PEDIDO HORTIFRÚTI - MART MINAS*\nUnidade: ${lojaNome}\nReferência: Semana ${pedido.semana} (${pedido.mesAno})\n------------------------------------\n\n`;
+    let txt = `*PEDIDO DE COMPRAS - MART MINAS*\nUnidade: *${lojaNome}*\nReferencia: Mes ${pedido.mesAno} (Semana ${pedido.semana})\n------------------------------------\n\n`;
 
     if (itensMart.length === 0) {
       txt += `Nenhum item direcionado para o Mart Minas nesta semana.\n`;
     } else {
-      itensMart.forEach((item, idx) => {
-        txt += `${idx + 1}. *${item.nomeProduto}*: ${item.quantidade} ${item.unidadeMedida} x R$ ${item.precoMartMinas.toFixed(2)} = *R$ ${item.subtotal.toFixed(2)}*\n`;
-      });
-      txt += `\n------------------------------------\nTOTAL MART MINAS: R$ ${pedido.totalMartMinas.toFixed(2)}\n`;
+      const hortiItens = itensMart.filter(i => i.categoria === 'Hortifruti');
+      const acougueItens = itensMart.filter(i => i.categoria === 'Açougue');
+
+      if (hortiItens.length > 0) {
+        txt += `*[HORTIFRUTI]*\n`;
+        hortiItens.forEach((item, idx) => {
+          txt += `${idx + 1}. *${item.nomeProduto || item.nome}*: ${item.quantidade} ${item.unidadeMedida} x R$ ${(parseFloat(item.precoMartMinas) || 0).toFixed(2)} = *R$ ${(parseFloat(item.subtotal) || 0).toFixed(2)}*\n`;
+        });
+        txt += `\n`;
+      }
+
+      if (acougueItens.length > 0) {
+        txt += `*[ACOUGUE / CARNES]*\n`;
+        acougueItens.forEach((item, idx) => {
+          txt += `${idx + 1}. *${item.nomeProduto || item.nome}*: ${item.quantidade} ${item.unidadeMedida} x R$ ${(parseFloat(item.precoMartMinas) || 0).toFixed(2)} = *R$ ${(parseFloat(item.subtotal) || 0).toFixed(2)}*\n`;
+        });
+        txt += `\n`;
+      }
+
+      txt += `------------------------------------\nTOTAL MART MINAS: R$ ${(parseFloat(pedido.totalMartMinas) || 0).toFixed(2)}\n`;
     }
 
+    txt += `\n_ABIB Refeicoes Coletivas_`;
     return txt;
   }
 
@@ -5960,8 +6036,8 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
 
   class HortifrutiModuleView {
     constructor() {
-      this.id = 'hortifruti';
-      this.name = 'Hortifrúti Semanal';
+      this.id = 'pedidos';
+      this.name = 'Pedidos (Hortifrúti & Açougue)';
       const now = new Date();
       this.currentMesAno = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
       this.currentSemana = Math.min(4, Math.max(1, Math.ceil(now.getDate() / 7)));
@@ -5975,7 +6051,7 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
       this.currentPedido = null;
       this.currentProfile = null;
       this.searchQuery = '';
-      this.selectedCategories = new Set(['Verduras', 'Legumes', 'Frutas', 'Ovos']);
+      this.activeCategoryFilter = 'todos';
     }
 
     async render(container, currentProfile, lockedUnit = null) {
@@ -5993,8 +6069,8 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
       container.innerHTML = `
       <div class="module-header">
         <div class="header-titles">
-          <h2>Cotação & Pedidos de Hortifrúti</h2>
-          <p class="subtitle">${isLocked ? `Mart Minas — ${this.lockedUnit.loja}` : 'Comparativo de menor preço por produto (Sacolão x Mart Minas) e auditoria de NFs'}</p>
+          <h2>Gestão de Pedidos (Hortifrúti & Açougue)</h2>
+          <p class="subtitle">${isLocked ? `Mart Minas — ${this.lockedUnit.loja}` : 'Cotação comparativa de menor preço por produto, apoio a pedidos e auditoria de compras'}</p>
         </div>
         <div class="header-actions">
           ${!isLocked ? `
@@ -6046,9 +6122,22 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
             </div>
           </div>
 
-          <div class="search-and-category-bar" style="margin-bottom: 14px; background: var(--bg-surface); padding: 10px 14px; border-radius: var(--radius-md); border: 1px solid var(--border-color); box-shadow: var(--shadow-card);">
+          <!-- Barra de Pesquisa e Filtros de Categoria (Hortifrúti / Açougue) -->
+          <div style="margin: 16px 0; display: flex; flex-direction: column; gap: 10px;">
             <div class="search-group" style="width: 100%;">
-              <input type="text" id="input-search-horti-produto" class="input-search" placeholder="Buscar produto (ex: Batata, Tomate, Laranja)..." style="width: 100%; padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); font-size: 0.88rem; outline: none;">
+              <input type="text" id="input-search-horti-produto" class="input-search" placeholder="Buscar produto (ex: Batata, Frango)..." style="width: 100%; padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); font-size: 0.88rem; outline: none;">
+            </div>
+
+            <div class="category-filter-pills" style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button type="button" class="pill btn-cat-filter ${this.activeCategoryFilter === 'todos' ? 'active' : ''}" data-cat="todos">
+                Todos os Produtos
+              </button>
+              <button type="button" class="pill btn-cat-filter ${this.activeCategoryFilter === 'Hortifruti' ? 'active' : ''}" data-cat="Hortifruti">
+                Hortifrúti
+              </button>
+              <button type="button" class="pill btn-cat-filter ${this.activeCategoryFilter === 'Açougue' ? 'active' : ''}" data-cat="Açougue">
+                Açougue
+              </button>
             </div>
           </div>
 
@@ -6066,7 +6155,7 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
                 </tr>
               </thead>
               <tbody id="horti-tbody-produtos">
-                <tr><td colspan="7" class="text-center pad-20">Carregando itens de hortifrúti...</td></tr>
+                <tr><td colspan="7" class="text-center pad-20">Carregando itens de pedidos...</td></tr>
               </tbody>
             </table>
           </div>
@@ -6326,6 +6415,16 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
           this.renderTabelaProdutos();
         });
       }
+
+      const catButtons = this.container.querySelectorAll('.btn-cat-filter');
+      catButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          catButtons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          this.activeCategoryFilter = btn.dataset.cat || 'todos';
+          this.renderTabelaProdutos();
+        });
+      });
 
       const btnCopiar = this.container.querySelector('#btn-copiar-anterior');
       if (btnCopiar) {
@@ -6609,8 +6708,12 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
       let itensExibidosCount = 0;
 
       this.itensState.forEach((item, index) => {
+        if (this.activeCategoryFilter && this.activeCategoryFilter !== 'todos' && item.categoria !== this.activeCategoryFilter) {
+          return;
+        }
+
         if (this.searchQuery) {
-          const matchNome = matchesFuzzySearch(item.nomeProduto, this.searchQuery);
+          const matchNome = matchesFuzzySearch(item.nomeProduto || item.nome, this.searchQuery);
           if (!matchNome) {
             return;
           }
@@ -6635,14 +6738,11 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
             martHighlight = 'bg-green-highlight';
             vencedorAuto = 'Mart Minas';
           } else {
-            // Empate de preços: nenhum recebe destaque de melhor preço!
             vencedorAuto = '';
           }
         } else if (pMart > 0) {
-          martHighlight = 'bg-green-highlight';
           vencedorAuto = 'Mart Minas';
         } else if (pSac > 0) {
-          sacHighlight = 'bg-green-highlight';
           vencedorAuto = 'Sacolão';
         } else {
           vencedorAuto = '';
@@ -6665,13 +6765,18 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
         const subtotal = Math.round((qtd * precoFinal) * 100) / 100;
 
         const isFilled = (pSac > 0 || pMart > 0 || qtd > 0 || est > 0);
+        const isAcougue = item.categoria === 'Açougue';
+        const catBadgeColor = isAcougue ? '#fee2e2' : '#ecfdf5';
+        const catTextColor = isAcougue ? '#991b1b' : '#065f46';
+
         const tr = document.createElement('tr');
         tr.className = `tr-produto-row ${isFilled ? 'tr-filled' : ''}`;
         tr.innerHTML = `
           <td class="col-produto">
             <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%;">
               <div>
-                <strong>${item.nomeProduto}</strong> <small class="text-muted">(${item.unidadeMedida})</small>
+                <strong>${item.nomeProduto || item.nome}</strong> <small class="text-muted">(${item.unidadeMedida})</small>
+                <span class="badge-tag" style="font-size: 0.68rem; margin-left: 6px; background: ${catBadgeColor}; color: ${catTextColor};">${item.categoria}</span>
               </div>
               <button class="btn-clear-item-row" data-index="${index}" title="Zerar valores deste produto">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -7452,7 +7557,7 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
         await this.comensaisModule.render(viewContainer, this.currentProfile);
       } else if (viewName === 'comensais-relatorios') {
         await this.comensaisReportView.render(viewContainer, this.currentProfile);
-      } else if (viewName === 'hortifruti') {
+      } else if (viewName === 'hortifruti' || viewName === 'pedidos') {
         await this.hortifrutiModule.render(viewContainer, this.currentProfile, this.lockedUnit);
       } else if (viewName === 'admin') {
         this.adminPanel.render(viewContainer);
@@ -7460,13 +7565,7 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
     }
 
     renderDashboard(container) {
-      let allowedModules = (this.currentProfile && this.currentProfile.modulos) || ['comensais', 'hortifruti'];
-      if (!allowedModules.includes('hortifruti')) {
-        allowedModules = [...allowedModules, 'hortifruti'];
-        if (this.currentProfile) {
-          this.currentProfile.modulos = allowedModules;
-        }
-      }
+      let allowedModules = (this.currentProfile && this.currentProfile.modulos) || ['comensais', 'hortifruti', 'pedidos'];
 
       let modulesHTML = '';
       if (allowedModules.includes('comensais')) {
@@ -7481,13 +7580,13 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
         `;
       }
 
-      if (allowedModules.includes('hortifruti')) {
+      if (allowedModules.includes('hortifruti') || allowedModules.includes('pedidos')) {
         modulesHTML += `
-          <div class="card-module-primary" id="card-modulo-hortifruti">
+          <div class="card-module-primary" id="card-modulo-pedidos">
             <span class="tag-active-module">Módulo Ativo</span>
             <div class="module-card-info">
-              <h3>Hortifrúti Semanal</h3>
-              <p>Cotação comparativa (Sacolão x Mart Minas), apoio a pedidos e auditoria mensal de NFs.</p>
+              <h3>Pedidos (Hortifrúti & Açougue)</h3>
+              <p>Cotação comparativa por fornecedor, apoio a pedidos de Hortifrúti e Açougue e auditoria de compras.</p>
             </div>
           </div>
         `;
@@ -7495,24 +7594,24 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
 
       if (allowedModules.includes('pratos')) {
         modulesHTML += `
-          <div class="card-module-primary" id="card-modulo-pratos">
-            <span class="tag-active-module">Módulo Ativo</span>
+          <div class="card-module-disabled">
             <div class="module-card-info">
               <h3>Inventário de Pratos & Louças</h3>
-              <p>Módulo de controle de estoque de talheres danificados e louças por unidade.</p>
+              <p>Módulo de controle de estoque de talheres e louças (Em Breve).</p>
             </div>
+            <span class="badge-soon">Em Breve</span>
           </div>
         `;
       }
 
       if (allowedModules.includes('precos')) {
         modulesHTML += `
-          <div class="card-module-primary" id="card-modulo-precos">
-            <span class="tag-active-module">Módulo Ativo</span>
+          <div class="card-module-disabled">
             <div class="module-card-info">
               <h3>Preços & Custos por Unidade</h3>
-              <p>Módulo de acompanhamento de preços de refeições e insumos.</p>
+              <p>Módulo de acompanhamento de preços de refeições e insumos (Em Breve).</p>
             </div>
+            <span class="badge-soon">Em Breve</span>
           </div>
         `;
       }
@@ -7532,9 +7631,9 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
         cardComensais.onclick = () => this.switchView('comensais');
       }
 
-      const cardHortifruti = container.querySelector('#card-modulo-hortifruti');
-      if (cardHortifruti) {
-        cardHortifruti.onclick = () => this.switchView('hortifruti');
+      const cardPedidos = container.querySelector('#card-modulo-pedidos');
+      if (cardPedidos) {
+        cardPedidos.onclick = () => this.switchView('pedidos');
       }
     }
   }

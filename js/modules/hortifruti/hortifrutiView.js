@@ -35,7 +35,7 @@ function matchesFuzzySearch(text, query) {
 
 export class HortifrutiModule extends BaseModule {
   constructor() {
-    super('hortifruti', 'Hortifrúti Semanal', '', 'Cotação Sacolão x Mart Minas, apoio a pedidos e auditoria mensal de NFs.');
+    super('pedidos', 'Pedidos (Hortifrúti & Açougue)', '', 'Cotações semanais, apoio a pedidos e auditoria de compras (Hortifrúti e Açougue).');
     
     const now = new Date();
     this.currentMesAno = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
@@ -52,7 +52,7 @@ export class HortifrutiModule extends BaseModule {
     this.currentPedido = null;
     this.currentProfile = null;
     this.searchQuery = '';
-    this.selectedCategories = new Set(['Verduras', 'Legumes', 'Frutas', 'Ovos']);
+    this.activeCategoryFilter = 'todos';
   }
 
   async render(container, currentProfile, lockedUnit = null) {
@@ -72,8 +72,8 @@ export class HortifrutiModule extends BaseModule {
     container.innerHTML = `
       <div class="module-header">
         <div class="header-titles">
-          <h2>Cotação & Pedidos de Hortifrúti</h2>
-          <p class="subtitle">${isLocked ? `Mart Minas — ${this.lockedUnit.loja}` : 'Comparativo de menor preço por produto (Sacolão x Mart Minas) e auditoria de NFs'}</p>
+          <h2>Gestão de Pedidos (Hortifrúti & Açougue)</h2>
+          <p class="subtitle">${isLocked ? `Mart Minas — ${this.lockedUnit.loja}` : 'Cotação comparativa de menor preço por produto, apoio a pedidos e auditoria de compras'}</p>
         </div>
         <div class="header-actions">
           ${!isLocked ? `
@@ -132,10 +132,22 @@ export class HortifrutiModule extends BaseModule {
           </div>
         </div>
 
-        <!-- Barra de Pesquisa -->
-        <div style="margin: 16px 0;">
+        <!-- Barra de Pesquisa e Filtros de Categoria (Hortifrúti / Açougue) -->
+        <div style="margin: 16px 0; display: flex; flex-direction: column; gap: 10px;">
           <div class="search-group" style="width: 100%;">
-            <input type="text" id="input-search-horti" class="input-search" placeholder="Buscar produto (ex: Batata, Tomate, Laranja)...">
+            <input type="text" id="input-search-horti" class="input-search" placeholder="Buscar produto (ex: Batata, Frango)...">
+          </div>
+
+          <div class="category-filter-pills" style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button type="button" class="pill btn-cat-filter ${this.activeCategoryFilter === 'todos' ? 'active' : ''}" data-cat="todos">
+              Todos os Produtos
+            </button>
+            <button type="button" class="pill btn-cat-filter ${this.activeCategoryFilter === 'Hortifruti' ? 'active' : ''}" data-cat="Hortifruti">
+              Hortifrúti
+            </button>
+            <button type="button" class="pill btn-cat-filter ${this.activeCategoryFilter === 'Açougue' ? 'active' : ''}" data-cat="Açougue">
+              Açougue
+            </button>
           </div>
         </div>
 
@@ -409,13 +421,23 @@ export class HortifrutiModule extends BaseModule {
       });
     });
 
-    const inputSearch = this.container.querySelector('#input-search-horti');
-    if (inputSearch) {
-      inputSearch.addEventListener('input', (e) => {
+    const searchInput = this.container.querySelector('#input-search-horti');
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
         this.searchQuery = e.target.value;
         this.filterAndRenderRows();
       });
     }
+
+    const catButtons = this.container.querySelectorAll('.btn-cat-filter');
+    catButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        catButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        this.activeCategoryFilter = btn.dataset.cat || 'todos';
+        this.filterAndRenderRows();
+      });
+    });
 
     const btnCopiarAnt = this.container.querySelector('#btn-copiar-anterior');
     if (btnCopiarAnt) {
@@ -692,7 +714,9 @@ export class HortifrutiModule extends BaseModule {
     tbody.innerHTML = '';
 
     const filtrados = this.itensState.filter(item => {
-      return matchesFuzzySearch(item.nome, this.searchQuery);
+      const matchSearch = matchesFuzzySearch(item.nome, this.searchQuery);
+      const matchCat = this.activeCategoryFilter === 'todos' || item.categoria === this.activeCategoryFilter;
+      return matchSearch && matchCat;
     });
 
     if (filtrados.length === 0) {
@@ -718,16 +742,11 @@ export class HortifrutiModule extends BaseModule {
         } else if (pMart < pSac) {
           vencAuto = 'Mart Minas';
           martHighlight = 'bg-green-highlight';
-        } else {
-          // Preços empatados: nenhum é o melhor preço!
-          vencAuto = '';
         }
       } else if (pMart > 0) {
         vencAuto = 'Mart Minas';
-        martHighlight = 'bg-green-highlight';
       } else if (pSac > 0) {
         vencAuto = 'Sacolão';
-        sacHighlight = 'bg-green-highlight';
       }
 
       if (!item.isManual) item.fornecedorEscolhido = vencAuto;
@@ -738,6 +757,10 @@ export class HortifrutiModule extends BaseModule {
       const valMart = (item.precoMartMinas !== '' && item.precoMartMinas !== null && item.precoMartMinas !== undefined) ? (parseFloat(item.precoMartMinas) || 0).toFixed(2) : '';
       const isFilled = (pSac > 0 || pMart > 0 || qtd > 0 || est > 0);
 
+      const isAcougue = item.categoria === 'Açougue';
+      const catBadgeColor = isAcougue ? '#fee2e2' : '#ecfdf5';
+      const catTextColor = isAcougue ? '#991b1b' : '#065f46';
+
       const tr = document.createElement('tr');
       tr.className = `tr-produto-row ${isFilled ? 'tr-filled' : ''}`;
       tr.innerHTML = `
@@ -745,6 +768,7 @@ export class HortifrutiModule extends BaseModule {
           <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%;">
             <div>
               <strong>${item.nome}</strong> <small class="text-muted">(${item.unidadeMedida})</small>
+              <span class="badge-tag" style="font-size: 0.68rem; margin-left: 6px; background: ${catBadgeColor}; color: ${catTextColor};">${item.categoria}</span>
             </div>
             <button class="btn-clear-item-row" data-index="${globalIdx}" title="Zerar valores deste produto">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

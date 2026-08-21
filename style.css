@@ -1987,9 +1987,9 @@ body.modal-open {
 
 .horti-table th {
   position: sticky;
-  top: 114px;
+  top: 56px;
   z-index: 85;
-  background: #f8fafc;
+  background: #f8fafc !important;
   color: var(--text-title);
   font-weight: 700;
   font-size: 0.8rem;
@@ -3826,6 +3826,51 @@ select.select-vencedor-override,
     padding: 3px 8px;
     font-size: 0.74rem;
   }
+}
+
+/* --- PÍLULAS DE FILTRO DE CATEGORIAS (PEDIDOS: HORTIFRÚTI / AÇOUGUE) --- */
+.category-filter-pills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.pill, .btn-cat-filter {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: var(--text-body);
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pill:hover, .btn-cat-filter:hover {
+  background: #e2e8f0;
+  border-color: #94a3b8;
+}
+
+.pill.active, .btn-cat-filter.active {
+  background: var(--primary-color, #2563eb);
+  border-color: var(--primary-color, #2563eb);
+  color: #ffffff !important;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+}
+
+.badge-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.72rem;
+  line-height: 1.2;
 }
 
 

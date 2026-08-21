@@ -368,7 +368,7 @@ class AppController {
       await this.comensaisModule.render(viewContainer, this.currentProfile, null);
     } else if (viewName === 'comensais-relatorios') {
       await this.comensaisReportView.render(viewContainer, this.currentProfile);
-    } else if (viewName === 'hortifruti') {
+    } else if (viewName === 'hortifruti' || viewName === 'pedidos') {
       await this.hortifrutiModule.render(viewContainer, this.currentProfile, this.lockedUnit);
     } else if (viewName === 'admin') {
       this.adminPanel.render(viewContainer);
@@ -376,7 +376,7 @@ class AppController {
   }
 
   renderDashboard(container) {
-    const allowedModules = (this.currentProfile && this.currentProfile.modulos) || ['comensais', 'hortifruti'];
+    const allowedModules = (this.currentProfile && this.currentProfile.modulos) || ['comensais', 'hortifruti', 'pedidos'];
 
     let modulesHTML = '';
     if (allowedModules.includes('comensais')) {
@@ -391,13 +391,13 @@ class AppController {
       `;
     }
 
-    if (allowedModules.includes('hortifruti')) {
+    if (allowedModules.includes('hortifruti') || allowedModules.includes('pedidos')) {
       modulesHTML += `
-        <div class="card-module-primary" id="card-modulo-hortifruti">
+        <div class="card-module-primary" id="card-modulo-pedidos">
           <span class="tag-active-module">Módulo Ativo</span>
           <div class="module-card-info">
-            <h3>Hortifrúti Semanal</h3>
-            <p>Cotação comparativa (Sacolão x Mart Minas), apoio a pedidos, gerador de links das lojas e auditoria mensal de NFs.</p>
+            <h3>Pedidos (Hortifrúti & Açougue)</h3>
+            <p>Cotação comparativa por fornecedor, apoio a pedidos de Hortifrúti e Açougue e auditoria de compras.</p>
           </div>
         </div>
       `;
@@ -437,10 +437,10 @@ class AppController {
       };
     }
 
-    const cardHortifruti = container.querySelector('#card-modulo-hortifruti');
-    if (cardHortifruti) {
-      cardHortifruti.onclick = () => {
-        this.switchView('hortifruti');
+    const cardPedidos = container.querySelector('#card-modulo-pedidos');
+    if (cardPedidos) {
+      cardPedidos.onclick = () => {
+        this.switchView('pedidos');
       };
     }
   }

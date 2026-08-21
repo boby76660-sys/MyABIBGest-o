@@ -2,41 +2,27 @@
  * Hortifrúti Service - Gerenciamento de Cotações Semanas, Regras de Menor Preço e Auditoria
  */
 
-import { getCollection, saveDoc, STORAGE_KEYS } from './adminService.js';
+import { getCollection, saveDoc, STORAGE_KEYS } from './storageService.js';
+import { PRODUTOS_PEDIDOS_SEED } from '../config.js';
 
-// Preços de referência padrão (21 Produtos Oficiais da Ficha de Pedidos/Cotações ABIB)
-export const PRODUTOS_HORTIFRUTI_SEED = [
-  { id: "hprod_abacaxi", nome: "Abacaxi", unidadeMedida: "un", categoria: "Frutas", ordem: 1, ativo: true },
-  { id: "hprod_abobrinha", nome: "Abobrinha", unidadeMedida: "kg", categoria: "Legumes", ordem: 2, ativo: true },
-  { id: "hprod_batata_doce", nome: "Batata Doce", unidadeMedida: "kg", categoria: "Legumes", ordem: 3, ativo: true },
-  { id: "hprod_batata_inglesa", nome: "Batata Inglesa", unidadeMedida: "kg", categoria: "Legumes", ordem: 4, ativo: true },
-  { id: "hprod_beterraba", nome: "Beterraba", unidadeMedida: "kg", categoria: "Legumes", ordem: 5, ativo: true },
-  { id: "hprod_brocolis", nome: "Brócolis", unidadeMedida: "un", categoria: "Verduras", ordem: 6, ativo: true },
-  { id: "hprod_cebola", nome: "Cebola", unidadeMedida: "kg", categoria: "Legumes", ordem: 7, ativo: true },
-  { id: "hprod_cenoura", nome: "Cenoura", unidadeMedida: "kg", categoria: "Legumes", ordem: 8, ativo: true },
-  { id: "hprod_chuchu", nome: "Chuchu", unidadeMedida: "kg", categoria: "Legumes", ordem: 9, ativo: true },
-  { id: "hprod_inhame", nome: "Inhame", unidadeMedida: "kg", categoria: "Legumes", ordem: 10, ativo: true },
-  { id: "hprod_laranja", nome: "Laranja", unidadeMedida: "kg", categoria: "Frutas", ordem: 11, ativo: true },
-  { id: "hprod_mamao_formoso", nome: "Mamão Formoso", unidadeMedida: "kg", categoria: "Frutas", ordem: 12, ativo: true },
-  { id: "hprod_mandioca", nome: "Mandioca", unidadeMedida: "kg", categoria: "Legumes", ordem: 13, ativo: true },
-  { id: "hprod_melao", nome: "Melão", unidadeMedida: "kg", categoria: "Frutas", ordem: 14, ativo: true },
-  { id: "hprod_moranga", nome: "Moranga / Abóbora", unidadeMedida: "kg", categoria: "Legumes", ordem: 15, ativo: true },
-  { id: "hprod_ovo", nome: "Ovo", unidadeMedida: "pente", categoria: "Ovos", ordem: 16, ativo: true },
-  { id: "hprod_pepino", nome: "Pepino", unidadeMedida: "kg", categoria: "Legumes", ordem: 17, ativo: true },
-  { id: "hprod_pimentao_verde", nome: "Pimentão Verde", unidadeMedida: "kg", categoria: "Legumes", ordem: 18, ativo: true },
-  { id: "hprod_quiabo", nome: "Quiabo", unidadeMedida: "kg", categoria: "Legumes", ordem: 19, ativo: true },
-  { id: "hprod_repolho", nome: "Repolho", unidadeMedida: "kg", categoria: "Verduras", ordem: 20, ativo: true },
-  { id: "hprod_tomate", nome: "Tomate", unidadeMedida: "kg", categoria: "Legumes", ordem: 21, ativo: true }
-];
+export const PRODUTOS_HORTIFRUTI_SEED = PRODUTOS_PEDIDOS_SEED;
 
-// Busca todos os produtos de hortifrúti cadastrados
+// Busca todos os produtos cadastrados de Pedidos (Hortifrúti e Açougue)
 export async function getProdutosHortifruti() {
   const produtos = await getCollection(STORAGE_KEYS.HORTIFRUTI_PRODUTOS);
   if (!produtos || !produtos.length) {
-    return PRODUTOS_HORTIFRUTI_SEED;
+    return PRODUTOS_PEDIDOS_SEED;
   }
-  return produtos.filter(p => p.ativo !== false);
+  const map = new Map(produtos.map(p => [p.id, p]));
+  PRODUTOS_PEDIDOS_SEED.forEach(pSeed => {
+    if (!map.has(pSeed.id)) {
+      map.set(pSeed.id, pSeed);
+    }
+  });
+  return Array.from(map.values()).filter(p => p.ativo !== false).sort((a, b) => (a.ordem || 0) - (b.ordem || 0));
 }
+
+export const getProdutosPedidos = getProdutosHortifruti;
 
 // Gera ID único determinístico para o pedido semanal
 export function generatePedidoId(unidadeId, mesAno, semana) {
@@ -274,52 +260,82 @@ export async function getConsolidadoMensal(mesAno, unidadeIdFilter = 'todas') {
   };
 }
 
-// Gerador de Texto Formatado para WhatsApp (Lista do Sacolão)
+// Gerador de Texto Formatado para WhatsApp (Lista Fornecedor 1 / Sacolão / Local)
 export function generateWhatsAppTextSacolao(pedidoDoc, nomeLoja) {
   if (!pedidoDoc || !pedidoDoc.itens) return '';
   const itensSac = pedidoDoc.itens.filter(i => i.fornecedorEscolhido === 'Sacolão' && i.quantidade > 0);
 
-  let msg = `*PEDIDO HORTIFRÚTI - SACOLÃO LOCAL*\n`;
-  msg += ` Unidade: *${nomeLoja}*\n`;
-  msg += `Referência: Mês ${pedidoDoc.mesAno} (Semana ${pedidoDoc.semana})\n`;
+  let msg = `*PEDIDO DE COMPRAS - FORNECEDOR LOCAL*\n`;
+  msg += `Unidade: *${nomeLoja}*\n`;
+  msg += `Referencia: Mes ${pedidoDoc.mesAno} (Semana ${pedidoDoc.semana})\n`;
   msg += `------------------------------------\n\n`;
 
   if (itensSac.length === 0) {
-    msg += `Nenhum produto cotado para o Sacolão nesta semana.\n`;
+    msg += `Nenhum produto cotado para este fornecedor nesta semana.\n`;
   } else {
-    itensSac.forEach(i => {
-      msg += `• *${i.nome}*: ${i.quantidade} ${i.unidadeMedida} (R$ ${i.precoSacolao.toFixed(2).replace('.', ',')} / ${i.unidadeMedida}) = *R$ ${i.subtotal.toFixed(2).replace('.', ',')}*\n`;
-    });
+    const hortiItens = itensSac.filter(i => i.categoria === 'Hortifruti');
+    const acougueItens = itensSac.filter(i => i.categoria === 'Açougue');
 
-    msg += `\n------------------------------------\n`;
-    msg += `*TOTAL SACOLÃO: R$ ${pedidoDoc.totalSacolao.toFixed(2).replace('.', ',')}*\n`;
+    if (hortiItens.length > 0) {
+      msg += `*[HORTIFRUTI]*\n`;
+      hortiItens.forEach(i => {
+        msg += `• *${i.nome}*: ${i.quantidade} ${i.unidadeMedida} (R$ ${i.precoSacolao.toFixed(2).replace('.', ',')} / ${i.unidadeMedida}) = *R$ ${i.subtotal.toFixed(2).replace('.', ',')}*\n`;
+      });
+      msg += `\n`;
+    }
+
+    if (acougueItens.length > 0) {
+      msg += `*[ACOUGUE / CARNES]*\n`;
+      acougueItens.forEach(i => {
+        msg += `• *${i.nome}*: ${i.quantidade} ${i.unidadeMedida} (R$ ${i.precoSacolao.toFixed(2).replace('.', ',')} / ${i.unidadeMedida}) = *R$ ${i.subtotal.toFixed(2).replace('.', ',')}*\n`;
+      });
+      msg += `\n`;
+    }
+
+    msg += `------------------------------------\n`;
+    msg += `*TOTAL FORNECEDOR LOCAL: R$ ${pedidoDoc.totalSacolao.toFixed(2).replace('.', ',')}*\n`;
   }
 
-  msg += `\n_ABIB Refeições Coletivas_`;
+  msg += `\n_ABIB Refeicoes Coletivas_`;
   return msg;
 }
 
-// Gerador de Texto Formatado para WhatsApp (Lista do Mart Minas)
+// Gerador de Texto Formatado para WhatsApp (Lista Fornecedor 2 / Mart Minas)
 export function generateWhatsAppTextMartMinas(pedidoDoc, nomeLoja) {
   if (!pedidoDoc || !pedidoDoc.itens) return '';
   const itensMart = pedidoDoc.itens.filter(i => i.fornecedorEscolhido === 'Mart Minas' && i.quantidade > 0);
 
-  let msg = `*PEDIDO HORTIFRÚTI - MART MINAS*\n`;
-  msg += ` Unidade: *${nomeLoja}*\n`;
-  msg += `Referência: Mês ${pedidoDoc.mesAno} (Semana ${pedidoDoc.semana})\n`;
+  let msg = `*PEDIDO DE COMPRAS - MART MINAS*\n`;
+  msg += `Unidade: *${nomeLoja}*\n`;
+  msg += `Referencia: Mes ${pedidoDoc.mesAno} (Semana ${pedidoDoc.semana})\n`;
   msg += `------------------------------------\n\n`;
 
   if (itensMart.length === 0) {
     msg += `Nenhum produto cotado para o Mart Minas nesta semana.\n`;
   } else {
-    itensMart.forEach(i => {
-      msg += `• *${i.nome}*: ${i.quantidade} ${i.unidadeMedida} (R$ ${i.precoMartMinas.toFixed(2).replace('.', ',')} / ${i.unidadeMedida}) = *R$ ${i.subtotal.toFixed(2).replace('.', ',')}*\n`;
-    });
+    const hortiItens = itensMart.filter(i => i.categoria === 'Hortifruti');
+    const acougueItens = itensMart.filter(i => i.categoria === 'Açougue');
 
-    msg += `\n------------------------------------\n`;
+    if (hortiItens.length > 0) {
+      msg += `*[HORTIFRUTI]*\n`;
+      hortiItens.forEach(i => {
+        msg += `• *${i.nome}*: ${i.quantidade} ${i.unidadeMedida} (R$ ${i.precoMartMinas.toFixed(2).replace('.', ',')} / ${i.unidadeMedida}) = *R$ ${i.subtotal.toFixed(2).replace('.', ',')}*\n`;
+      });
+      msg += `\n`;
+    }
+
+    if (acougueItens.length > 0) {
+      msg += `*[ACOUGUE / CARNES]*\n`;
+      acougueItens.forEach(i => {
+        msg += `• *${i.nome}*: ${i.quantidade} ${i.unidadeMedida} (R$ ${i.precoMartMinas.toFixed(2).replace('.', ',')} / ${i.unidadeMedida}) = *R$ ${i.subtotal.toFixed(2).replace('.', ',')}*\n`;
+      });
+      msg += `\n`;
+    }
+
+    msg += `------------------------------------\n`;
     msg += `*TOTAL MART MINAS: R$ ${pedidoDoc.totalMartMinas.toFixed(2).replace('.', ',')}*\n`;
   }
 
-  msg += `\n_ABIB Refeições Coletivas_`;
+  msg += `\n_ABIB Refeicoes Coletivas_`;
   return msg;
 }

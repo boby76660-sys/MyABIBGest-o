@@ -36,11 +36,34 @@ export function seedInitialData() {
       localStorage.setItem(STORAGE_KEYS.PUBLICOS, JSON.stringify(PUBLICOS_SEED));
     }
   }
-  if (!localStorage.getItem(STORAGE_KEYS.PERFIS)) {
-    localStorage.setItem(STORAGE_KEYS.PERFIS, JSON.stringify(PERFIS_SEED));
-  }
-  if (!localStorage.getItem(STORAGE_KEYS.MODULOS)) {
+  const storedModulos = localStorage.getItem(STORAGE_KEYS.MODULOS);
+  if (!storedModulos) {
     localStorage.setItem(STORAGE_KEYS.MODULOS, JSON.stringify(MODULOS_SEED));
+  } else {
+    try {
+      const parsed = JSON.parse(storedModulos);
+      const hasPedidos = parsed.some(m => m.id === 'pedidos' || (m.nome && m.nome.includes('Pedidos')));
+      if (!hasPedidos) {
+        localStorage.setItem(STORAGE_KEYS.MODULOS, JSON.stringify(MODULOS_SEED));
+      }
+    } catch (e) {
+      localStorage.setItem(STORAGE_KEYS.MODULOS, JSON.stringify(MODULOS_SEED));
+    }
+  }
+
+  const storedProds = localStorage.getItem(STORAGE_KEYS.HORTIFRUTI_PRODUTOS);
+  if (!storedProds) {
+    localStorage.setItem(STORAGE_KEYS.HORTIFRUTI_PRODUTOS, JSON.stringify(PRODUTOS_HORTIFRUTI_SEED));
+  } else {
+    try {
+      const parsed = JSON.parse(storedProds);
+      const hasAcougue = parsed.some(p => p.categoria === 'Açougue');
+      if (!hasAcougue) {
+        localStorage.setItem(STORAGE_KEYS.HORTIFRUTI_PRODUTOS, JSON.stringify(PRODUTOS_HORTIFRUTI_SEED));
+      }
+    } catch (e) {
+      localStorage.setItem(STORAGE_KEYS.HORTIFRUTI_PRODUTOS, JSON.stringify(PRODUTOS_HORTIFRUTI_SEED));
+    }
   }
   if (!localStorage.getItem(STORAGE_KEYS.CONFIG)) {
     localStorage.setItem(STORAGE_KEYS.CONFIG, JSON.stringify({
