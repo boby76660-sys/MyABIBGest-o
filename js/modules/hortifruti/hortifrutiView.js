@@ -724,8 +724,20 @@ export class HortifrutiModule extends BaseModule {
       return;
     }
 
+    let categoriaAtual = '';
+
     filtrados.forEach((item) => {
       const globalIdx = this.itensState.findIndex(x => x.produtoId === item.produtoId);
+
+      // Cabeçalho divisor por categoria (Hortifrúti e Açougue)
+      const cat = item.categoria || 'Outros';
+      if (cat !== categoriaAtual) {
+        categoriaAtual = cat;
+        const trCat = document.createElement('tr');
+        trCat.className = 'tr-category-header';
+        trCat.innerHTML = `<td colspan="7"><strong>${cat}</strong></td>`;
+        tbody.appendChild(trCat);
+      }
 
       const pSac = parseFloat(item.precoSacolao) || 0;
       const pMart = parseFloat(item.precoMartMinas) || 0;
@@ -757,18 +769,13 @@ export class HortifrutiModule extends BaseModule {
       const valMart = (item.precoMartMinas !== '' && item.precoMartMinas !== null && item.precoMartMinas !== undefined) ? (parseFloat(item.precoMartMinas) || 0).toFixed(2) : '';
       const isFilled = (pSac > 0 || pMart > 0 || qtd > 0 || est > 0);
 
-      const isAcougue = item.categoria === 'Açougue';
-      const catBadgeColor = isAcougue ? '#fee2e2' : '#ecfdf5';
-      const catTextColor = isAcougue ? '#991b1b' : '#065f46';
-
       const tr = document.createElement('tr');
       tr.className = `tr-produto-row ${isFilled ? 'tr-filled' : ''}`;
       tr.innerHTML = `
         <td class="col-produto">
           <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%;">
             <div>
-              <strong>${item.nome}</strong> <small class="text-muted">(${item.unidadeMedida})</small>
-              <span class="badge-tag" style="font-size: 0.68rem; margin-left: 6px; background: ${catBadgeColor}; color: ${catTextColor};">${item.categoria}</span>
+              <strong>${item.nome || item.nomeProduto}</strong> <small class="text-muted">(${item.unidadeMedida})</small>
             </div>
             <button class="btn-clear-item-row" data-index="${globalIdx}" title="Zerar valores deste produto">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

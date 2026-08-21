@@ -6719,6 +6719,16 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
           }
         }
 
+        // Cabeçalho divisor por categoria (Hortifrúti e Açougue)
+        const cat = item.categoria || 'Outros';
+        if (cat !== categoriaAtual) {
+          categoriaAtual = cat;
+          const trCat = document.createElement('tr');
+          trCat.className = 'tr-category-header';
+          trCat.innerHTML = `<td colspan="7"><strong>${cat}</strong></td>`;
+          tbody.appendChild(trCat);
+        }
+
         itensExibidosCount++;
 
         const pSac = parseFloat(item.precoSacolao) || 0;
@@ -6765,9 +6775,6 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
         const subtotal = Math.round((qtd * precoFinal) * 100) / 100;
 
         const isFilled = (pSac > 0 || pMart > 0 || qtd > 0 || est > 0);
-        const isAcougue = item.categoria === 'Açougue';
-        const catBadgeColor = isAcougue ? '#fee2e2' : '#ecfdf5';
-        const catTextColor = isAcougue ? '#991b1b' : '#065f46';
 
         const tr = document.createElement('tr');
         tr.className = `tr-produto-row ${isFilled ? 'tr-filled' : ''}`;
@@ -6776,7 +6783,6 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
             <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%;">
               <div>
                 <strong>${item.nomeProduto || item.nome}</strong> <small class="text-muted">(${item.unidadeMedida})</small>
-                <span class="badge-tag" style="font-size: 0.68rem; margin-left: 6px; background: ${catBadgeColor}; color: ${catTextColor};">${item.categoria}</span>
               </div>
               <button class="btn-clear-item-row" data-index="${index}" title="Zerar valores deste produto">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
