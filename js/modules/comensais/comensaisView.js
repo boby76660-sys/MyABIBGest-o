@@ -90,7 +90,14 @@ export class ComensaisModule extends BaseModule {
                 <span>Mais</span>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
               </button>
-              <div id="dropdown-menu-comensais" class="dropdown-menu hidden">
+                <button type="button" id="btn-link-relatorio-comensais-dropdown" class="dropdown-item">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                  </svg>
+                  <span>Link Direto dos Relatórios</span>
+                </button>
                 <button type="button" id="btn-links-whatsapp-unidades" class="dropdown-item">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
@@ -514,6 +521,19 @@ export class ComensaisModule extends BaseModule {
     this.bindCentralLotesEvents();
 
     // --- OUTROS EVENTOS PADRÃO ---
+    const btnLinkRelatorioDropdown = this.container.querySelector('#btn-link-relatorio-comensais-dropdown');
+    if (btnLinkRelatorioDropdown) {
+      btnLinkRelatorioDropdown.addEventListener('click', () => {
+        if (dropdownMenu) dropdownMenu.classList.add('hidden');
+        const fullUrl = `${window.location.origin}${window.location.pathname}?modulo=comensais-relatorios`;
+        navigator.clipboard.writeText(fullUrl).then(() => {
+          alert("Link direto para o Painel de Relatórios copiado com sucesso!\n\nEste link exige senha para entrar e não permite navegar para outros módulos.");
+        }).catch(() => {
+          prompt("Copie o link direto para o Painel de Relatórios:", fullUrl);
+        });
+      });
+    }
+
     const btnLinksWhatsapp = this.container.querySelector('#btn-links-whatsapp-unidades');
     if (btnLinksWhatsapp) {
       btnLinksWhatsapp.addEventListener('click', async () => {

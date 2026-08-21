@@ -54,8 +54,17 @@ export class ComensaisReportView {
           <p class="subtitle">Análise por gráficos SVG, evolução em onda, distribuição e exportação em PDF</p>
         </div>
         <div class="header-actions">
-          <button id="btn-voltar-comensais" class="btn btn-secondary">
-            <span>⬅</span> Voltar
+          ${!this.isLockedMode() ? `
+            <button id="btn-voltar-comensais" class="btn btn-secondary">
+              <span>⬅</span> Voltar
+            </button>
+          ` : ''}
+          <button id="btn-copiar-link-relatorio" class="btn btn-secondary" title="Copiar link de acesso direto com senha para este painel de relatórios">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+            </svg>
+            <span>Link Direto</span>
           </button>
           <button id="btn-exportar-csv" class="btn btn-secondary">
              Exportar CSV
@@ -363,11 +372,29 @@ export class ComensaisReportView {
     }
   }
 
+  isLockedMode() {
+    return !!(window.app && (window.app.lockedModule === 'comensais-relatorios' || window.app.lockedUnit));
+  }
+
   bindEvents() {
     const btnVoltar = this.container.querySelector('#btn-voltar-comensais');
-    btnVoltar.addEventListener('click', () => {
-      window.app.switchView('comensais');
-    });
+    if (btnVoltar) {
+      btnVoltar.addEventListener('click', () => {
+        window.app.switchView('comensais');
+      });
+    }
+
+    const btnCopiarLink = this.container.querySelector('#btn-copiar-link-relatorio');
+    if (btnCopiarLink) {
+      btnCopiarLink.addEventListener('click', () => {
+        const fullUrl = `${window.location.origin}${window.location.pathname}?modulo=comensais-relatorios`;
+        navigator.clipboard.writeText(fullUrl).then(() => {
+          alert("Link direto para o Painel de Relatórios copiado com sucesso!\n\nEste link exige senha para entrar e não permite navegar para outros módulos.");
+        }).catch(() => {
+          prompt("Copie o link direto para o Painel de Relatórios:", fullUrl);
+        });
+      });
+    }
 
     // Alternância de Abas
     const tabVisual = this.container.querySelector('#tab-relatorio-visual') || this.container.querySelector('#tab-visual-view');

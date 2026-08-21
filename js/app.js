@@ -27,6 +27,9 @@ class AppController {
     const isMaster = sessionStorage.getItem('abib_manager_logged') === 'true';
     if (isMaster) return true;
     if (targetModule === 'comensais') return sessionStorage.getItem('abib_module_logged_comensais') === 'true';
+    if (targetModule === 'comensais-relatorios') {
+      return sessionStorage.getItem('abib_module_logged_comensais') === 'true' || sessionStorage.getItem('abib_module_logged_comensais-relatorios') === 'true';
+    }
     if (targetModule === 'hortifruti') return sessionStorage.getItem('abib_module_logged_hortifruti') === 'true';
     return false;
   }
@@ -48,6 +51,7 @@ class AppController {
     const urlParams = new URLSearchParams(window.location.search);
     const urlToken = urlParams.get('token') || urlParams.get('t') || urlParams.get('u');
     const urlModulo = (urlParams.get('modulo') || urlParams.get('m') || '').toLowerCase();
+    const urlRelatorio = (urlParams.get('relatorio') || urlParams.get('r') || '').toLowerCase();
 
     if (urlToken) {
       const validatedUnit = await getUnidadeByToken(urlToken);
@@ -68,7 +72,9 @@ class AppController {
       }
     }
 
-    if (urlModulo === 'comensais' || urlModulo === 'hortifruti') {
+    if (urlModulo === 'comensais-relatorios' || urlModulo === 'relatorios-comensais' || urlRelatorio === 'comensais') {
+      this.lockedModule = 'comensais-relatorios';
+    } else if (urlModulo === 'comensais' || urlModulo === 'hortifruti') {
       this.lockedModule = urlModulo;
     }
 
@@ -76,7 +82,7 @@ class AppController {
     localStorage.removeItem('abib_unit_token');
     this.lockedUnit = null;
 
-    // 3. SE ACCESSO POR MÓDULO DIRETO OU GERAL: VERIFICAR AUTENTICAÇÃO E SENHAS
+    // 3. SE ACESSO POR MÓDULO DIRETO OU GERAL: VERIFICAR AUTENTICAÇÃO E SENHAS
     if (this.lockedModule) {
       if (!this.isAuthorized(this.lockedModule)) {
         this.renderManagerLoginView(this.lockedModule);
@@ -114,7 +120,11 @@ class AppController {
     let subtitle = "Digite a Senha Máster para acessar o Sistema de Gestão ABIB";
     let placeholder = "Digite a senha máster...";
 
-    if (targetModule === 'comensais') {
+    if (targetModule === 'comensais-relatorios') {
+      title = "Acesso Restrito: Relatórios de Comensais";
+      subtitle = "Digite a senha do Módulo de Comensais ou a Senha Máster";
+      placeholder = "Digite a senha do módulo comensais...";
+    } else if (targetModule === 'comensais') {
       title = "Acesso Restrito: Comensais Diários";
       subtitle = "Digite a senha do Módulo de Comensais ou a Senha Máster";
       placeholder = "Digite a senha do módulo comensais...";
@@ -144,7 +154,8 @@ class AppController {
       e.preventDefault();
       const pass = container.querySelector('#input-manager-password').value;
       const moduleTarget = targetModule || this.lockedModule;
-      const authResult = await validateModulePIN(pass, moduleTarget);
+      const authTarget = moduleTarget === 'comensais-relatorios' ? 'comensais' : moduleTarget;
+      const authResult = await validateModulePIN(pass, authTarget);
 
       if (authResult.valid) {
         if (authResult.isMaster) {
@@ -187,18 +198,29 @@ class AppController {
     const profileBadge = document.getElementById('active-profile-badge');
     const profileName = document.getElementById('active-profile-name');
 
-    if (profileName && this.currentProfile) {
+    if (profileName) {
       if (profileBadge) profileBadge.textContent = '';
-      profileName.textContent = this.currentProfile.nome || 'Gestão Restrita';
+      if (targetModule === 'comensais-relatorios') {
+        profileName.textContent = 'Relatórios de Comensais';
+      } else if (targetModule === 'comensais') {
+        profileName.textContent = 'Comensais Diários';
+      } else if (targetModule === 'hortifruti') {
+        profileName.textContent = 'Hortifrúti Semanal';
+      } else if (this.currentProfile) {
+        profileName.textContent = this.currentProfile.nome || 'Gestão Restrita';
+      }
     }
 
     const btnChangeProfile = document.getElementById('btn-change-profile');
     if (btnChangeProfile) {
       btnChangeProfile.style.display = 'inline-flex';
-      btnChangeProfile.innerHTML = ' Sair da Gestão';
+      btnChangeProfile.innerHTML = ' Sair';
       btnChangeProfile.onclick = () => {
         sessionStorage.removeItem('abib_manager_logged');
-        this.renderManagerLoginView();
+        if (targetModule) {
+          sessionStorage.removeItem(`abib_module_logged_${targetModule}`);
+        }
+        this.renderManagerLoginView(targetModule);
       };
     }
 
@@ -313,7 +335,7 @@ class AppController {
   }
 
   async switchView(viewName) {
-    if (this.lockedModule && viewName === 'dashboard') {
+    if (this.lockedModule && (viewName === 'dashboard' || (this.lockedModule === 'comensais-relatorios' && viewName === 'comensais'))) {
       viewName = this.lockedModule;
     }
 
@@ -321,7 +343,10 @@ class AppController {
     if (viewName === 'dashboard' && !this.isAuthorized(null)) {
       this.renderManagerLoginView(null);
       return;
-    } else if ((viewName === 'comensais' || viewName === 'comensais-relatorios') && !this.isAuthorized('comensais')) {
+    } else if (viewName === 'comensais-relatorios' && !this.isAuthorized('comensais-relatorios')) {
+      this.renderManagerLoginView('comensais-relatorios');
+      return;
+    } else if (viewName === 'comensais' && !this.isAuthorized('comensais')) {
       this.renderManagerLoginView('comensais');
       return;
     } else if (viewName === 'hortifruti' && !this.lockedUnit && !this.isAuthorized('hortifruti')) {

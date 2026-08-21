@@ -1646,6 +1646,14 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                 </button>
                 <div id="dropdown-menu-comensais" class="dropdown-menu hidden">
+                  <button type="button" id="btn-link-relatorio-comensais-dropdown" class="dropdown-item">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="18" y1="20" x2="18" y2="10"></line>
+                      <line x1="12" y1="20" x2="12" y2="4"></line>
+                      <line x1="6" y1="20" x2="6" y2="14"></line>
+                    </svg>
+                    <span>Link Direto dos Relatórios</span>
+                  </button>
                   <button type="button" id="btn-links-whatsapp-unidades" class="dropdown-item">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
@@ -2084,6 +2092,19 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
       this.bindConfigIaEvents();
       this.bindOcrRevisaoEvents();
       this.bindCentralLotesEvents();
+
+      const btnLinkRelatorioDropdown = this.container.querySelector('#btn-link-relatorio-comensais-dropdown');
+      if (btnLinkRelatorioDropdown) {
+        btnLinkRelatorioDropdown.addEventListener('click', () => {
+          if (dropdownMenu) dropdownMenu.classList.add('hidden');
+          const fullUrl = `${window.location.origin}${window.location.pathname}?modulo=comensais-relatorios`;
+          navigator.clipboard.writeText(fullUrl).then(() => {
+            alert("Link direto para o Painel de Relatórios copiado com sucesso!\n\nEste link exige senha para entrar e não permite navegar para outros módulos.");
+          }).catch(() => {
+            prompt("Copie o link direto para o Painel de Relatórios:", fullUrl);
+          });
+        });
+      }
 
       const btnLinksWhatsapp = this.container.querySelector('#btn-links-whatsapp-unidades');
       if (btnLinksWhatsapp) {
@@ -3347,7 +3368,16 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
             <p class="subtitle">Análise por gráficos SVG, evolução em onda, distribuição e exportação em PDF</p>
           </div>
           <div class="header-actions">
-            <button id="btn-voltar-comensais" class="btn btn-secondary"><span>⬅</span> Voltar</button>
+            ${!this.isLockedMode() ? `
+              <button id="btn-voltar-comensais" class="btn btn-secondary"><span>⬅</span> Voltar</button>
+            ` : ''}
+            <button id="btn-copiar-link-relatorio" class="btn btn-secondary" title="Copiar link de acesso direto com senha para este painel de relatórios">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+              </svg>
+              <span>Link Direto</span>
+            </button>
             <button id="btn-exportar-csv" class="btn btn-secondary"> Exportar CSV</button>
             <button id="btn-exportar-pdf" class="btn btn-success"> Exportar PDF</button>
             <button id="btn-ver-detalhes-unidades" class="btn btn-primary"> Unidades</button>
@@ -3648,11 +3678,29 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
       }
     }
 
+    isLockedMode() {
+      return !!(window.app && (window.app.lockedModule === 'comensais-relatorios' || window.app.lockedUnit));
+    }
+
     bindEvents() {
       const btnVoltar = this.container.querySelector('#btn-voltar-comensais');
-      btnVoltar.addEventListener('click', () => {
-        window.app.switchView('comensais');
-      });
+      if (btnVoltar) {
+        btnVoltar.addEventListener('click', () => {
+          window.app.switchView('comensais');
+        });
+      }
+
+      const btnCopiarLink = this.container.querySelector('#btn-copiar-link-relatorio');
+      if (btnCopiarLink) {
+        btnCopiarLink.addEventListener('click', () => {
+          const fullUrl = `${window.location.origin}${window.location.pathname}?modulo=comensais-relatorios`;
+          navigator.clipboard.writeText(fullUrl).then(() => {
+            alert("Link direto para o Painel de Relatórios copiado com sucesso!\n\nEste link exige senha para entrar e não permite navegar para outros módulos.");
+          }).catch(() => {
+            prompt("Copie o link direto para o Painel de Relatórios:", fullUrl);
+          });
+        });
+      }
 
       // Alternância de Abas
       const tabVisual = this.container.querySelector('#tab-relatorio-visual') || this.container.querySelector('#tab-visual-view');
@@ -6964,6 +7012,9 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
       const isMaster = sessionStorage.getItem('abib_manager_logged') === 'true';
       if (isMaster) return true;
       if (targetModule === 'comensais') return sessionStorage.getItem('abib_module_logged_comensais') === 'true';
+      if (targetModule === 'comensais-relatorios') {
+        return sessionStorage.getItem('abib_module_logged_comensais') === 'true' || sessionStorage.getItem('abib_module_logged_comensais-relatorios') === 'true';
+      }
       if (targetModule === 'hortifruti') return sessionStorage.getItem('abib_module_logged_hortifruti') === 'true';
       return false;
     }
@@ -6982,6 +7033,7 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
         const urlParams = new URLSearchParams(window.location.search);
         const urlToken = urlParams.get('token') || urlParams.get('t') || urlParams.get('u');
         const urlModulo = (urlParams.get('modulo') || urlParams.get('m') || '').toLowerCase();
+        const urlRelatorio = (urlParams.get('relatorio') || urlParams.get('r') || '').toLowerCase();
 
         if (urlToken) {
           const validatedUnit = await getUnidadeByToken(urlToken);
@@ -7002,7 +7054,9 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
           }
         }
 
-        if (urlModulo === 'comensais' || urlModulo === 'hortifruti') {
+        if (urlModulo === 'comensais-relatorios' || urlModulo === 'relatorios-comensais' || urlRelatorio === 'comensais') {
+          this.lockedModule = 'comensais-relatorios';
+        } else if (urlModulo === 'comensais' || urlModulo === 'hortifruti') {
           this.lockedModule = urlModulo;
         }
 
@@ -7055,7 +7109,11 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
       let subtitle = "Digite a Senha Máster para acessar o Sistema de Gestão ABIB";
       let placeholder = "Digite a senha máster...";
 
-      if (targetModule === 'comensais') {
+      if (targetModule === 'comensais-relatorios') {
+        title = "Acesso Restrito: Relatórios de Comensais";
+        subtitle = "Digite a senha do Módulo de Comensais ou a Senha Máster";
+        placeholder = "Digite a senha do módulo comensais...";
+      } else if (targetModule === 'comensais') {
         title = "Acesso Restrito: Comensais Diários";
         subtitle = "Digite a senha do Módulo de Comensais ou a Senha Máster";
         placeholder = "Digite a senha do módulo comensais...";
@@ -7085,7 +7143,8 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
         e.preventDefault();
         const pass = container.querySelector('#input-manager-password').value;
         const moduleTarget = targetModule || this.lockedModule;
-        const authResult = await validateModulePIN(pass, moduleTarget);
+        const authTarget = moduleTarget === 'comensais-relatorios' ? 'comensais' : moduleTarget;
+        const authResult = await validateModulePIN(pass, authTarget);
 
         if (authResult.valid) {
           if (authResult.isMaster) {
@@ -7125,18 +7184,27 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
       }
 
       const profileName = document.getElementById('active-profile-name');
-      if (profileName && this.currentProfile) {
-        profileName.textContent = this.currentProfile.nome || 'Gestão Restrita';
+      if (profileName) {
+        if (targetModule === 'comensais-relatorios') {
+          profileName.textContent = 'Relatórios de Comensais';
+        } else if (targetModule === 'comensais') {
+          profileName.textContent = 'Comensais Diários';
+        } else if (targetModule === 'hortifruti') {
+          profileName.textContent = 'Hortifrúti Semanal';
+        } else if (this.currentProfile) {
+          profileName.textContent = this.currentProfile.nome || 'Gestão Restrita';
+        }
       }
 
       const btnChangeProfile = document.getElementById('btn-change-profile');
       if (btnChangeProfile) {
         btnChangeProfile.style.display = 'inline-flex';
-        btnChangeProfile.innerHTML = ' Sair da Gestão';
+        btnChangeProfile.innerHTML = ' Sair';
         btnChangeProfile.onclick = () => {
           sessionStorage.removeItem('abib_manager_logged');
-          sessionStorage.removeItem('abib_module_logged_comensais');
-          sessionStorage.removeItem('abib_module_logged_hortifruti');
+          if (targetModule) {
+            sessionStorage.removeItem(`abib_module_logged_${targetModule}`);
+          }
           this.renderManagerLoginView(targetModule);
         };
       }
@@ -7252,7 +7320,7 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
     }
 
     async switchView(viewName) {
-      if (this.lockedModule && viewName === 'dashboard') {
+      if (this.lockedModule && (viewName === 'dashboard' || (this.lockedModule === 'comensais-relatorios' && viewName === 'comensais'))) {
         viewName = this.lockedModule;
       }
 
@@ -7260,7 +7328,10 @@ REGRAS CRÍTICAS DE EXTRAÇÃO:
       if (viewName === 'dashboard' && !this.isAuthorized(null)) {
         this.renderManagerLoginView(null);
         return;
-      } else if ((viewName === 'comensais' || viewName === 'comensais-relatorios') && !this.isAuthorized('comensais')) {
+      } else if (viewName === 'comensais-relatorios' && !this.isAuthorized('comensais-relatorios')) {
+        this.renderManagerLoginView('comensais-relatorios');
+        return;
+      } else if (viewName === 'comensais' && !this.isAuthorized('comensais')) {
         this.renderManagerLoginView('comensais');
         return;
       } else if (viewName === 'hortifruti' && !this.lockedUnit && !this.isAuthorized('hortifruti')) {
