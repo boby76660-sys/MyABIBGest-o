@@ -526,11 +526,15 @@ export class ComensaisModule extends BaseModule {
       btnLinkRelatorioDropdown.addEventListener('click', () => {
         if (dropdownMenu) dropdownMenu.classList.add('hidden');
         const fullUrl = `${window.location.origin}${window.location.pathname}?modulo=comensais-relatorios`;
-        navigator.clipboard.writeText(fullUrl).then(() => {
-          alert("Link direto para o Painel de Relatórios copiado com sucesso!\n\nEste link exige senha para entrar e não permite navegar para outros módulos.");
-        }).catch(() => {
-          prompt("Copie o link direto para o Painel de Relatórios:", fullUrl);
-        });
+        const temp = document.createElement('textarea');
+        temp.value = fullUrl;
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand('copy');
+        document.body.removeChild(temp);
+        if (typeof showToast === 'function') {
+          showToast("Link do Relatório copiado!", "success");
+        }
       });
     }
 
@@ -573,7 +577,9 @@ export class ComensaisModule extends BaseModule {
         const textarea = this.container.querySelector('#whatsapp-preview-text');
         textarea.select();
         document.execCommand('copy');
-        alert("Resumo copiado para a área de transferência! Cole no grupo do WhatsApp.");
+        if (typeof showToast === 'function') {
+          showToast("Resumo copiado para a área de transferência!", "success");
+        }
         this.container.querySelector('#modal-whatsapp').classList.add('hidden');
       });
     }
@@ -1422,13 +1428,17 @@ export class ComensaisModule extends BaseModule {
         temp.select();
         document.execCommand('copy');
         document.body.removeChild(temp);
-        alert(`Link do WhatsApp para a loja ${u.loja} copiado com sucesso!`);
+        if (typeof showToast === 'function') {
+          showToast(`Link da unidade ${u.loja} copiado!`, "success");
+        }
       });
 
       tr.querySelector('.btn-regerar-token').addEventListener('click', async () => {
         if (confirm(`Atenção: Deseja revogar o link antigo e gerar um NOVO token seguro para a unidade ${u.loja}?`)) {
           await regenerateUnitToken(u.id);
-          alert(`Novo token gerado para ${u.loja}!`);
+          if (typeof showToast === 'function') {
+            showToast(`Novo token gerado para ${u.loja}!`, "success");
+          }
           await this.renderModalLinksWhatsapp();
         }
       });
