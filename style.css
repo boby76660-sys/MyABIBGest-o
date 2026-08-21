@@ -3591,6 +3591,130 @@ select.select-vencedor-override,
   word-break: break-word;
 }
 
+/* --- TABELA DE RELATÓRIO RESPONSIVA (CARDS COMPACTOS NO MOBILE - ZERO SCROLL) --- */
+#table-relatorio-comensais {
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  #container-table-view {
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    overflow-x: visible;
+  }
+
+  #table-relatorio-comensais thead {
+    display: none;
+  }
+
+  #table-relatorio-comensais,
+  #table-relatorio-comensais tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+
+  #table-relatorio-comensais tr.report-table-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "loja total"
+      "data total"
+      "chips chips"
+      "obs acoes";
+    gap: 4px 10px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 12px 14px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  #table-relatorio-comensais tr.report-table-row td {
+    border: none;
+    padding: 0;
+    background: transparent;
+  }
+
+  #table-relatorio-comensais .col-loja {
+    grid-area: loja;
+    font-size: 0.96rem;
+    font-weight: 800;
+    color: var(--text-title);
+    line-height: 1.2;
+  }
+
+  #table-relatorio-comensais .col-data {
+    grid-area: data;
+    font-size: 0.76rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  #table-relatorio-comensais .col-total {
+    grid-area: total;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  #table-relatorio-comensais .col-total .badge-total-comensais {
+    font-size: 0.95rem;
+    padding: 5px 12px;
+    border-radius: 14px;
+  }
+
+  #table-relatorio-comensais .col-chips {
+    grid-area: chips;
+    padding: 8px 0 4px 0 !important;
+    border-top: 1px dashed #f1f5f9 !important;
+    margin-top: 4px;
+  }
+
+  #table-relatorio-comensais .col-chips .publico-chips-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    width: 100%;
+  }
+
+  #table-relatorio-comensais .col-chips .publico-chip {
+    padding: 3px 7px;
+    font-size: 0.74rem;
+    border-radius: 6px;
+  }
+
+  #table-relatorio-comensais .col-obs {
+    grid-area: obs;
+    font-size: 0.74rem;
+    color: var(--text-muted);
+    line-height: 1.3;
+    word-break: break-word;
+  }
+
+  #table-relatorio-comensais .col-obs .text-empty {
+    display: none;
+  }
+
+  #table-relatorio-comensais .col-acoes {
+    grid-area: acoes;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  #table-relatorio-comensais .col-acoes .btn-editar-reg {
+    padding: 3px 8px;
+    font-size: 0.74rem;
+  }
+}
+
 
 
 

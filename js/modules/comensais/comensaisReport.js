@@ -1074,27 +1074,28 @@ export class ComensaisReportView {
       });
 
       const tr = document.createElement('tr');
+      tr.className = 'report-table-row';
       tr.innerHTML = `
-        <td style="white-space: nowrap;">
+        <td class="col-data" style="white-space: nowrap;">
           <strong>${new Date(r.data + 'T00:00:00').toLocaleDateString('pt-BR')}</strong>
         </td>
-        <td style="white-space: nowrap;">
+        <td class="col-loja" style="white-space: nowrap;">
           <strong style="color: var(--text-title); font-size: 0.9rem;">${u.loja}</strong>
         </td>
-        <td>
+        <td class="col-chips">
           <div class="publico-chips-container">
             ${chipsHTML.length > 0 ? chipsHTML.join('') : '<em style="color: var(--text-muted); font-size: 0.8rem;">Sem registros</em>'}
           </div>
         </td>
-        <td style="text-align: center; white-space: nowrap;">
+        <td class="col-total" style="text-align: center; white-space: nowrap;">
           <span class="badge-total-comensais">${totalDoc.toLocaleString('pt-BR')}</span>
         </td>
-        <td>
-          <span style="font-size: 0.8rem; color: ${r.observacao ? 'var(--text-main)' : 'var(--text-muted)'};">
-            ${r.observacao || '-'}
+        <td class="col-obs">
+          <span class="cell-obs-text ${r.observacao ? '' : 'text-empty'}" style="font-size: 0.8rem; color: ${r.observacao ? 'var(--text-main)' : 'var(--text-muted)'};">
+            ${r.observacao ? `Obs: ${r.observacao}` : '-'}
           </span>
         </td>
-        <td style="text-align: center; white-space: nowrap;">
+        <td class="col-acoes" style="text-align: center; white-space: nowrap;">
           ${!isLocked ? `
             <button class="btn btn-sm btn-secondary btn-editar-reg" data-id="${r.id}" title="Editar registro">Editar</button>
           ` : '<span style="color: var(--text-muted); font-size: 0.75rem;">-</span>'}
